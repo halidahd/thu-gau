@@ -1865,6 +1865,7 @@
         });
 
         function followElephant(posX) {
+            if (isCustomFullscreen) return;
             const wrap = document.getElementById('gameViewportWrap');
             if (!wrap || wrap.scrollWidth <= wrap.clientWidth) return;
             const targetScroll = Math.max(0, Math.min(wrap.scrollWidth - wrap.clientWidth, posX - wrap.clientWidth / 2));
@@ -1922,6 +1923,13 @@
             if (!isCustomFullscreen) {
                 isCustomFullscreen = true;
                 container.classList.add('fullscreen-active');
+                
+                const wrap = document.getElementById('gameViewportWrap');
+                if (wrap) {
+                    wrap.scrollLeft = 0;
+                    wrap.scrollTop = 0;
+                }
+
                 if (btn) {
                     btn.innerHTML = '<span class="fs-icon">🗗</span> <span class="fs-text">Thu nhỏ</span>';
                     btn.classList.add('active');
@@ -1985,6 +1993,12 @@
             const container = document.getElementById('gameOuterContainer');
             const canvas = document.querySelector('.game-canvas-wrap');
             if (!container || !canvas || !isCustomFullscreen) return;
+
+            const wrap = document.getElementById('gameViewportWrap');
+            if (wrap) {
+                wrap.scrollLeft = 0;
+                wrap.scrollTop = 0;
+            }
 
             const isPortrait = window.innerHeight > window.innerWidth;
             let targetW = isPortrait ? window.innerHeight : window.innerWidth;

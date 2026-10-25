@@ -2059,6 +2059,7 @@
         });
 
         function scrollGameToBank(bank) {
+            if (isCustomFullscreen) return;
             const wrap = document.getElementById('gameViewportWrap');
             if (!wrap || wrap.scrollWidth <= wrap.clientWidth) return;
             if (bank === 'right') {
@@ -2123,6 +2124,13 @@
             if (!isCustomFullscreen) {
                 isCustomFullscreen = true;
                 container.classList.add('fullscreen-active');
+                
+                const wrap = document.getElementById('gameViewportWrap');
+                if (wrap) {
+                    wrap.scrollLeft = 0;
+                    wrap.scrollTop = 0;
+                }
+
                 if (btn) {
                     btn.innerHTML = '<span class="fs-icon">🗗</span> <span class="fs-text">Thu nhỏ</span>';
                     btn.classList.add('active');
@@ -2184,8 +2192,14 @@
 
         function adjustFullscreenLayout() {
             const container = document.getElementById('gameOuterContainer');
+            const wrap = document.getElementById('gameViewportWrap');
             const scene = document.querySelector('.scene-container');
             if (!container || !scene || !isCustomFullscreen) return;
+
+            if (wrap) {
+                wrap.scrollLeft = 0;
+                wrap.scrollTop = 0;
+            }
 
             const isPortrait = window.innerHeight > window.innerWidth;
             let targetW = isPortrait ? window.innerHeight : window.innerWidth;
@@ -2207,6 +2221,15 @@
                 scene.style.transform = '';
                 scene.style.transformOrigin = '';
                 scene.style.margin = '';
+            }
+            const wrap = document.getElementById('gameViewportWrap');
+            if (wrap) {
+                const startModal = document.getElementById('startModal');
+                if (startModal && startModal.classList.contains('active')) {
+                    wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
+                } else {
+                    scrollGameToBank(boatSide);
+                }
             }
         }
 
