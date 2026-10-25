@@ -20,8 +20,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 12px;
+            justify-content: flex-start;
+            padding: 12px 10px;
             color: #333;
             overflow-x: hidden;
         }
@@ -210,16 +210,104 @@
             margin: 4px 6px;
         }
 
-        @media (max-width: 600px) {
+        .rotate-hint-banner {
+            display: none;
+            width: 100%;
+            max-width: 1050px;
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            color: #b45309;
+            padding: 8px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
+        .game-viewport-wrap {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0 auto;
+            position: relative;
+            overflow: visible;
+        }
+
+        @media (max-width: 768px) and (orientation: portrait) {
+            .rotate-hint-banner {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 8px 6px;
+            }
+            .game-top-nav {
+                padding: 6px 12px;
+                border-radius: 14px;
+                margin-bottom: 8px;
+            }
             .nav-brand-title {
                 display: none;
             }
-            .nav-btn-text {
-                display: inline;
+            .nav-home-btn, .nav-dropdown-btn {
+                font-size: 13px;
+                padding: 6px 12px;
             }
             .game-dropdown-menu {
-                right: -20px;
-                width: 280px;
+                right: 0;
+                width: min(300px, 92vw);
+            }
+            .game-header {
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px 14px;
+                text-align: center;
+                border-radius: 16px;
+                margin-bottom: 8px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+                line-height: 1.2;
+            }
+            .title-box p {
+                font-size: 13px;
+            }
+            .status-panel {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                width: 100%;
+            }
+            .stage-badge {
+                font-size: 13px;
+                padding: 5px 12px;
+            }
+            .guide-banner {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+                padding: 8px 12px;
+                font-size: 13px;
+                border-radius: 14px;
+                margin-bottom: 8px;
+            }
+            .alert-card, .victory-card {
+                padding: 20px 16px;
+                max-height: 85vh;
+                overflow-y: auto;
+                width: 94%;
+            }
+            .victory-card h2 {
+                font-size: 22px;
             }
         }
 
@@ -340,6 +428,8 @@
             border: 6px solid #fff;
             box-shadow: 0 16px 36px rgba(0,0,0,0.3);
             overflow: hidden;
+            transform-origin: top center;
+            flex-shrink: 0;
         }
 
         .river {
@@ -914,7 +1004,13 @@
         <span style="font-weight: 800; color: #e65100; font-size: 16px; background: #ffe0b2; padding: 4px 12px; border-radius: 10px;">Voi: <strong>150 kg</strong></span>
     </div>
 
-    <div class="game-canvas-wrap">
+    <div class="rotate-hint-banner">
+        <span>🔄</span>
+        <span>Mẹo: Xoay ngang màn hình điện thoại để chơi to và dễ chạm hơn nhé!</span>
+    </div>
+
+    <div class="game-viewport-wrap" id="gameViewportWrap">
+        <div class="game-canvas-wrap">
         <div class="river">
             <div class="water-wave"></div>
         </div>
@@ -1046,6 +1142,7 @@
         </div>
 
         <div id="splash" class="splash-ring"></div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="alertModal">
@@ -1633,6 +1730,31 @@
                 panel.classList.remove('show');
             }
         });
+
+        // Tự động co dãn màn hình chơi game theo kích thước điện thoại / tablet
+        function fitGameToScreen() {
+            const wrap = document.getElementById('gameViewportWrap');
+            const canvas = document.querySelector('.game-canvas-wrap');
+            if (!wrap || !canvas) return;
+
+            const maxGameW = 1000;
+            const gameH = 600;
+
+            const availW = Math.min(window.innerWidth - 16, maxGameW);
+            const scale = Math.max(0.32, Math.min(1, availW / maxGameW));
+
+            canvas.style.transform = `scale(${scale})`;
+            wrap.style.width = `${maxGameW * scale}px`;
+            wrap.style.height = `${gameH * scale}px`;
+        }
+
+        window.addEventListener('resize', fitGameToScreen);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(fitGameToScreen, 150);
+        });
+        document.addEventListener('DOMContentLoaded', fitGameToScreen);
+        fitGameToScreen();
+        setTimeout(fitGameToScreen, 300);
     </script>
 </body>
 </html>

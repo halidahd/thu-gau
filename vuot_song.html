@@ -20,8 +20,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 10px;
+            justify-content: flex-start;
+            padding: 12px 10px;
             color: #2c3e50;
             overflow-x: hidden;
         }
@@ -210,16 +210,113 @@
             margin: 4px 6px;
         }
 
-        @media (max-width: 600px) {
+        .rotate-hint-banner {
+            display: none;
+            width: 100%;
+            max-width: 1060px;
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            color: #b45309;
+            padding: 8px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
+        .game-viewport-wrap {
+            width: 100%;
+            max-width: 1060px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0 auto;
+            position: relative;
+            overflow: visible;
+        }
+
+        @media (max-width: 768px) and (orientation: portrait) {
+            .rotate-hint-banner {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 8px 6px;
+            }
+            .game-top-nav {
+                padding: 6px 12px;
+                border-radius: 14px;
+                margin-bottom: 8px;
+            }
             .nav-brand-title {
                 display: none;
             }
-            .nav-btn-text {
-                display: inline;
+            .nav-home-btn, .nav-dropdown-btn {
+                font-size: 13px;
+                padding: 6px 12px;
             }
             .game-dropdown-menu {
-                right: -20px;
-                width: 280px;
+                right: 0;
+                width: min(300px, 92vw);
+            }
+            .problem-card {
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px 14px;
+                border-radius: 16px;
+                margin-bottom: 8px;
+            }
+            .problem-text {
+                font-size: 14px;
+                gap: 10px;
+                width: 100%;
+            }
+            .problem-badge {
+                min-width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+            .problem-content {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .controls-top {
+                align-items: center;
+                width: 100%;
+                gap: 8px;
+            }
+            .btn-group {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 6px;
+                width: 100%;
+            }
+            .btn-top {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+            .counters-group {
+                justify-content: center;
+            }
+            .dialog-card {
+                padding: 18px 16px;
+                max-height: 85vh;
+                overflow-y: auto;
+                width: 94%;
+            }
+            .dialog-title {
+                font-size: 20px;
+            }
+            .btn-dialog {
+                font-size: 15px;
+                padding: 10px 18px;
             }
         }
 
@@ -353,6 +450,8 @@
             box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
             overflow: hidden;
             background: linear-gradient(180deg, #a7cbd9 0%, #d4e3e8 35%, #e6dec8 46%, #88b3aa 48%, #77a89f 100%);
+            transform-origin: top center;
+            flex-shrink: 0;
         }
 
         .red-sun {
@@ -1006,7 +1105,13 @@
         </div>
     </div>
 
-    <div class="scene-container">
+    <div class="rotate-hint-banner">
+        <span>🔄</span>
+        <span>Mẹo: Xoay ngang màn hình điện thoại để chơi to và dễ chạm hơn nhé!</span>
+    </div>
+
+    <div class="game-viewport-wrap" id="gameViewportWrap">
+        <div class="scene-container">
         <!-- Prominent Timer Badge at Top-Right of Scene -->
         <div class="scene-timer-badge" id="sceneTimerBadge">⏱️ 00:00</div>
         <div class="red-sun"></div>
@@ -1073,6 +1178,7 @@
         </div>
 
         <div class="water-splash-fx" id="waterSplashFx"></div>
+        </div>
     </div>
 
     <!-- Start Game Modal (Overlay on load) -->
@@ -1785,6 +1891,31 @@
                 panel.classList.remove('show');
             }
         });
+
+        // Tự động co dãn màn hình chơi game theo kích thước điện thoại / tablet
+        function fitGameToScreen() {
+            const wrap = document.getElementById('gameViewportWrap');
+            const scene = document.querySelector('.scene-container');
+            if (!wrap || !scene) return;
+
+            const maxGameW = 1060;
+            const gameH = 550;
+
+            const availW = Math.min(window.innerWidth - 16, maxGameW);
+            const scale = Math.max(0.32, Math.min(1, availW / maxGameW));
+
+            scene.style.transform = `scale(${scale})`;
+            wrap.style.width = `${maxGameW * scale}px`;
+            wrap.style.height = `${gameH * scale}px`;
+        }
+
+        window.addEventListener('resize', fitGameToScreen);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(fitGameToScreen, 150);
+        });
+        document.addEventListener('DOMContentLoaded', fitGameToScreen);
+        fitGameToScreen();
+        setTimeout(fitGameToScreen, 300);
     </script>
 </body>
 </html>
