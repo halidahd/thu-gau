@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voi Con Vượt Sông - Toán Lớp 4 (Âm Thanh Vui Nhộn)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* THANH ĐIỀU HƯỚNG CHUNG CHO CÁC TRÒ CHƠI */
+        .game-top-nav {
+            width: 100%;
+            max-width: 1050px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 8px 18px;
+            margin-bottom: 10px;
+            border: 3px solid #fde047;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ff7a00 0%, #ea580c 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .nav-home-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.45);
+        }
+
+        .nav-brand-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 17px;
+            font-weight: 900;
+            color: #0284c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .game-dropdown-wrapper {
+            position: relative;
+        }
+
+        .nav-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0284c7;
+            color: #ffffff;
+            border: none;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 7px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+            transition: all 0.2s;
+        }
+
+        .nav-dropdown-btn:hover {
+            background: #0369a1;
+            transform: translateY(-2px);
+        }
+
+        .dropdown-caret {
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .game-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 300px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 9999;
+            animation: navFade 0.2s ease-out;
+        }
+
+        .game-dropdown-menu.show {
+            display: flex;
+        }
+
+        @keyframes navFade {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-header-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: #94a3b8;
+            letter-spacing: 0.6px;
+            padding: 6px 10px 2px 10px;
+        }
+
+        .dropdown-game-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 12px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: background 0.2s;
+        }
+
+        .dropdown-game-item:hover {
+            background: #f0f9ff;
+        }
+
+        .dropdown-game-item.active-current {
+            background: #e0f2fe;
+            border: 1.5px solid #38bdf8;
+        }
+
+        .game-item-emoji {
+            font-size: 26px;
+        }
+
+        .game-item-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            text-align: left;
+        }
+
+        .game-item-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 16px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #0f172a;
+        }
+
+        .game-item-sub {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .game-item-badge {
+            font-size: 11px;
+            font-weight: 800;
+            background: #22c55e;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .game-item-badge.badge-play {
+            background: #ea580c;
+        }
+
+        .dropdown-sep {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 4px 6px;
+        }
+
+        @media (max-width: 600px) {
+            .nav-brand-title {
+                display: none;
+            }
+            .nav-btn-text {
+                display: inline;
+            }
+            .game-dropdown-menu {
+                right: -20px;
+                width: 280px;
+            }
+        }
+
+        .game-header {
+            width: 100%;
+            max-width: 1050px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 12px 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border: 3px solid #ffca28;
+        }
+
+        .title-box h1 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 26px;
+            color: #d84315;
+            line-height: 1.2;
+            text-shadow: 1px 1px 0px #ffe082;
+        }
+
+        .title-box p {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .status-panel {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stage-badge {
+            background: #10b981;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .btn-action {
+            background: #29b6f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            background: #0288d1;
+        }
+
+        .sound-btn {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .guide-banner {
+            width: 100%;
+            max-width: 1050px;
+            background: #fff9c4;
+            border: 2px dashed #fbc02d;
+            border-radius: 14px;
+            padding: 10px 18px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #5d4037;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+
+        .guide-banner strong {
+            color: #c2185b;
+        }
+
+        .game-canvas-wrap {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+            background: linear-gradient(to bottom, #81d4fa 0%, #b3e5fc 40%, #e0f7fa 100%);
+            border-radius: 24px;
+            border: 6px solid #fff;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .river {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 170px;
+            width: 660px;
+            background: linear-gradient(90deg, #29b6f6, #0288d1 40%, #039be5 70%, #29b6f6);
+            overflow: hidden;
+        }
+
+        .water-wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 15%, transparent 20%);
+            background-size: 50px 50px;
+            animation: waveFlow 12s linear infinite;
+        }
+
+        @keyframes waveFlow {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        .bank-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 180px;
+            background: linear-gradient(135deg, #7cb342, #558b2f);
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 24px 15px;
+            text-align: center;
+        }
+
+        .bank-right {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 180px;
+            background: linear-gradient(225deg, #7cb342, #558b2f);
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.2);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 24px 15px;
+            text-align: center;
+        }
+
+        .bank-label {
+            background: #fff;
+            color: #2e7d32;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            margin-bottom: 12px;
+        }
+
+        .goal-trees {
+            font-size: 50px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            animation: sway 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(-3deg); }
+            100% { transform: rotate(3deg); }
+        }
+
+        .island {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #8bc34a 30%, #558b2f 90%);
+            border: 4px solid #aed581;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .island-1 {
+            left: 455px;
+            top: 145px;
+            width: 110px;
+            height: 110px;
+        }
+
+        .island-2 {
+            left: 455px;
+            top: 385px;
+            width: 110px;
+            height: 110px;
+        }
+
+        svg.bridge-paths {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .bridge-path-line {
+            stroke: #8d4925;
+            stroke-width: 22;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 8 4;
+            transition: all 0.5s ease;
+        }
+
+        .bridge-rail-line {
+            stroke: #fcd34d;
+            stroke-width: 3;
+            stroke-dasharray: 6 3;
+            fill: none;
+            transition: all 0.5s ease;
+        }
+
+        .bridge-active-glow {
+            stroke: #38bdf8;
+            stroke-width: 24;
+            stroke-linecap: round;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .bridge-active-glow.active {
+            opacity: 0.85;
+            stroke-dasharray: 12 12;
+            animation: dash 1.2s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -24; }
+        }
+
+        .bridge-card {
+            position: absolute;
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bridge-body {
+            position: relative;
+            background: linear-gradient(to bottom, #b45309, #78350f);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 14px;
+            border: 3px solid #fef08a;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+            text-align: center;
+            font-weight: 800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 125px;
+        }
+
+        .bridge-body::before, .bridge-body::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            background: #facc15;
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+        .bridge-body::before { left: -5px; }
+        .bridge-body::after { right: -5px; }
+
+        .bridge-card.selectable:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            filter: drop-shadow(0 0 14px rgba(253, 224, 71, 0.95));
+        }
+
+        .bridge-card.selectable .bridge-body {
+            border-color: #38bdf8;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+        }
+
+        .bridge-card.passed .bridge-body {
+            background: linear-gradient(to bottom, #16a34a, #15803d);
+            border-color: #86efac;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+        }
+
+        .bridge-card.past-clickable:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.85));
+        }
+
+        .bridge-card.broken {
+            animation: bridgeCrack 1s forwards cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        @keyframes bridgeCrack {
+            0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+            35% { transform: translate(-50%, -40%) rotate(18deg) scale(1.05); }
+            100% { transform: translate(-50%, 75px) rotate(60deg) scale(0.4); opacity: 0; }
+        }
+
+        .bridge-tag-original {
+            font-size: 18px;
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: 0.5px;
+        }
+
+        .bridge-tag-kg {
+            font-size: 14px;
+            background: rgba(0,0,0,0.45);
+            padding: 3px 10px;
+            border-radius: 8px;
+            margin-top: 4px;
+            color: #fef08a;
+            display: none;
+            font-weight: 900;
+            animation: fadeInDown 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bridge-card.revealed .bridge-tag-kg {
+            display: block;
+        }
+
+        #elephant {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            z-index: 20;
+            transform: translate(-50%, -50%);
+            transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1), top 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+            pointer-events: none;
+        }
+
+        .elephant-bounce {
+            animation: elephantHop 0.6s infinite alternate ease-in-out;
+        }
+
+        @keyframes elephantHop {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-7px); }
+        }
+
+        .elephant-bubble {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            color: #d84315;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 12px;
+            white-space: nowrap;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 2px solid #ff7043;
+            transition: all 0.3s;
+        }
+
+        .elephant-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0;
+            border-style: solid;
+            border-color: #fff transparent;
+            display: block;
+            width: 0;
+        }
+
+        .elephant-fall-water {
+            animation: fallInWater 1.5s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fallInWater {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            30% { transform: translate(-50%, -20%) rotate(25deg) scale(1.1); }
+            65% { transform: translate(-50%, 40px) rotate(45deg) scale(0.9); }
+            85% { transform: translate(-50%, 70px) rotate(60deg) scale(0.65); opacity: 0.8; }
+            100% { transform: translate(-50%, 85px) rotate(90deg) scale(0.3); opacity: 0; }
+        }
+
+        .splash-ring {
+            position: absolute;
+            border: 5px solid #ffffff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .splash-animate {
+            animation: waterSplash 1s forwards ease-out;
+        }
+
+        @keyframes waterSplash {
+            0% { width: 10px; height: 10px; opacity: 1; }
+            60% { width: 110px; height: 70px; opacity: 0.8; border-color: #bbf2f6; }
+            100% { width: 150px; height: 90px; opacity: 0; }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .alert-card {
+            background: #ffffff;
+            border-radius: 26px;
+            padding: 30px 28px;
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            border: 5px solid #ef4444;
+            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.45);
+            transform: scale(0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .alert-card {
+            transform: scale(1);
+        }
+
+        .alert-icon-big {
+            font-size: 50px;
+            margin-bottom: 8px;
+            animation: shake 0.6s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-12deg); }
+            40% { transform: rotate(12deg); }
+            60% { transform: rotate(-8deg); }
+            80% { transform: rotate(8deg); }
+        }
+
+        .alert-card h3 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 26px;
+            color: #dc2626;
+            margin-bottom: 12px;
+        }
+
+        .alert-content-box {
+            font-size: 17px;
+            color: #334155;
+            font-weight: 700;
+            line-height: 1.6;
+            background: #fef2f2;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px dashed #fca5a5;
+            margin-bottom: 22px;
+        }
+
+        .alert-content-box strong {
+            color: #b91c1c;
+        }
+
+        .btn-alert-ok {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 12px 36px;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(220, 38, 38, 0.4);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-alert-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(220, 38, 38, 0.6);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .victory-card {
+            background: white;
+            border-radius: 28px;
+            padding: 36px 30px;
+            text-align: center;
+            max-width: 520px;
+            border: 6px solid #4ade80;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            transform: scale(0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .victory-card {
+            transform: scale(1);
+        }
+
+        .victory-card h2 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 32px;
+            color: #16a34a;
+            margin-bottom: 10px;
+        }
+
+        .victory-stars {
+            font-size: 46px;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(16, 185, 129, 0.6);
+        }
+
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 200;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG CỔNG TRÒ CHƠI & ĐỔI GAME -->
+    <nav class="game-top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-home-btn" title="Quay lại Cổng Trò Chơi">
+                <span>🏠</span>
+                <span class="nav-btn-text">Trang Chủ</span>
+            </a>
+            <div class="nav-brand-title">
+                <span>🎈</span>
+                <span>Khu Vườn Trò Chơi</span>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <div class="game-dropdown-wrapper">
+                <button class="nav-dropdown-btn" id="gameMenuBtn" onclick="toggleGameMenu(event)">
+                    <span>🎮</span>
+                    <span>Đổi Trò Chơi</span>
+                    <span class="dropdown-caret">▾</span>
+                </button>
+                <div class="game-dropdown-menu" id="gameNavDropdown">
+                    <div class="dropdown-header-label">CHỌN TRÒ CHƠI TOÁN HỌC</div>
+                    <a href="trochoi_voicon.html" class="dropdown-game-item active-current">
+                        <span class="game-item-emoji">🐘</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Voi Con Vượt Sông</span>
+                            <span class="game-item-sub">So sánh khối lượng • Toán 4</span>
+                        </div>
+                        <span class="game-item-badge">Đang chơi</span>
+                    </a>
+                    <a href="vuot_song.html" class="dropdown-game-item">
+                        <span class="game-item-emoji">⛵</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Ba Người Vượt Sông</span>
+                            <span class="game-item-sub">Thuyền 1 tạ • Tư duy • Toán 4</span>
+                        </div>
+                        <span class="game-item-badge badge-play">Vào chơi 🚀</span>
+                    </a>
+                    <div class="dropdown-sep"></div>
+                    <a href="index.html" class="dropdown-game-item item-home-all">
+                        <span class="game-item-emoji">🌈</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Về Cổng Trò Chơi</span>
+                            <span class="game-item-sub">Khám phá tất cả trò chơi</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="game-header">
+        <div class="title-box">
+            <h1>🐘 Voi Con Vượt Sông An Toàn</h1>
+            <p>Trò chơi toán học: So sánh khối lượng (Yến, Tạ, Tấn, Kg) - Lớp 4</p>
+        </div>
+
+        <div class="status-panel">
+            <div id="stageIndicator" class="stage-badge">
+                <span>📍</span> <span id="stageText">VỊ TRÍ: BỜ XUẤT PHÁT</span>
+            </div>
+            <button class="sound-btn" id="soundToggle" title="Bật/Tắt âm thanh">🔊</button>
+            <button class="btn-action" id="resetBtn" title="Chơi lại từ đầu">🔄 Làm lại</button>
+        </div>
+    </div>
+
+    <div class="guide-banner" id="guideBanner">
+        <span id="guideText">👉 Voi con đang ở <strong>Bờ xuất phát</strong>. Hãy chọn 1 cây cầu có sức chịu tải ≥ <strong>150 kg</strong> để bước sang đảo!</span>
+        <span style="font-weight: 800; color: #e65100; font-size: 16px; background: #ffe0b2; padding: 4px 12px; border-radius: 10px;">Voi: <strong>150 kg</strong></span>
+    </div>
+
+    <div class="game-canvas-wrap">
+        <div class="river">
+            <div class="water-wave"></div>
+        </div>
+
+        <div class="bank-left">
+            <div class="bank-label">🏁 XUẤT PHÁT</div>
+            <div style="font-size: 38px; margin-top: 5px;">🏕️</div>
+            <div style="margin-top: auto; margin-bottom: 20px; font-size: 24px;">🌸🌿🌼</div>
+        </div>
+
+        <div class="bank-right">
+            <div class="bank-label">🎯 BỜ ĐÍCH ĐẾN</div>
+            <div class="goal-trees" style="margin-top: 10px;">🌴🍌🌴</div>
+            <div style="font-weight: 800; color: #fff; font-size: 13px; margin-top: auto; margin-bottom: 20px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+                Rừng chuối & mía<br>ngọt ngào!
+            </div>
+        </div>
+
+        <div class="island island-1" id="island1">
+            <span>ĐẢO 1</span>
+        </div>
+
+        <div class="island island-2" id="island2">
+            <span>ĐẢO 2</span>
+        </div>
+
+        <svg class="bridge-paths">
+            <!-- Cầu 0: Bờ xuất phát -> Đảo 1 (1 tạ) -->
+            <path id="path-0" d="M 180 110 Q 310 90, 465 175" class="bridge-path-line"/>
+            <path id="rail-0" d="M 180 110 Q 310 90, 465 175" class="bridge-rail-line"/>
+            <path id="glow-0" d="M 180 110 Q 310 90, 465 175" class="bridge-active-glow"/>
+
+            <!-- Cầu 1: Bờ xuất phát -> Đảo 1 (1 tạ 40 kg) -->
+            <path id="path-1" d="M 180 220 Q 320 215, 465 215" class="bridge-path-line"/>
+            <path id="rail-1" d="M 180 220 Q 320 215, 465 215" class="bridge-rail-line"/>
+            <path id="glow-1" d="M 180 220 Q 320 215, 465 215" class="bridge-active-glow"/>
+
+            <!-- Cầu 2: Bờ xuất phát -> Đảo 2 (2 tạ) -->
+            <path id="path-2" d="M 180 440 Q 320 440, 465 440" class="bridge-path-line"/>
+            <path id="rail-2" d="M 180 440 Q 320 440, 465 440" class="bridge-rail-line"/>
+            <path id="glow-2" d="M 180 440 Q 320 440, 465 440" class="bridge-active-glow"/>
+
+            <!-- Cầu 3: Đảo 2 -> Đảo 1 (1 tấn) -->
+            <path id="path-3" d="M 510 385 Q 525 320, 510 255" class="bridge-path-line"/>
+            <path id="rail-3" d="M 510 385 Q 525 320, 510 255" class="bridge-rail-line"/>
+            <path id="glow-3" d="M 510 385 Q 525 320, 510 255" class="bridge-active-glow"/>
+
+            <!-- Cầu 4: Đảo 1 -> Bờ đích (160 kg) -->
+            <path id="path-4" d="M 555 175 Q 690 90, 820 110" class="bridge-path-line"/>
+            <path id="rail-4" d="M 555 175 Q 690 90, 820 110" class="bridge-rail-line"/>
+            <path id="glow-4" d="M 555 175 Q 690 90, 820 110" class="bridge-active-glow"/>
+
+            <!-- Cầu 5: Đảo 1 -> Bờ đích (7 yến) -->
+            <path id="path-5" d="M 555 215 Q 690 215, 820 220" class="bridge-path-line"/>
+            <path id="rail-5" d="M 555 215 Q 690 215, 820 220" class="bridge-rail-line"/>
+            <path id="glow-5" d="M 555 215 Q 690 215, 820 220" class="bridge-active-glow"/>
+
+            <!-- Cầu 6: Đảo 2 -> Bờ đích (1 tạ 20 kg) -->
+            <path id="path-6" d="M 555 440 Q 690 440, 820 440" class="bridge-path-line"/>
+            <path id="rail-6" d="M 555 440 Q 690 440, 820 440" class="bridge-rail-line"/>
+            <path id="glow-6" d="M 555 440 Q 690 440, 820 440" class="bridge-active-glow"/>
+        </svg>
+
+        <div class="bridge-card selectable" id="bridge-0" style="left: 310px; top: 100px;" onclick="selectBridge(0)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">1 tạ</span>
+                <span class="bridge-tag-kg">= 100 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card selectable" id="bridge-1" style="left: 320px; top: 215px;" onclick="selectBridge(1)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">1 tạ 40 kg</span>
+                <span class="bridge-tag-kg">= 140 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card selectable" id="bridge-2" style="left: 320px; top: 440px;" onclick="selectBridge(2)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">2 tạ</span>
+                <span class="bridge-tag-kg">= 200 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card" id="bridge-3" style="left: 510px; top: 320px;" onclick="selectBridge(3)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">1 tấn</span>
+                <span class="bridge-tag-kg">= 1000 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card" id="bridge-4" style="left: 690px; top: 100px;" onclick="selectBridge(4)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">160 kg</span>
+                <span class="bridge-tag-kg">= 160 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card" id="bridge-5" style="left: 690px; top: 215px;" onclick="selectBridge(5)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">7 yến</span>
+                <span class="bridge-tag-kg">= 70 kg</span>
+            </div>
+        </div>
+
+        <div class="bridge-card" id="bridge-6" style="left: 690px; top: 440px;" onclick="selectBridge(6)">
+            <div class="bridge-body">
+                <span class="bridge-tag-original">1 tạ 20 kg</span>
+                <span class="bridge-tag-kg">= 120 kg</span>
+            </div>
+        </div>
+
+        <div id="elephant" style="left: 100px; top: 300px;">
+            <div class="elephant-bubble" id="elephantBubble">150 kg</div>
+            <svg id="elephantSvg" viewBox="0 0 100 100" class="elephant-bounce" width="90" height="90">
+                <ellipse cx="48" cy="54" rx="30" ry="24" fill="#90a4ae" stroke="#455a64" stroke-width="3"/>
+                <rect x="26" y="68" width="10" height="20" rx="5" fill="#78909c" stroke="#455a64" stroke-width="2"/>
+                <rect x="42" y="70" width="10" height="18" rx="5" fill="#78909c" stroke="#455a64" stroke-width="2"/>
+                <rect x="56" y="70" width="10" height="18" rx="5" fill="#78909c" stroke="#455a64" stroke-width="2"/>
+                <rect x="68" y="68" width="10" height="20" rx="5" fill="#78909c" stroke="#455a64" stroke-width="2"/>
+                <circle cx="72" cy="42" r="18" fill="#90a4ae" stroke="#455a64" stroke-width="3"/>
+                <ellipse cx="62" cy="42" rx="10" ry="14" fill="#ffb74d" stroke="#f57c00" stroke-width="2.5"/>
+                <path d="M 82 46 Q 94 48, 92 64 Q 90 72, 85 70" fill="none" stroke="#78909c" stroke-width="7" stroke-linecap="round"/>
+                <circle cx="76" cy="38" r="3.5" fill="#212121"/>
+                <circle cx="77.5" cy="36.5" r="1.2" fill="#ffffff"/>
+                <ellipse cx="73" cy="46" rx="3.5" ry="2" fill="#ff8a80" opacity="0.8"/>
+                <path d="M 20 54 Q 14 62, 16 68" fill="none" stroke="#546e7a" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <div id="splash" class="splash-ring"></div>
+    </div>
+
+    <div class="modal-overlay" id="alertModal">
+        <div class="alert-card">
+            <div class="alert-icon-big">⚠️💥</div>
+            <h3>CẦU ĐÃ BỊ GÃY!</h3>
+            <div class="alert-content-box" id="alertModalContent"></div>
+            <button class="btn-alert-ok" id="btnAlertOk" onclick="closeAlertModal()">Đã hiểu (Thử lại) 👍</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="victoryModal">
+        <div class="victory-card">
+            <div class="victory-stars">🌟🎉🐘🌴</div>
+            <h2>XUẤT SẮC! CHIẾN THẮNG!</h2>
+            <p style="font-size: 18px; color: #475569; font-weight: 700; line-height: 1.5; margin-bottom: 15px;">
+                Voi con đã an toàn vượt sông nhờ lộ trình chịu tải cực chuẩn:<br>
+                <strong style="color: #16a34a; font-size: 21px;">2 tạ (200 kg) ➔ 1 tấn (1000 kg) ➔ 160 kg</strong>
+            </p>
+            <p style="font-size: 15px; color: #64748b; font-weight: 600;">
+                Tất cả cây cầu voi đi qua đều có sức chịu tải <strong>≥ 150 kg</strong>. Voi con tha hồ thưởng thức mía và chuối ngon rồi!
+            </p>
+            <button class="btn-restart" onclick="restartGame()">🔄 Chơi lại lần nữa</button>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas"></canvas>
+
+    <script>
+        const bridgesData = [
+            {
+                id: 0,
+                from: 'start',
+                to: 'island1',
+                rawName: '1 tạ',
+                correctKg: 100,
+                isSafe: false,
+                midPos: { left: 310, top: 100 },
+                targetPos: { left: 510, top: 200 },
+                lineId: 'path-0',
+                railId: 'rail-0',
+                glowId: 'glow-0'
+            },
+            {
+                id: 1,
+                from: 'start',
+                to: 'island1',
+                rawName: '1 tạ 40 kg',
+                correctKg: 140,
+                isSafe: false,
+                midPos: { left: 320, top: 215 },
+                targetPos: { left: 510, top: 200 },
+                lineId: 'path-1',
+                railId: 'rail-1',
+                glowId: 'glow-1'
+            },
+            {
+                id: 2,
+                from: 'start',
+                to: 'island2',
+                rawName: '2 tạ',
+                correctKg: 200,
+                isSafe: true,
+                midPos: { left: 320, top: 440 },
+                targetPos: { left: 510, top: 440 },
+                lineId: 'path-2',
+                railId: 'rail-2',
+                glowId: 'glow-2'
+            },
+            {
+                id: 3,
+                from: 'island2',
+                to: 'island1',
+                rawName: '1 tấn',
+                correctKg: 1000,
+                isSafe: true,
+                midPos: { left: 510, top: 320 },
+                targetPos: { left: 510, top: 200 },
+                lineId: 'path-3',
+                railId: 'rail-3',
+                glowId: 'glow-3'
+            },
+            {
+                id: 4,
+                from: 'island1',
+                to: 'goal',
+                rawName: '160 kg',
+                correctKg: 160,
+                isSafe: true,
+                midPos: { left: 690, top: 100 },
+                targetPos: { left: 890, top: 280 },
+                lineId: 'path-4',
+                railId: 'rail-4',
+                glowId: 'glow-4'
+            },
+            {
+                id: 5,
+                from: 'island1',
+                to: 'goal',
+                rawName: '7 yến',
+                correctKg: 70,
+                isSafe: false,
+                midPos: { left: 690, top: 215 },
+                targetPos: { left: 890, top: 280 },
+                lineId: 'path-5',
+                railId: 'rail-5',
+                glowId: 'glow-5'
+            },
+            {
+                id: 6,
+                from: 'island2',
+                to: 'goal',
+                rawName: '1 tạ 20 kg',
+                correctKg: 120,
+                isSafe: false,
+                midPos: { left: 690, top: 440 },
+                targetPos: { left: 890, top: 280 },
+                lineId: 'path-6',
+                railId: 'rail-6',
+                glowId: 'glow-6'
+            }
+        ];
+
+        const nodePositions = {
+            'start': { left: 100, top: 300 },
+            'island2': { left: 510, top: 440 },
+            'island1': { left: 510, top: 200 },
+            'goal': { left: 890, top: 280 }
+        };
+
+        let currentLocation = 'start';
+        let isMoving = false;
+        let brokenStatus = [false, false, false, false, false, false, false];
+        let passedBridges = [];
+        let soundEnabled = true;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        /* HỆ THỐNG ÂM THANH HOẠT HÌNH (CARTOON SFX) ĐẶC BIỆT DÀNH CHO TIỂU HỌC */
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                if (type === 'step') {
+                    // TIẾNG BƯỚC CHÂN HOẠT HÌNH: 2 tiếng "Boing! Plop!" vui tai
+                    const osc1 = audioCtx.createOscillator();
+                    const gain1 = audioCtx.createGain();
+                    osc1.type = 'sine';
+                    osc1.connect(gain1);
+                    gain1.connect(audioCtx.destination);
+                    osc1.frequency.setValueAtTime(140, now);
+                    osc1.frequency.exponentialRampToValueAtTime(320, now + 0.12);
+                    gain1.gain.setValueAtTime(0.25, now);
+                    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                    osc1.start(now);
+                    osc1.stop(now + 0.14);
+
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.type = 'triangle';
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.frequency.setValueAtTime(220, now + 0.15);
+                    osc2.frequency.exponentialRampToValueAtTime(110, now + 0.28);
+                    gain2.gain.setValueAtTime(0.2, now + 0.15);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+                    osc2.start(now + 0.15);
+                    osc2.stop(now + 0.28);
+
+                } else if (type === 'break') {
+                    // TIẾNG CẦU GÃY RĂNG RẮC: Nhiều tiếng crack và tiếng trượt "Oooops!"
+                    [0, 0.05, 0.12, 0.2].forEach((offset, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.setValueAtTime(450 - idx * 60, now + offset);
+                        osc.frequency.exponentialRampToValueAtTime(80, now + offset + 0.08);
+                        gain.gain.setValueAtTime(0.35, now + offset);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.08);
+                        osc.start(now + offset);
+                        osc.stop(now + offset + 0.08);
+                    });
+
+                    // Tiếng trượt tuột vui nhộn (Slide whistle rơi)
+                    const whistle = audioCtx.createOscillator();
+                    const wGain = audioCtx.createGain();
+                    whistle.type = 'sine';
+                    whistle.connect(wGain);
+                    wGain.connect(audioCtx.destination);
+                    whistle.frequency.setValueAtTime(600, now + 0.22);
+                    whistle.frequency.exponentialRampToValueAtTime(120, now + 0.7);
+                    wGain.gain.setValueAtTime(0.3, now + 0.22);
+                    wGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                    whistle.start(now + 0.22);
+                    whistle.stop(now + 0.7);
+
+                } else if (type === 'splash') {
+                    // TIẾNG RƠI XUỐNG NƯỚC BÙM BỌT TUNG TÓE (Plop / Splash)
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(110, now);
+                    osc.frequency.exponentialRampToValueAtTime(420, now + 0.1);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.35);
+                    gain.gain.setValueAtTime(0.55, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+                    osc.start(now);
+                    osc.stop(now + 0.38);
+
+                    // Bọt sủi bong bóng: Blub-blub!
+                    [0.15, 0.26, 0.38].forEach((t, i) => {
+                        const bOsc = audioCtx.createOscillator();
+                        const bGain = audioCtx.createGain();
+                        bOsc.type = 'sine';
+                        bOsc.connect(bGain);
+                        bGain.connect(audioCtx.destination);
+                        bOsc.frequency.setValueAtTime(260 + i * 90, now + t);
+                        bOsc.frequency.exponentialRampToValueAtTime(480 + i * 110, now + t + 0.09);
+                        bGain.gain.setValueAtTime(0.3, now + t);
+                        bGain.gain.exponentialRampToValueAtTime(0.01, now + t + 0.09);
+                        bOsc.start(now + t);
+                        bOsc.stop(now + t + 0.09);
+                    });
+
+                } else if (type === 'success_stage') {
+                    // ÂM THANH QUA ĐẢO THÀNH CÔNG: Chuông leng keng vui tươi (Ding-Dang-Dong!)
+                    const arpeggio = [523.25, 659.25, 783.99, 1046.50]; // Đô - Mi - Sol - Đố
+                    arpeggio.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+                        gain.gain.setValueAtTime(0.28, now + idx * 0.09);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.09 + 0.35);
+                        osc.start(now + idx * 0.09);
+                        osc.stop(now + idx * 0.09 + 0.35);
+                    });
+
+                } else if (type === 'victory') {
+                    // NHẠC CHIẾN THẮNG RỘN RÃ: Giai điệu chúc mừng rực rỡ
+                    const fanfare = [
+                        { f: 523.25, t: 0.00, d: 0.15 },
+                        { f: 523.25, t: 0.16, d: 0.15 },
+                        { f: 523.25, t: 0.32, d: 0.15 },
+                        { f: 659.25, t: 0.48, d: 0.25 },
+                        { f: 783.99, t: 0.75, d: 0.25 },
+                        { f: 1046.5, t: 1.02, d: 0.60 }
+                    ];
+                    fanfare.forEach(note => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.setValueAtTime(note.f, now + note.t);
+                        gain.gain.setValueAtTime(0.35, now + note.t);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + note.t + note.d);
+                        osc.start(now + note.t);
+                        osc.stop(now + note.t + note.d);
+                    });
+
+                } else if (type === 'reveal_click') {
+                    // TIẾNG "TÍNH TONG" KHI XEM QUY ĐỔI SỐ ĐO
+                    [659.25, 880].forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        gain.gain.setValueAtTime(0.22, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.18);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.18);
+                    });
+
+                } else if (type === 'btn_click') {
+                    // Tiếng "Pop!" vui vẻ khi bấm nút OK
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(350, now);
+                    osc.frequency.exponentialRampToValueAtTime(750, now + 0.08);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log('Audio error:', e);
+            }
+        }
+
+        document.getElementById('soundToggle').addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundToggle').innerText = soundEnabled ? '🔊' : '🔇';
+        });
+
+        function getLocationName(loc) {
+            switch (loc) {
+                case 'start': return 'BỜ XUẤT PHÁT';
+                case 'island2': return 'ĐẢO 2';
+                case 'island1': return 'ĐẢO 1';
+                case 'goal': return 'BỜ ĐÍCH ĐẾN';
+                default: return '';
+            }
+        }
+
+        function updateNavigationUI() {
+            const locNames = {
+                'start': 'BỜ XUẤT PHÁT',
+                'island2': 'ĐẢO 2',
+                'island1': 'ĐẢO 1',
+                'goal': 'BỜ ĐÍCH'
+            };
+            document.getElementById('stageText').innerText = `VỊ TRÍ: ${locNames[currentLocation] || ''}`;
+
+            const guideTexts = {
+                'start': '👉 Voi con đang ở <strong>Bờ xuất phát</strong>. Hãy chọn 1 cây cầu có sức chịu tải ≥ <strong>150 kg</strong> để bước sang đảo!',
+                'island2': '👉 Voi con đã sang <strong>Đảo 2</strong> an toàn! Tiếp tục chọn cây cầu chịu tải ≥ <strong>150 kg</strong> để đi tiếp!',
+                'island1': '👉 Voi con đã đến <strong>Đảo 1</strong>! Chỉ còn một bước nữa là tới Bờ đích, chọn cây cầu an toàn nào!',
+                'goal': '🎉 Voi con đã đến Bờ đích an toàn! Hoan hô bạn nhỏ!'
+            };
+            const guideEl = document.getElementById('guideText');
+            if (guideEl && guideTexts[currentLocation]) {
+                guideEl.innerHTML = guideTexts[currentLocation];
+            }
+
+            bridgesData.forEach(b => {
+                const card = document.getElementById(`bridge-${b.id}`);
+                const glow = document.getElementById(b.glowId);
+
+                if (b.from === currentLocation && !brokenStatus[b.id] && !passedBridges.includes(b.id)) {
+                    card.classList.add('selectable');
+                    card.classList.remove('past-clickable');
+                    if (glow) glow.classList.add('active');
+                } else if (passedBridges.includes(b.id)) {
+                    card.classList.remove('selectable');
+                    card.classList.add('past-clickable');
+                    if (glow) glow.classList.remove('active');
+                } else {
+                    card.classList.remove('selectable');
+                    card.classList.remove('past-clickable');
+                    if (glow) glow.classList.remove('active');
+                }
+            });
+        }
+
+        function selectBridge(bridgeIndex) {
+            if (isMoving) return;
+            initAudio();
+
+            const b = bridgesData[bridgeIndex];
+            const card = document.getElementById(`bridge-${bridgeIndex}`);
+
+            if (passedBridges.includes(bridgeIndex)) {
+                playSound('reveal_click');
+                card.classList.toggle('revealed');
+                return;
+            }
+
+            if (b.from !== currentLocation) {
+                if (b.to === currentLocation) {
+                    playSound('reveal_click');
+                    card.classList.toggle('revealed');
+                } else {
+                    showCenterAlert(`Voi con đang ở <strong>${getLocationName(currentLocation)}</strong>, không thể bước lên cây cầu này! Hãy chọn cây cầu nối từ vị trí hiện tại của voi nhé!`);
+                }
+                return;
+            }
+
+            if (brokenStatus[bridgeIndex]) return;
+
+            isMoving = true;
+            playSound('step');
+
+            const elephant = document.getElementById('elephant');
+            elephant.style.left = b.midPos.left + 'px';
+            elephant.style.top = b.midPos.top + 'px';
+
+            card.classList.add('revealed');
+
+            setTimeout(() => {
+                if (b.isSafe) {
+                    playSound('success_stage');
+                    card.classList.add('passed');
+                    passedBridges.push(bridgeIndex);
+
+                    setTimeout(() => {
+                        elephant.style.left = b.targetPos.left + 'px';
+                        elephant.style.top = b.targetPos.top + 'px';
+                        playSound('step');
+
+                        setTimeout(() => {
+                            isMoving = false;
+                            currentLocation = b.to;
+
+                            if (currentLocation === 'goal') {
+                                updateNavigationUI();
+                                setTimeout(triggerVictory, 600);
+                            } else {
+                                updateNavigationUI();
+                            }
+                        }, 1200);
+                    }, 400);
+
+                } else {
+                    handleBridgeCollapse(bridgeIndex, b);
+                }
+            }, 1200);
+        }
+
+        function handleBridgeCollapse(bridgeIndex, b) {
+            playSound('break');
+
+            const card = document.getElementById(`bridge-${bridgeIndex}`);
+            card.classList.add('broken');
+            brokenStatus[bridgeIndex] = true;
+
+            const path = document.getElementById(b.lineId);
+            const rail = document.getElementById(b.railId);
+            const glow = document.getElementById(b.glowId);
+            if (path) path.style.opacity = '0.15';
+            if (rail) rail.style.opacity = '0.15';
+            if (glow) glow.classList.remove('active');
+
+            const elephant = document.getElementById('elephant');
+            const elephantSvg = document.getElementById('elephantSvg');
+            const bubble = document.getElementById('elephantBubble');
+
+            bubble.style.display = 'none';
+            elephantSvg.classList.remove('elephant-bounce');
+            elephant.classList.add('elephant-fall-water');
+
+            setTimeout(() => {
+                playSound('splash');
+                triggerSplash(b.midPos.left, b.midPos.top + 50);
+
+                setTimeout(() => {
+                    showCenterAlert(`Ôi không! Cây cầu <strong>${b.rawName} (${b.correctKg} kg)</strong> có sức chịu đựng nhỏ hơn cân nặng <strong>150 kg</strong> của voi con.<br><br>👉 Cầu đã bị gãy và voi con bị rơi xuống sông! Hãy nhấn <strong>Đã hiểu (Thử lại)</strong> để chọn lại cây cầu an toàn hơn nhé!`);
+                }, 400);
+            }, 500);
+        }
+
+        function triggerSplash(x, y) {
+            const splash = document.getElementById('splash');
+            splash.style.left = x + 'px';
+            splash.style.top = y + 'px';
+            splash.classList.remove('splash-animate');
+            void splash.offsetWidth;
+            splash.classList.add('splash-animate');
+        }
+
+        function showCenterAlert(htmlContent) {
+            const modal = document.getElementById('alertModal');
+            const content = document.getElementById('alertModalContent');
+            content.innerHTML = htmlContent;
+            modal.classList.add('active');
+        }
+
+        function closeAlertModal() {
+            playSound('btn_click');
+            const modal = document.getElementById('alertModal');
+            modal.classList.remove('active');
+
+            resetElephantToCurrentLocation();
+        }
+
+        function resetElephantToCurrentLocation() {
+            const elephant = document.getElementById('elephant');
+            const elephantSvg = document.getElementById('elephantSvg');
+            const bubble = document.getElementById('elephantBubble');
+
+            elephant.style.transition = 'none';
+            elephant.classList.remove('elephant-fall-water');
+
+            const startPos = nodePositions[currentLocation] || { left: 100, top: 300 };
+            elephant.style.left = startPos.left + 'px';
+            elephant.style.top = startPos.top + 'px';
+            elephant.style.opacity = '1';
+
+            setTimeout(() => {
+                elephant.style.transition = 'left 1.2s cubic-bezier(0.4, 0, 0.2, 1), top 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                elephantSvg.classList.add('elephant-bounce');
+                bubble.style.display = 'block';
+                isMoving = false;
+                updateNavigationUI();
+            }, 50);
+        }
+
+        function triggerVictory() {
+            playSound('victory');
+            document.getElementById('victoryModal').classList.add('active');
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800'];
+
+            for (let i = 0; i < 160; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 10 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 5 + 3,
+                    rotation: Math.random() * 360,
+                    rotSpeed: Math.random() * 10 - 5
+                });
+            }
+
+            let animationFrame;
+            function update() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.speed;
+                    p.rotation += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+
+                    if (p.y > canvas.height) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                animationFrame = requestAnimationFrame(update);
+            }
+            update();
+
+            setTimeout(() => {
+                cancelAnimationFrame(animationFrame);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 8000);
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Bạn có muốn cho voi con chơi lại từ đầu không?')) {
+                restartGame();
+            }
+        });
+
+        updateNavigationUI();
+
+        // Xử lý menu đổi trò chơi
+        function toggleGameMenu(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('gameNavDropdown');
+            if (panel) panel.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('gameNavDropdown');
+            const btn = document.getElementById('gameMenuBtn');
+            if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+                panel.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khu Vườn Trò Chơi Tuổi Thơ - Vừa Học Vừa Chơi</title>
+    <!-- Font chữ tròn trịa, dễ thương, cực kỳ thích hợp cho học sinh Tiểu học -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800;900&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent-yellow: #ffe66d;
+            --accent-purple: #a06ee1;
+            --accent-green: #48bb78;
+            --text-dark: #2d3748;
+            --bg-sky: #e0f2fe;
+            --card-radius: 28px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #bbf2f6 0%, #dcfce7 60%, #fef08a 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 50px;
+        }
+
+        /* Hiệu ứng hoạt hình mây trời bồng bềnh */
+        .sky-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 100px;
+            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.05));
+            animation: floatCloud linear infinite;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .cloud-1 {
+            width: 140px;
+            height: 45px;
+            top: 60px;
+            left: -150px;
+            animation-duration: 38s;
+        }
+        .cloud-1::before { width: 55px; height: 55px; top: -25px; left: 25px; }
+        .cloud-1::after { width: 45px; height: 45px; top: -18px; left: 70px; }
+
+        .cloud-2 {
+            width: 180px;
+            height: 55px;
+            top: 180px;
+            left: -200px;
+            animation-duration: 48s;
+            animation-delay: 10s;
+        }
+        .cloud-2::before { width: 70px; height: 70px; top: -35px; left: 35px; }
+        .cloud-2::after { width: 55px; height: 55px; top: -25px; left: 95px; }
+
+        .cloud-3 {
+            width: 120px;
+            height: 40px;
+            top: 280px;
+            left: -130px;
+            animation-duration: 32s;
+            animation-delay: 5s;
+        }
+        .cloud-3::before { width: 50px; height: 50px; top: -22px; left: 20px; }
+        .cloud-3::after { width: 40px; height: 40px; top: -16px; left: 60px; }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(-200px); }
+            100% { transform: translateX(calc(100vw + 250px)); }
+        }
+
+        /* Nút âm thanh & trợ giúp trên thanh menu */
+        .top-bar {
+            position: relative;
+            z-index: 10;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 18px;
+            border-radius: 50px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+            border: 2px solid #ffffff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.03) rotate(-1deg);
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .brand-name {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 900;
+            font-size: 20px;
+            color: #d97706;
+            letter-spacing: 0.5px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-circle-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #fef08a;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .action-circle-btn:hover {
+            transform: scale(1.15) rotate(8deg);
+            background: #fffbeb;
+        }
+
+        /* KHU VỰC HERO CHÀO MỪNG */
+        .hero-section {
+            position: relative;
+            z-index: 5;
+            max-width: 1080px;
+            margin: 10px auto 30px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #ffffff 0%, #fffbf0 100%);
+            border-radius: 36px;
+            padding: 30px 24px;
+            box-shadow: 0 16px 36px rgba(45, 85, 125, 0.12);
+            border: 4px solid #fde047;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-decor-star {
+            position: absolute;
+            font-size: 32px;
+            animation: spinStar 8s linear infinite;
+        }
+        .star-left { top: 20px; left: 25px; }
+        .star-right { top: 25px; right: 25px; }
+
+        @keyframes spinStar {
+            0% { transform: rotate(0deg) scale(0.9); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(0.9); }
+        }
+
+        .hero-mascot-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .mascot-avatar {
+            width: 80px;
+            height: 80px;
+            background: #e0f2fe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            box-shadow: 0 8px 16px rgba(2, 132, 199, 0.2);
+            border: 3px solid #7dd3fc;
+            animation: mascotWiggle 3s ease-in-out infinite;
+        }
+
+        @keyframes mascotWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg) scale(1.05); }
+            75% { transform: rotate(8deg) scale(1.05); }
+        }
+
+        .hero-title {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 900;
+            font-size: clamp(28px, 5.5vw, 44px);
+            line-height: 1.15;
+            color: #ea580c;
+            text-shadow: 2px 2px 0px #fed7aa, 4px 4px 0px rgba(0,0,0,0.06);
+            margin-bottom: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(15px, 2.2vw, 19px);
+            font-weight: 800;
+            color: #047857;
+            max-width: 680px;
+            line-height: 1.5;
+        }
+
+        .sparkle-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fef3c7;
+            color: #b45309;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 14px;
+            margin-top: 15px;
+            border: 2px dashed #f59e0b;
+        }
+
+        /* BỘ LỌC DANH MỤC GAME (TẤT CẢ, TOÁN, TIẾNG VIỆT,...) */
+        .filter-container {
+            position: relative;
+            z-index: 5;
+            max-width: 1080px;
+            margin: 0 auto 28px auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 17px;
+            color: #475569;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            color: #ea580c;
+            box-shadow: 0 8px 18px rgba(234, 88, 12, 0.15);
+        }
+
+        .filter-btn.active {
+            background: #ea580c;
+            color: #ffffff;
+            border-color: #ea580c;
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.35);
+            transform: scale(1.05);
+        }
+
+        /* KHU VỰC LƯỚI TRÒ CHƠI (GAME GRID) */
+        .games-container {
+            position: relative;
+            z-index: 5;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 8px;
+        }
+
+        .section-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 26px;
+            font-weight: 900;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .game-count-badge {
+            background: #3b82f6;
+            color: #ffffff;
+            font-size: 13px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 28px;
+        }
+
+        /* CARD TRÒ CHƠI */
+        .game-card {
+            background: #ffffff;
+            border-radius: var(--card-radius);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            border: 3px solid #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 36px rgba(0, 0, 0, 0.14);
+            border-color: #f59e0b;
+        }
+
+        /* Banner hình ảnh đại diện game */
+        .game-thumb-box {
+            height: 180px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Gradient màu sắc riêng cho từng thể loại */
+        .thumb-bg-voicon {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+        }
+        .thumb-bg-banguoi {
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0284c7 100%);
+        }
+        .thumb-bg-khicon {
+            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+        }
+        .thumb-bg-ongvang {
+            background: linear-gradient(135deg, #f472b6 0%, #db2777 100%);
+        }
+        .thumb-bg-vutru {
+            background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+        }
+
+        .thumb-illustration {
+            font-size: 76px;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .thumb-illustration {
+            transform: scale(1.15) rotate(4deg);
+        }
+
+        .thumb-badge-floating {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+
+        .badge-ready {
+            background: #22c55e;
+            color: #ffffff;
+            animation: pulseGreen 2s infinite;
+        }
+
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+        }
+
+        .badge-soon {
+            background: rgba(255, 255, 255, 0.95);
+            color: #64748b;
+        }
+
+        .rating-chip {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            color: #fef08a;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Phần nội dung chi tiết game */
+        .game-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .game-tags-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .game-tag {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .tag-toan { background: #dbeafe; color: #1d4ed8; }
+        .tag-tiengviet { background: #fce7f3; color: #be185d; }
+        .tag-dotrithongminh { background: #ede9fe; color: #6d28d9; }
+
+        .game-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+
+        .game-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.45;
+            margin-bottom: 18px;
+            flex-grow: 1;
+        }
+
+        /* Nút bấm chơi */
+        .game-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 18px;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 18px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+        }
+
+        .btn-play-active {
+            background: linear-gradient(135deg, #ff7a00 0%, #ff5200 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(255, 82, 0, 0.35);
+        }
+
+        .btn-play-active:hover {
+            transform: scale(1.03);
+            background: linear-gradient(135deg, #ff8c1a 0%, #ff3b00 100%);
+            box-shadow: 0 10px 22px rgba(255, 82, 0, 0.45);
+        }
+
+        .btn-play-disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .btn-play-disabled:hover {
+            background: #e2e8f0;
+        }
+
+        /* BẬT MÍ / LỜI KHUYÊN CHO BÉ */
+        .tips-banner {
+            max-width: 1140px;
+            margin: 40px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        .tips-inner {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 20px 24px;
+            border: 2px dashed #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+
+        .tips-icon {
+            font-size: 38px;
+            flex-shrink: 0;
+        }
+
+        .tips-text h4 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 18px;
+            color: #0369a1;
+            margin-bottom: 2px;
+        }
+
+        .tips-text p {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        footer p span {
+            color: #ea580c;
+        }
+
+        /* MODAL THÔNG BÁO DỄ THƯƠNG KHI BẤM GAME SẮP RA MẮT */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: 32px;
+            max-width: 420px;
+            width: 100%;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 4px solid #fde047;
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-emoji {
+            font-size: 64px;
+            margin-bottom: 12px;
+            animation: bounce 1.8s infinite;
+        }
+
+        .modal-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ea580c;
+            margin-bottom: 8px;
+        }
+
+        .modal-body {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .modal-close-btn {
+            background: #22c55e;
+            color: #ffffff;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 17px;
+            padding: 10px 28px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35);
+            transition: transform 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            transform: scale(1.06);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 640px) {
+            .hero-banner {
+                padding: 24px 16px;
+            }
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            .tips-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Các đám mây trôi lãng đãng trên bầu trời -->
+    <div class="sky-decorations">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+    </div>
+
+    <!-- Thanh logo & công cụ trên cùng -->
+    <header class="top-bar">
+        <div class="brand-logo" onclick="playSound('click')">
+            <span class="logo-icon">🎈</span>
+            <span class="brand-name">HỌC TẬP VUI NHỘN</span>
+        </div>
+        <div class="top-actions">
+            <button class="action-circle-btn" id="soundToggleBtn" title="Bật/Tắt âm thanh" onclick="toggleSound()">
+                🔊
+            </button>
+            <button class="action-circle-btn" title="Hướng dẫn" onclick="showHelpModal()">
+                ❓
+            </button>
+        </div>
+    </header>
+
+    <!-- Khu vực Hero chào đón các bạn học sinh -->
+    <main>
+        <section class="hero-section">
+            <div class="hero-banner">
+                <span class="hero-decor-star star-left">⭐</span>
+                <span class="hero-decor-star star-right">✨</span>
+
+                <div class="hero-mascot-row">
+                    <div class="mascot-avatar">🐘</div>
+                </div>
+
+                <h1 class="hero-title">KHU VƯỜN TRÒ CHƠI TUỔI THƠ</h1>
+                <p class="hero-subtitle">
+                    Chào mừng các bạn học sinh Tiểu học! Hãy cùng chú Voi Con và các bạn thú vượt qua thử thách trí tuệ để trở thành những nhà thông thái nhé!
+                </p>
+
+                <div class="sparkle-badge">
+                    <span>🌟 Vừa Học Vừa Chơi • Không Lo Căng Thẳng</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bộ nút lọc danh mục trò chơi -->
+        <nav class="filter-container">
+            <button class="filter-btn active" data-filter="all" onclick="filterGames('all', this)">
+                <span>🌈</span> Tất Cả Trò Chơi
+            </button>
+            <button class="filter-btn" data-filter="toan" onclick="filterGames('toan', this)">
+                <span>🔢</span> Toán Học Vui
+            </button>
+            <button class="filter-btn" data-filter="tiengviet" onclick="filterGames('tiengviet', this)">
+                <span>📖</span> Tiếng Việt Hay
+            </button>
+            <button class="filter-btn" data-filter="tuduy" onclick="filterGames('tuduy', this)">
+                <span>💡</span> Đố Vui Trí Tuệ
+            </button>
+        </nav>
+
+        <!-- Danh sách các thẻ Game -->
+        <section class="games-container">
+            <div class="section-header-row">
+                <h2 class="section-title">
+                    <span>🎮 Danh Sách Trò Chơi</span>
+                    <span class="game-count-badge" id="gameCountBadge">2 Đang Mở • 2 Sắp Có</span>
+                </h2>
+            </div>
+
+            <div class="games-grid" id="gamesGrid">
+
+                <!-- GAME 1: VOI CON VƯỢT SÔNG (ĐANG CHẠY CỰC HOT) -->
+                <article class="game-card" data-category="toan">
+                    <div class="game-thumb-box thumb-bg-voicon">
+                        <span class="thumb-badge-floating badge-ready">🔥 Đang Mở Chơi</span>
+                        <div class="thumb-illustration">🐘🌊</div>
+                        <div class="rating-chip">⭐ 5.0 (Rất Hay)</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-tags-row">
+                            <span class="game-tag tag-toan">Toán Lớp 4</span>
+                            <span class="game-tag">Khối Lượng (Tạ, Tấn, Yến, Kg)</span>
+                        </div>
+                        <h3 class="game-name">Voi Con Vượt Sông</h3>
+                        <p class="game-desc">
+                            Giúp bạn Voi Con tính toán khối lượng chính xác để chọn cây cầu an toàn, vượt qua các đảo nhỏ giữa dòng sông xiết để về với mẹ!
+                        </p>
+                        <a href="trochoi_voicon.html" class="game-btn btn-play-active" onclick="playSound('launch')">
+                            <span>VÀO CHƠI NGAY</span>
+                            <span>🚀</span>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- GAME 2: BA NGƯỜI VƯỢT SÔNG (ĐANG MỞ CHƠI) -->
+                <article class="game-card" data-category="toan tuduy">
+                    <div class="game-thumb-box thumb-bg-banguoi">
+                        <span class="thumb-badge-floating badge-ready">🔥 Đang Mở Chơi</span>
+                        <div class="thumb-illustration">⛵👨‍👦‍👦🌊</div>
+                        <div class="rating-chip">⭐ 5.0 (Cực Hay)</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-tags-row">
+                            <span class="game-tag tag-toan">Toán Lớp 4</span>
+                            <span class="game-tag tag-dotrithongminh">Đố Vui Qua Sông (1 tạ)</span>
+                        </div>
+                        <h3 class="game-name">Ba Người Vượt Sông</h3>
+                        <p class="game-desc">
+                            Thuyền chở tối đa 1 tạ (100 kg), 3 người cân nặng 52 kg, 50 kg và 45 kg. Hãy lập kế hoạch thông minh đưa cả 3 người sang bờ an toàn!
+                        </p>
+                        <a href="vuot_song.html" class="game-btn btn-play-active" onclick="playSound('launch')">
+                            <span>VÀO CHƠI NGAY</span>
+                            <span>🚀</span>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- GAME 3: ONG VÀNG TÌM CHỮ (SẮP RA MẮT) -->
+                <article class="game-card" data-category="tiengviet">
+                    <div class="game-thumb-box thumb-bg-ongvang">
+                        <span class="thumb-badge-floating badge-soon">⏳ Sắp Ra Mắt</span>
+                        <div class="thumb-illustration">🐝🌸</div>
+                        <div class="rating-chip">⭐ Chờ Đón</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-tags-row">
+                            <span class="game-tag tag-tiengviet">Tiếng Việt 1-5</span>
+                            <span class="game-tag">Ghép Từ & Chính Tả</span>
+                        </div>
+                        <h3 class="game-name">Ong Vàng Tìm Chữ</h3>
+                        <p class="game-desc">
+                            Bay qua vườn hoa thơm ngát, giúp bạn Ong Vàng nhặt các chữ cái ghép thành từ ngữ có nghĩa và sửa lỗi chính tả.
+                        </p>
+                        <button class="game-btn btn-play-disabled" onclick="openComingSoon('Ong Vàng Tìm Chữ', '🐝')">
+                            <span>Sắp Ra Mắt...</span>
+                            <span>🔒</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- GAME 4: THÁM HIỂM VŨ TRỤ (SẮP RA MẮT) -->
+                <article class="game-card" data-category="tuduy">
+                    <div class="game-thumb-box thumb-bg-vutru">
+                        <span class="thumb-badge-floating badge-soon">⏳ Sắp Ra Mắt</span>
+                        <div class="thumb-illustration">🚀🪐</div>
+                        <div class="rating-chip">⭐ Chờ Đón</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-tags-row">
+                            <span class="game-tag tag-dotrithongminh">Tư Duy Nhanh</span>
+                            <span class="game-tag">Đố Vui Khoa Học</span>
+                        </div>
+                        <h3 class="game-name">Vũ Trụ Kỳ Thú</h3>
+                        <p class="game-desc">
+                            Lái tàu không gian khám phá hệ mặt trời, giải những câu đố thông minh để nạp năng lượng đưa phi thuyền về Trái Đất.
+                        </p>
+                        <button class="game-btn btn-play-disabled" onclick="openComingSoon('Vũ Trụ Kỳ Thú', '🚀')">
+                            <span>Sắp Ra Mắt...</span>
+                            <span>🔒</span>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Lời dặn dò bổ ích cho học sinh -->
+        <aside class="tips-banner">
+            <div class="tips-inner">
+                <div class="tips-icon">💡</div>
+                <div class="tips-text">
+                    <h4>Bí quyết học giỏi mỗi ngày dành cho bé:</h4>
+                    <p>Hãy dành ra 15 - 20 phút mỗi ngày để vừa chơi vừa ôn bài. Nếu gặp câu hỏi khó, đừng ngại hỏi thầy cô hoặc bố mẹ nhé!</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Chân trang -->
+    <footer>
+        <p>Chúc các bạn học sinh học tập thật vui vẻ và đạt nhiều điểm 10! 💯</p>
+        <p style="margin-top: 6px; font-size: 13px;">Thiết kế cho học sinh Tiểu học • Cổng Trò Chơi Học Tập Trực Tuyến</p>
+    </footer>
+
+    <!-- MODAL THÔNG BÁO CHO GAME SẮP RA MẮT -->
+    <div class="modal-overlay" id="comingSoonModal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <div class="modal-emoji" id="modalEmoji">🎁</div>
+            <h3 class="modal-title" id="modalTitle">Đang Chuẩn Bị...</h3>
+            <p class="modal-body" id="modalMessage">
+                Trò chơi này đang được hoàn thiện tỉ mỉ để mang đến trải nghiệm tuyệt vời nhất cho bạn! Hãy thử tài với game <strong>Voi Con Vượt Sông</strong> trước nhé!
+            </p>
+            <button class="modal-close-btn" onclick="closeModal()">Đã Hiểu Rồi! 👍</button>
+        </div>
+    </div>
+
+    <!-- HỆ THỐNG ÂM THANH BẰNG WEB AUDIO API (KHÔNG CẦN TẢI FILE MP3 NGOÀI) -->
+    <script>
+        let audioCtx = null;
+        let isSoundMuted = false;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Phát âm thanh vui nhộn cho trẻ em
+        function playSound(type) {
+            if (isSoundMuted) return;
+
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    // Tiếng "pop" dễ thương
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'launch') {
+                    // Tiếng kèn vui nhộn khi vào game
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, index) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+
+                        const startTime = now + (index * 0.07);
+                        gain.gain.setValueAtTime(0.18, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.2);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.2);
+                    });
+                } else if (type === 'notice') {
+                    // Tiếng boing
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            } catch (e) {
+                console.log("Audio not allowed yet:", e);
+            }
+        }
+
+        // Bật / Tắt âm thanh
+        function toggleSound() {
+            isSoundMuted = !isSoundMuted;
+            const btn = document.getElementById('soundToggleBtn');
+            btn.innerHTML = isSoundMuted ? '🔇' : '🔊';
+            if (!isSoundMuted) playSound('click');
+        }
+
+        // Lọc danh mục game
+        function filterGames(category, btn) {
+            playSound('click');
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                const cardCat = card.getAttribute('data-category') || '';
+                if (category === 'all' || cardCat.split(' ').includes(category)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Mở popup thông báo trò chơi sắp ra mắt
+        function openComingSoon(gameName, emoji) {
+            playSound('notice');
+            document.getElementById('modalEmoji').innerText = emoji || '🎁';
+            document.getElementById('modalTitle').innerText = gameName;
+            document.getElementById('modalMessage').innerHTML = `Trò chơi <strong>${gameName}</strong> đang được xây dựng thêm nhiều bài tập thú vị.<br>Bạn hãy trải nghiệm trò <strong>Voi Con Vượt Sông</strong> trước nhé!`;
+            document.getElementById('comingSoonModal').classList.add('active');
+        }
+
+        // Đóng popup
+        function closeModal() {
+            playSound('click');
+            document.getElementById('comingSoonModal').classList.remove('active');
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target.id === 'comingSoonModal') {
+                closeModal();
+            }
+        }
+
+        function showHelpModal() {
+            playSound('click');
+            document.getElementById('modalEmoji').innerText = '💡';
+            document.getElementById('modalTitle').innerText = 'Cách Tham Gia Chơi';
+            document.getElementById('modalMessage').innerHTML = 'Rất đơn giản! Bạn chỉ cần bấm vào nút <strong>"VÀO CHƠI NGAY"</strong> màu cam ở trò chơi bạn muốn thử tài. Chúc bạn rèn luyện thật giỏi nhé!';
+            document.getElementById('comingSoonModal').classList.add('active');
+        }
+
+        // Hiệu ứng âm thanh nhẹ khi rê chuột vào card
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    playSound('click');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

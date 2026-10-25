@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 4: Ba Người Vượt Sông - Toán Lớp 4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        /* THANH ĐIỀU HƯỚNG CHUNG CHO CÁC TRÒ CHƠI */
+        .game-top-nav {
+            width: 100%;
+            max-width: 1060px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 8px 18px;
+            margin-bottom: 10px;
+            border: 3px solid #fde047;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ff7a00 0%, #ea580c 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .nav-home-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.45);
+        }
+
+        .nav-brand-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 17px;
+            font-weight: 900;
+            color: #0284c7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .game-dropdown-wrapper {
+            position: relative;
+        }
+
+        .nav-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0284c7;
+            color: #ffffff;
+            border: none;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 7px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+            transition: all 0.2s;
+        }
+
+        .nav-dropdown-btn:hover {
+            background: #0369a1;
+            transform: translateY(-2px);
+        }
+
+        .dropdown-caret {
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .game-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 300px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 9999;
+            animation: navFade 0.2s ease-out;
+        }
+
+        .game-dropdown-menu.show {
+            display: flex;
+        }
+
+        @keyframes navFade {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-header-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: #94a3b8;
+            letter-spacing: 0.6px;
+            padding: 6px 10px 2px 10px;
+        }
+
+        .dropdown-game-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 12px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: background 0.2s;
+        }
+
+        .dropdown-game-item:hover {
+            background: #f0f9ff;
+        }
+
+        .dropdown-game-item.active-current {
+            background: #e0f2fe;
+            border: 1.5px solid #38bdf8;
+        }
+
+        .game-item-emoji {
+            font-size: 26px;
+        }
+
+        .game-item-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            text-align: left;
+        }
+
+        .game-item-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 16px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #0f172a;
+        }
+
+        .game-item-sub {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .game-item-badge {
+            font-size: 11px;
+            font-weight: 800;
+            background: #22c55e;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .game-item-badge.badge-play {
+            background: #ea580c;
+        }
+
+        .dropdown-sep {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 4px 6px;
+        }
+
+        @media (max-width: 600px) {
+            .nav-brand-title {
+                display: none;
+            }
+            .nav-btn-text {
+                display: inline;
+            }
+            .game-dropdown-menu {
+                right: -20px;
+                width: 280px;
+            }
+        }
+
+        .problem-card {
+            width: 100%;
+            max-width: 1060px;
+            background: #fff9f2;
+            border: 3px solid #f59e0b;
+            border-radius: 20px;
+            padding: 14px 22px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .problem-text {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            flex: 1;
+        }
+
+        .problem-badge {
+            min-width: 44px;
+            height: 44px;
+            background: #2e7d32;
+            color: #fff;
+            font-family: 'Baloo 2', cursive;
+            font-size: 26px;
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+            margin-top: 2px;
+        }
+
+        .problem-content {
+            font-size: 17px;
+            line-height: 1.45;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .problem-content .highlight {
+            color: #d97706;
+            font-weight: 900;
+            background: #fef3c7;
+            padding: 1px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px dashed #f59e0b;
+        }
+
+        .controls-top {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-top {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 8px rgba(2, 132, 199, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-top:hover {
+            transform: translateY(-2px);
+            background: #0369a1;
+        }
+
+        .btn-hint {
+            background: #8b5cf6;
+        }
+        .btn-hint:hover {
+            background: #7c3aed;
+        }
+
+        .counters-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .step-counter, .timer-counter {
+            font-size: 14px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .step-counter {
+            color: #0f766e;
+            background: #ccfbf1;
+            border: 2px solid #5eead4;
+        }
+
+        .timer-counter {
+            color: #b45309;
+            background: #fef3c7;
+            border: 2px solid #fcd34d;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 1060px;
+            height: 550px;
+            border-radius: 28px;
+            border: 6px solid #ffffff;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+            background: linear-gradient(180deg, #a7cbd9 0%, #d4e3e8 35%, #e6dec8 46%, #88b3aa 48%, #77a89f 100%);
+        }
+
+        .red-sun {
+            position: absolute;
+            top: 62px;
+            left: 290px;
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, #dc2626 60%, #b91c1c 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.6);
+            animation: sunPulse 4s infinite alternate ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes sunPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); }
+            100% { transform: scale(1.08); box-shadow: 0 0 35px rgba(220, 38, 38, 0.8); }
+        }
+
+        .mountains-svg {
+            position: absolute;
+            top: 145px;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .river-water {
+            position: absolute;
+            top: 255px;
+            left: 0;
+            width: 100%;
+            height: 295px;
+            background: linear-gradient(180deg, #9bbab5 0%, #86ada6 40%, #6f9c94 100%);
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .water-ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.25);
+            height: 3px;
+            border-radius: 50%;
+            animation: rippleMove 6s infinite linear;
+        }
+
+        @keyframes rippleMove {
+            0% { transform: translateX(-30px); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateX(30px); opacity: 0; }
+        }
+
+        .bank-left-wrap {
+            position: absolute;
+            left: -10px;
+            bottom: 45px;
+            width: 240px;
+            height: 230px;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .bank-right-wrap {
+            position: absolute;
+            right: -10px;
+            bottom: 40px;
+            width: 300px;
+            height: 280px;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .bank-title-tag {
+            position: absolute;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 2px solid #3f6212;
+            color: #365314;
+            font-weight: 900;
+            font-size: 14px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 12;
+        }
+
+        .tag-left {
+            left: 20px;
+            bottom: 245px;
+        }
+
+        .tag-right {
+            right: 25px;
+            bottom: 265px;
+        }
+
+        .bank-slots {
+            position: absolute;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            z-index: 15;
+            pointer-events: auto;
+        }
+
+        #leftBankSlots {
+            left: 18px;
+            bottom: 112px;
+            min-width: 200px;
+            min-height: 130px;
+        }
+
+        #rightBankSlots {
+            right: 22px;
+            bottom: 108px;
+            min-width: 245px;
+            min-height: 130px;
+            justify-content: flex-end;
+        }
+
+        .person-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s;
+            position: relative;
+            padding: 2px;
+        }
+
+        .person-item:hover {
+            transform: translateY(-8px) scale(1.06);
+            filter: drop-shadow(0 6px 10px rgba(255, 255, 255, 0.85));
+        }
+
+        .person-item.disabled-click {
+            opacity: 0.75;
+            cursor: not-allowed;
+        }
+
+        .person-item.disabled-click:hover {
+            transform: none;
+            filter: none;
+        }
+
+        .weight-badge {
+            background: #ffffff;
+            color: #b91c1c;
+            border: 2px solid #dc2626;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 3px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .person-name-tag {
+            background: rgba(15, 23, 42, 0.8);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 8px;
+            margin-top: -4px;
+        }
+
+        .boat-wrapper {
+            position: absolute;
+            bottom: 18px;
+            width: 250px;
+            height: 220px;
+            z-index: 14;
+            transition: left 1.8s cubic-bezier(0.45, 0.05, 0.55, 0.95), transform 0.6s ease, bottom 0.8s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 52px;
+        }
+
+        .boat-wrapper.at-right {
+            left: 525px;
+        }
+
+        .boat-wrapper.at-left {
+            left: 210px;
+        }
+
+        .boat-wrapper.at-middle-sinking {
+            left: 410px !important;
+            bottom: -75px !important;
+            transform: rotate(28deg) scale(0.85) !important;
+        }
+
+        .boat-floating {
+            animation: boatBob 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes boatBob {
+            0% { transform: translateY(0px) rotate(-1deg); }
+            100% { transform: translateY(5px) rotate(1.2deg); }
+        }
+
+        .boat-passengers {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: -18px;
+            z-index: 15;
+            min-height: 110px;
+        }
+
+        .boat-hull-svg {
+            width: 230px;
+            height: 60px;
+            z-index: 16;
+            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.35));
+        }
+
+        .boat-capacity-meter {
+            background: #fef08a;
+            border: 2px solid #ca8a04;
+            color: #713f12;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 3px 12px;
+            border-radius: 14px;
+            margin-top: 3px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+            z-index: 17;
+            transition: all 0.3s;
+        }
+
+        .boat-capacity-meter.overload {
+            background: #fecaca;
+            border-color: #dc2626;
+            color: #991b1b;
+            animation: pulseWarning 0.6s infinite alternate;
+        }
+
+        @keyframes pulseWarning {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        .btn-row-under-boat {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            font-family: 'Baloo 2', cursive;
+            font-size: 17px;
+            font-weight: 800;
+            padding: 6px 20px;
+            border-radius: 25px;
+            border: 3px solid #ffedd5;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.55);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            z-index: 25;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-row-under-boat.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) scale(1);
+            animation: bounceBtnUnder 1.2s infinite alternate ease-in-out;
+        }
+
+        @keyframes bounceBtnUnder {
+            0% { transform: translateX(-50%) translateY(0) scale(1); }
+            100% { transform: translateX(-50%) translateY(-4px) scale(1.04); }
+        }
+
+        .btn-row-under-boat:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.75);
+        }
+
+        .top-guide-panel {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
+        }
+
+        .unit-helper-pill {
+            background: rgba(255, 255, 255, 0.94);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 800;
+            color: #15803d;
+            border: 2px solid #86efac;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            white-space: nowrap;
+        }
+
+        .toast-msg {
+            position: absolute;
+            top: 62px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: #1e293b;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 15px;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .water-splash-fx {
+            position: absolute;
+            left: 480px;
+            bottom: 85px;
+            width: 160px;
+            height: 80px;
+            pointer-events: none;
+            z-index: 20;
+            display: none;
+        }
+
+        .water-splash-fx.active {
+            display: block;
+        }
+
+        .splash-drop {
+            position: absolute;
+            background: #e0f2fe;
+            border-radius: 50%;
+            animation: splashOut 0.9s ease-out forwards;
+        }
+
+        @keyframes splashOut {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dialog-card {
+            background: #ffffff;
+            width: 92%;
+            max-width: 520px;
+            max-height: calc(100vh - 32px);
+            display: flex;
+            flex-direction: column;
+            border-radius: 28px;
+            padding: 22px 24px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .dialog-card {
+            transform: scale(1);
+        }
+
+        .dialog-sink {
+            border: 6px solid #ef4444;
+        }
+
+        .dialog-victory {
+            border: 6px solid #22c55e;
+            max-width: 560px;
+        }
+
+        .dialog-start {
+            border: 6px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        .dialog-header {
+            flex-shrink: 0;
+        }
+
+        .dialog-icon {
+            font-size: 46px;
+            margin-bottom: 4px;
+            display: inline-block;
+            animation: iconBounce 0.8s infinite alternate;
+        }
+
+        @keyframes iconBounce {
+            from { transform: translateY(0) rotate(-4deg); }
+            to { transform: translateY(-8px) rotate(4deg); }
+        }
+
+        .dialog-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 28px;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .dialog-sink .dialog-title { color: #dc2626; }
+        .dialog-victory .dialog-title { color: #16a34a; }
+        .dialog-start .dialog-title { color: #d97706; }
+
+        .dialog-body {
+            font-size: 16px;
+            font-weight: 700;
+            color: #334155;
+            line-height: 1.55;
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 2px dashed #cbd5e1;
+            margin-bottom: 16px;
+            text-align: left;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        .dialog-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dialog-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        .dialog-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .dialog-sink .dialog-body {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            text-align: center;
+        }
+
+        .dialog-victory .dialog-body {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .dialog-start .dialog-body {
+            background: #fffbeb;
+            border-color: #fde68a;
+            text-align: center;
+        }
+
+        .dialog-footer {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        .btn-dialog {
+            border: none;
+            padding: 11px 32px;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 16px;
+            cursor: pointer;
+            font-family: inherit;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .btn-sink-ok {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 6px 15px rgba(220, 38, 38, 0.4);
+        }
+        .btn-sink-ok:hover { transform: translateY(-2px); background: linear-gradient(135deg, #dc2626, #b91c1c); }
+
+        .btn-victory-ok {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 6px 15px rgba(22, 163, 74, 0.4);
+        }
+        .btn-victory-ok:hover { transform: translateY(-2px); background: linear-gradient(135deg, #16a34a, #15803d); }
+
+        .btn-start-play {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
+            font-size: 20px;
+            padding: 12px 38px;
+            font-family: 'Baloo 2', cursive;
+        }
+        .btn-start-play:hover { transform: translateY(-2px); background: linear-gradient(135deg, #d97706, #b45309); }
+
+        /* Highlighted Time Badge Inside Success Popup */
+        .time-badge-highlight {
+            display: inline-block;
+            background: #fef08a;
+            color: #854d0e;
+            border: 2px dashed #ca8a04;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 900;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 200;
+        }
+    
+        /* Prominent Timer Badge inside Scene Top-Right */
+        .scene-timer-badge {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: #ffffff;
+            color: #b45309;
+            border: 3px solid #f59e0b;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 20px;
+            font-weight: 900;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG CỔNG TRÒ CHƠI & ĐỔI GAME -->
+    <nav class="game-top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-home-btn" title="Quay lại Cổng Trò Chơi">
+                <span>🏠</span>
+                <span class="nav-btn-text">Trang Chủ</span>
+            </a>
+            <div class="nav-brand-title">
+                <span>🎈</span>
+                <span>Khu Vườn Trò Chơi</span>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <div class="game-dropdown-wrapper">
+                <button class="nav-dropdown-btn" id="gameMenuBtn" onclick="toggleGameMenu(event)">
+                    <span>🎮</span>
+                    <span>Đổi Trò Chơi</span>
+                    <span class="dropdown-caret">▾</span>
+                </button>
+                <div class="game-dropdown-menu" id="gameNavDropdown">
+                    <div class="dropdown-header-label">CHỌN TRÒ CHƠI TOÁN HỌC</div>
+                    <a href="vuot_song.html" class="dropdown-game-item active-current">
+                        <span class="game-item-emoji">⛵</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Ba Người Vượt Sông</span>
+                            <span class="game-item-sub">Thuyền 1 tạ • Tư duy • Toán 4</span>
+                        </div>
+                        <span class="game-item-badge">Đang chơi</span>
+                    </a>
+                    <a href="trochoi_voicon.html" class="dropdown-game-item">
+                        <span class="game-item-emoji">🐘</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Voi Con Vượt Sông</span>
+                            <span class="game-item-sub">So sánh khối lượng • Toán 4</span>
+                        </div>
+                        <span class="game-item-badge badge-play">Vào chơi 🚀</span>
+                    </a>
+                    <div class="dropdown-sep"></div>
+                    <a href="index.html" class="dropdown-game-item item-home-all">
+                        <span class="game-item-emoji">🌈</span>
+                        <div class="game-item-details">
+                            <span class="game-item-name">Về Cổng Trò Chơi</span>
+                            <span class="game-item-sub">Khám phá tất cả trò chơi</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="problem-card">
+        <div class="problem-text">
+            <div class="problem-badge">4</div>
+            <div class="problem-content">
+                Có ba người cần vượt qua sông bằng một chiếc thuyền nhỏ. Thuyền chỉ chở được tối đa 
+                <span class="highlight" onclick="toggleUnitTip()" title="Bấm để đổi đơn vị">1 tạ (100 kg)</span>. 
+                Biết cân nặng của từng người là: <strong>52 kg</strong>, <strong>50 kg</strong> và <strong>45 kg</strong>. 
+                Hỏi ba người đó cần làm như thế nào để vượt qua sông?
+            </div>
+        </div>
+        <div class="controls-top">
+            <div class="btn-group">
+                <button class="btn-top btn-hint" onclick="showHintModal()">💡 Gợi ý cách giải</button>
+                <button class="btn-top" id="soundToggleBtn" onclick="toggleSound()">🔊 Âm thanh: BẬT</button>
+                <button class="btn-top" onclick="resetGame()">🔄 Chơi lại</button>
+            </div>
+            <div class="counters-group">
+                <div class="step-counter" id="stepCounter">Lượt: 0</div>
+                <div class="timer-counter" id="timerCounter">⏱️ 00:00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scene-container">
+        <!-- Prominent Timer Badge at Top-Right of Scene -->
+        <div class="scene-timer-badge" id="sceneTimerBadge">⏱️ 00:00</div>
+        <div class="red-sun"></div>
+
+        <svg class="mountains-svg" viewBox="0 0 1060 120" preserveAspectRatio="none">
+            <path d="M 0 120 L 0 75 Q 70 15, 160 65 Q 250 10, 360 75 Q 500 55, 650 65 Q 800 30, 920 55 Q 1000 35, 1060 60 L 1060 120 Z" fill="#88a878" stroke="#4a5d3f" stroke-width="2"/>
+            <line x1="0" y1="118" x2="1060" y2="118" stroke="#4a5d3f" stroke-width="2.5"/>
+        </svg>
+
+        <div class="river-water">
+            <div class="water-ripple" style="width: 140px; top: 45px; left: 250px; animation-delay: 0s;"></div>
+            <div class="water-ripple" style="width: 180px; top: 95px; left: 480px; animation-delay: 1.5s;"></div>
+            <div class="water-ripple" style="width: 120px; top: 150px; left: 320px; animation-delay: 2.8s;"></div>
+            <div class="water-ripple" style="width: 210px; top: 195px; left: 550px; animation-delay: 0.7s;"></div>
+            <div class="water-ripple" style="width: 150px; top: 230px; left: 290px; animation-delay: 3.4s;"></div>
+        </div>
+
+        <div class="top-guide-panel">
+            <div class="unit-helper-pill" id="unitPill">
+                📌 Đổi đơn vị: <strong>1 tạ = 100 kg</strong> | Bấm vào người trên bờ để lên/xuống thuyền!
+            </div>
+        </div>
+
+        <div class="toast-msg" id="toastMsg">⚠️ Thuyền đang ở bờ bên kia! Hãy chèo thuyền về đón nhé!</div>
+
+        <div class="bank-title-tag tag-left">🏁 BỜ BÊN KIA (ĐÍCH)</div>
+        <div class="bank-left-wrap">
+            <svg viewBox="0 0 250 230" width="100%" height="100%">
+                <path d="M 10 115 Q 5 70, 35 80 Q 50 45, 75 75 Q 95 60, 100 95 L 95 130 L 10 130 Z" fill="#6c8c42" stroke="#2c3e16" stroke-width="2.5"/>
+                <path d="M 0 110 Q 130 105, 195 135 Q 215 155, 195 178 Q 120 198, 0 202 Z" fill="#849b4c" stroke="#2c3e16" stroke-width="2.5"/>
+                <path d="M 0 195 Q 120 192, 195 172 L 195 190 Q 120 212, 0 215 Z" fill="#b4654a" stroke="#2c3e16" stroke-width="2"/>
+                <rect x="148" y="162" width="7" height="32" rx="2" fill="#5c2c16" stroke="#261209" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="bank-slots" id="leftBankSlots"></div>
+
+        <div class="bank-title-tag tag-right">🏕️ BỜ XUẤT PHÁT</div>
+        <div class="bank-right-wrap">
+            <svg viewBox="0 0 300 280" width="100%" height="100%">
+                <path d="M 140 165 Q 135 95, 175 105 Q 190 50, 235 65 Q 260 20, 295 45 L 300 185 Z" fill="#789448" stroke="#2c3e16" stroke-width="2.5"/>
+                <path d="M 45 170 Q 95 150, 300 155 L 300 225 Q 140 230, 35 210 Q 25 190, 45 170 Z" fill="#849b4c" stroke="#2c3e16" stroke-width="2.5"/>
+                <path d="M 35 206 Q 140 222, 300 218 L 300 236 Q 140 242, 35 222 Z" fill="#b4654a" stroke="#2c3e16" stroke-width="2"/>
+                <rect x="42" y="185" width="8" height="36" rx="2" fill="#5c2c16" stroke="#261209" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="bank-slots" id="rightBankSlots"></div>
+
+        <div class="boat-wrapper at-right boat-floating" id="boatWrapper">
+            <div class="boat-passengers" id="boatPassengers"></div>
+            <svg class="boat-hull-svg" viewBox="0 0 230 60">
+                <path d="M 75 5 L 115 35" stroke="#5c2c16" stroke-width="5" stroke-linecap="round"/>
+                <ellipse cx="72" cy="5" rx="8" ry="4" transform="rotate(-30 72 5)" fill="#7c3f23" stroke="#2b1409" stroke-width="1.5"/>
+                <path d="M 12 22 Q 115 28, 218 22 L 195 48 Q 115 54, 35 48 Z" fill="#7c3d2b" stroke="#2b1409" stroke-width="2"/>
+                <path d="M 8 20 Q 115 28, 222 18 L 198 52 Q 115 58, 32 52 Z" fill="#a84a32" stroke="#2b1409" stroke-width="2.5"/>
+                <path d="M 22 35 Q 115 41, 208 33" fill="none" stroke="#431c10" stroke-width="1.8"/>
+            </svg>
+            <div class="boat-capacity-meter" id="boatMeter">
+                Trên thuyền: 0 kg / 100 kg (1 tạ)
+            </div>
+
+            <button class="btn-row-under-boat" id="btnRow" onclick="handleRowBoat()">
+                <span>🚣 Chèo sang bờ đích</span>
+            </button>
+        </div>
+
+        <div class="water-splash-fx" id="waterSplashFx"></div>
+    </div>
+
+    <!-- Start Game Modal (Overlay on load) -->
+    <div class="modal-overlay active" id="startModal">
+        <div class="dialog-card dialog-start">
+            <div class="dialog-header">
+                <div class="dialog-icon">🚣‍♂️⏱️</div>
+                <h3 class="dialog-title">BÀI 4: BA NGƯỜI VƯỢT SÔNG</h3>
+            </div>
+            <div class="dialog-body">
+                🎯 <strong>Nhiệm vụ:</strong> Đưa cả 3 người (52 kg, 50 kg, 45 kg) sang bờ bên kia an toàn.<br>
+                ⚖️ <strong>Quy tắc:</strong> Thuyền chở tối đa <strong>1 tạ (100 kg)</strong>. Quá tải thuyền sẽ chìm!<br>
+                ⏱️ <strong>Bấm giờ:</strong> Thời gian sẽ tính từ khi bạn nhấn nút BẮT ĐẦU. Sẵn sàng chưa?
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-dialog btn-start-play" onclick="startTheGame()">🚀 BẮT ĐẦU NGAY!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sinkModal">
+        <div class="dialog-card dialog-sink">
+            <div class="dialog-header">
+                <div class="dialog-icon">😱🌊🛶</div>
+                <h3 class="dialog-title">ÔI KHÔNG... THUYỀN CHÌM RỒI!</h3>
+            </div>
+            <div class="dialog-body" id="sinkModalText"></div>
+            <div class="dialog-footer">
+                <button class="btn-dialog btn-sink-ok" onclick="closeSinkModal()">Đã hiểu (Thử lại) 👍</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="victoryModal">
+        <div class="dialog-card dialog-victory">
+            <div class="dialog-header">
+                <div class="dialog-icon">🎉🏆👏🌟</div>
+                <h3 class="dialog-title">CHÚC MỪNG! XUẤT SẮC QUÁ!</h3>
+            </div>
+            <div class="dialog-body" style="text-align: center;">
+                <p style="font-size: 17px; color: #15803d; margin-bottom: 4px;">
+                    Cả 3 người đã qua sông an toàn!
+                </p>
+                <!-- Highlighted Time Badge -->
+                <div class="time-badge-highlight" id="finalTimeBadge">
+                    ⏱️ Thời gian: 00:00
+                </div>
+                <div style="background: #ffffff; padding: 10px 14px; border-radius: 12px; border: 2px solid #bbf7d0; font-size: 14px; text-align: left; margin-top: 6px;">
+                    <strong>📝 Bài giải toán học (1 tạ = 100 kg):</strong><br>
+                    • Lượt 1: Chở 50 kg & 45 kg sang (95 kg &lt; 100 kg).<br>
+                    • Lượt 2: 45 kg chèo thuyền về lại bờ xuất phát.<br>
+                    • Lượt 3: Chở 52 kg & 45 kg sang (97 kg &lt; 100 kg).
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-dialog btn-victory-ok" onclick="resetGame()">🔄 Chơi lại từ đầu</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="hintModal">
+        <div class="dialog-card" style="border: 6px solid #8b5cf6;">
+            <div class="dialog-header">
+                <div class="dialog-icon">💡🤔</div>
+                <h3 class="dialog-title" style="color: #6d28d9;">GỢI Ý SUY LUẬN</h3>
+            </div>
+            <div class="dialog-body" style="background: #f5f3ff; border-color: #c4b5fd;">
+                1. Đổi đơn vị: <strong>1 tạ = 100 kg</strong>.<br>
+                2. Thử cộng cân nặng của từng cặp hai người:<br>
+                &nbsp;&nbsp;• 52 kg + 50 kg = <strong>102 kg</strong> (&gt; 100 kg ➔ Quá tải, thuyền chìm!)<br>
+                &nbsp;&nbsp;• 50 kg + 45 kg = <strong>95 kg</strong> (&lt; 100 kg ➔ Đi cùng được ✅)<br>
+                &nbsp;&nbsp;• 52 kg + 45 kg = <strong>97 kg</strong> (&lt; 100 kg ➔ Đi cùng được ✅)<br>
+                3. Lưu ý: Khi sang bờ bên kia, phải có 1 người chèo thuyền quay lại để đón người còn lại!
+            </div>
+            <div class="dialog-footer">
+                <button class="btn-dialog" style="background: #7c3aed;" onclick="closeHintModal()">Đã hiểu! Để em làm thử 👍</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas"></canvas>
+
+    <script>
+        const peopleData = {
+            p52: {
+                id: 'p52',
+                name: 'Chú Hùng',
+                weight: 52,
+                location: 'right',
+                svg: `
+                <svg width="56" height="95" viewBox="0 0 60 100">
+                    <circle cx="30" cy="18" r="10" fill="#fbd38d" stroke="#2d3748" stroke-width="2"/>
+                    <path d="M 20 16 Q 25 6, 38 11 Q 40 15, 39 18 Q 30 12, 20 16 Z" fill="#1a202c"/>
+                    <circle cx="27" cy="18" r="1.5" fill="#1a202c"/>
+                    <path d="M 16 32 L 10 48 L 16 50 L 21 36 Z" fill="#ffffff" stroke="#2d3748" stroke-width="1.8"/>
+                    <path d="M 44 32 L 50 48 L 44 50 L 39 36 Z" fill="#ffffff" stroke="#2d3748" stroke-width="1.8"/>
+                    <line x1="12" y1="49" x2="8" y2="58" stroke="#fbd38d" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="48" y1="49" x2="51" y2="58" stroke="#fbd38d" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="19" y="29" width="22" height="28" rx="4" fill="#c53030" stroke="#2d3748" stroke-width="2"/>
+                    <line x1="30" y1="29" x2="30" y2="57" stroke="#2d3748" stroke-width="1.8"/>
+                    <path d="M 20 57 L 17 88 L 26 88 L 30 66 L 34 88 L 43 88 L 40 57 Z" fill="#4a5568" stroke="#1a202c" stroke-width="2"/>
+                    <ellipse cx="21" cy="90" rx="6" ry="3.5" fill="#2d3748"/>
+                    <ellipse cx="39" cy="90" rx="6" ry="3.5" fill="#2d3748"/>
+                </svg>`
+            },
+            p50: {
+                id: 'p50',
+                name: 'Cô Lan',
+                weight: 50,
+                location: 'right',
+                svg: `
+                <svg width="56" height="95" viewBox="0 0 60 100">
+                    <circle cx="30" cy="21" r="9.5" fill="#fbd38d" stroke="#2d3748" stroke-width="2"/>
+                    <circle cx="27" cy="21" r="1.5" fill="#1a202c"/>
+                    <polygon points="10,18 30,3 50,18" fill="#ecc94b" stroke="#744210" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M 19 31 L 14 55 L 46 55 L 41 31 Z" fill="#c53030" stroke="#2d3748" stroke-width="2"/>
+                    <rect x="23" y="50" width="14" height="15" rx="2" fill="#f6e05e" stroke="#744210" stroke-width="1.8"/>
+                    <path d="M 25 50 Q 30 43, 35 50" fill="none" stroke="#744210" stroke-width="1.8"/>
+                    <path d="M 21 55 L 20 88 L 28 88 L 30 65 L 32 88 L 40 88 L 39 55 Z" fill="#2d3748" stroke="#1a202c" stroke-width="2"/>
+                    <ellipse cx="24" cy="90" rx="5.5" ry="3" fill="#744210"/>
+                    <ellipse cx="36" cy="90" rx="5.5" ry="3" fill="#744210"/>
+                </svg>`
+            },
+            p45: {
+                id: 'p45',
+                name: 'Bạn Nam',
+                weight: 45,
+                location: 'right',
+                svg: `
+                <svg width="54" height="90" viewBox="0 0 60 95">
+                    <circle cx="30" cy="20" r="9.5" fill="#fbd38d" stroke="#2d3748" stroke-width="2"/>
+                    <circle cx="27" cy="20" r="1.5" fill="#1a202c"/>
+                    <path d="M 20 16 Q 22 7, 36 10 L 42 15 L 20 16 Z" fill="#e53e3e" stroke="#2d3748" stroke-width="1.8"/>
+                    <line x1="18" y1="34" x2="12" y2="54" stroke="#fbd38d" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="42" y1="34" x2="48" y2="54" stroke="#fbd38d" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="20" y="30" width="20" height="25" rx="4" fill="#dd6b20" stroke="#2d3748" stroke-width="2"/>
+                    <path d="M 21 55 L 19 85 L 28 85 L 30 64 L 32 85 L 41 85 L 39 55 Z" fill="#2d3748" stroke="#1a202c" stroke-width="2"/>
+                    <ellipse cx="23" cy="87" rx="5.5" ry="3" fill="#1a202c"/>
+                    <ellipse cx="37" cy="87" rx="5.5" ry="3" fill="#1a202c"/>
+                </svg>`
+            }
+        };
+
+        let boatSide = 'right';
+        let boatPassengers = [];
+        let isAnimating = false;
+        let moveCount = 0;
+        let soundEnabled = true;
+
+        // Stopwatch variables
+        let gameStarted = false;
+        let startTime = 0;
+        let timerInterval = null;
+        let finalElapsedTimeStr = "00:00";
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggleBtn');
+            btn.innerText = soundEnabled ? '🔊 Âm thanh: BẬT' : '🔇 Âm thanh: TẮT';
+        }
+
+        function startTheGame() {
+            initAudio();
+            playSFX('hop_on');
+            document.getElementById('startModal').classList.remove('active');
+            
+            // Start Stopwatch
+            gameStarted = true;
+            startTime = Date.now();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+            renderScene();
+        }
+
+        function updateTimerDisplay() {
+            if (!gameStarted) return;
+            const diffSec = Math.floor((Date.now() - startTime) / 1000);
+            const m = Math.floor(diffSec / 60).toString().padStart(2, '0');
+            const s = (diffSec % 60).toString().padStart(2, '0');
+            finalElapsedTimeStr = `${m}:${s}`;
+            const timeText = `⏱️ ${finalElapsedTimeStr}`;
+            const t1 = document.getElementById('timerCounter');
+            const t2 = document.getElementById('sceneTimerBadge');
+            if (t1) t1.innerText = timeText;
+            if (t2) t2.innerText = timeText;
+        }
+
+        function playSinkCartoonSound() {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                const wahNotes = [
+                    { fStart: 392.00, fEnd: 370.00, start: 0.00, dur: 0.22 },
+                    { fStart: 369.99, fEnd: 349.23, start: 0.25, dur: 0.22 },
+                    { fStart: 349.23, fEnd: 329.63, start: 0.50, dur: 0.22 },
+                    { fStart: 329.63, fEnd: 220.00, start: 0.75, dur: 0.70 }
+                ];
+
+                wahNotes.forEach(n => {
+                    const osc = audioCtx.createOscillator();
+                    const filter = audioCtx.createBiquadFilter();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sawtooth';
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(450, now + n.start);
+                    filter.frequency.linearRampToValueAtTime(1400, now + n.start + n.dur * 0.4);
+                    filter.frequency.linearRampToValueAtTime(500, now + n.start + n.dur);
+
+                    osc.frequency.setValueAtTime(n.fStart, now + n.start);
+                    osc.frequency.exponentialRampToValueAtTime(n.fEnd, now + n.start + n.dur);
+
+                    gain.gain.setValueAtTime(0.28, now + n.start);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + n.start + n.dur);
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now + n.start);
+                    osc.stop(now + n.start + n.dur);
+                });
+
+                [0.15, 0.28, 0.42, 0.58, 0.75, 0.92].forEach((t, idx) => {
+                    const bOsc = audioCtx.createOscillator();
+                    const bGain = audioCtx.createGain();
+                    bOsc.type = 'sine';
+                    bOsc.frequency.setValueAtTime(180 + idx * 75, now + t);
+                    bOsc.frequency.exponentialRampToValueAtTime(460 + idx * 90, now + t + 0.11);
+                    bGain.gain.setValueAtTime(0.32, now + t);
+                    bGain.gain.exponentialRampToValueAtTime(0.01, now + t + 0.11);
+                    bOsc.connect(bGain);
+                    bGain.connect(audioCtx.destination);
+                    bOsc.start(now + t);
+                    bOsc.stop(now + t + 0.11);
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function playVictoryAndApplauseSound() {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                const melody = [
+                    { f: 523.25, t: 0.0, d: 0.14 },
+                    { f: 523.25, t: 0.15, d: 0.14 },
+                    { f: 523.25, t: 0.30, d: 0.14 },
+                    { f: 659.25, t: 0.46, d: 0.28 },
+                    { f: 783.99, t: 0.76, d: 0.28 },
+                    { f: 1046.50, t: 1.06, d: 0.65 }
+                ];
+                melody.forEach(m => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(m.f, now + m.t);
+                    gain.gain.setValueAtTime(0.32, now + m.t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + m.t + m.d);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + m.t);
+                    osc.stop(now + m.t + m.d);
+                });
+
+                const bufferSize = audioCtx.sampleRate * 0.08;
+                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                for (let c = 0; c < 45; c++) {
+                    const clapTime = now + 0.2 + Math.random() * 3.2;
+                    const whiteNoise = audioCtx.createBufferSource();
+                    whiteNoise.buffer = noiseBuffer;
+
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.value = 1100 + Math.random() * 900;
+                    filter.Q.value = 1.8;
+
+                    const gain = audioCtx.createGain();
+                    const peak = 0.18 + Math.random() * 0.2;
+                    gain.gain.setValueAtTime(0.001, clapTime);
+                    gain.gain.linearRampToValueAtTime(peak, clapTime + 0.008);
+                    gain.gain.exponentialRampToValueAtTime(0.001, clapTime + 0.075);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    whiteNoise.start(clapTime);
+                    whiteNoise.stop(clapTime + 0.08);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function playSFX(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                if (type === 'hop_on') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(240, now);
+                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.14);
+                    gain.gain.setValueAtTime(0.28, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'hop_off') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(480, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.13);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.13);
+                } else if (type === 'row_water') {
+                    [0, 0.55, 1.1].forEach(offset => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(150, now + offset);
+                        osc.frequency.exponentialRampToValueAtTime(65, now + offset + 0.35);
+                        gain.gain.setValueAtTime(0.25, now + offset);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.35);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + offset);
+                        osc.stop(now + offset + 0.35);
+                    });
+                } else if (type === 'warn') {
+                    [0, 0.14].forEach(offset => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(180, now + offset);
+                        gain.gain.setValueAtTime(0.2, now + offset);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.1);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + offset);
+                        osc.stop(now + offset + 0.1);
+                    });
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function renderScene() {
+            const leftContainer = document.getElementById('leftBankSlots');
+            const rightContainer = document.getElementById('rightBankSlots');
+            const boatContainer = document.getElementById('boatPassengers');
+
+            leftContainer.innerHTML = '';
+            rightContainer.innerHTML = '';
+            boatContainer.innerHTML = '';
+
+            Object.values(peopleData).forEach(person => {
+                const el = document.createElement('div');
+                el.className = 'person-item';
+                if (!gameStarted || (person.location !== 'boat' && person.location !== boatSide)) {
+                    el.classList.add('disabled-click');
+                }
+                el.onclick = () => handlePersonClick(person.id);
+                el.innerHTML = `
+                    <div class="weight-badge">${person.weight} kg</div>
+                    ${person.svg}
+                    <div class="person-name-tag">${person.name}</div>
+                `;
+
+                if (person.location === 'left') {
+                    leftContainer.appendChild(el);
+                } else if (person.location === 'right') {
+                    rightContainer.appendChild(el);
+                } else if (person.location === 'boat') {
+                    boatContainer.appendChild(el);
+                }
+            });
+
+            updateBoatStatusUI();
+        }
+
+        function getBoatWeight() {
+            return boatPassengers.reduce((sum, id) => sum + peopleData[id].weight, 0);
+        }
+
+        function updateBoatStatusUI() {
+            const totalW = getBoatWeight();
+            const meter = document.getElementById('boatMeter');
+            const btnRow = document.getElementById('btnRow');
+
+            meter.innerText = `Trên thuyền: ${totalW} kg / 100 kg (1 tạ)`;
+            if (totalW > 100) {
+                meter.classList.add('overload');
+            } else {
+                meter.classList.remove('overload');
+            }
+
+            if (gameStarted && boatPassengers.length > 0 && !isAnimating) {
+                btnRow.classList.add('visible');
+            } else {
+                btnRow.classList.remove('visible');
+            }
+
+            const directionLabel = (boatSide === 'right') ? '⬅️ Chèo sang bờ đích' : '➡️ Chèo về bờ xuất phát';
+            btnRow.innerHTML = `<span>🚣 ${directionLabel}</span>`;
+        }
+
+        function handlePersonClick(personId) {
+            if (!gameStarted || isAnimating) return;
+            initAudio();
+
+            const person = peopleData[personId];
+
+            if (person.location === 'boat') {
+                boatPassengers = boatPassengers.filter(id => id !== personId);
+                person.location = boatSide;
+                playSFX('hop_off');
+                renderScene();
+            } else {
+                if (person.location !== boatSide) {
+                    playSFX('warn');
+                    showToast('⚠️ Thuyền đang ở bờ bên kia! Hãy chèo thuyền về đón nhé!');
+                    return;
+                }
+                boatPassengers.push(personId);
+                person.location = 'boat';
+                playSFX('hop_on');
+                renderScene();
+            }
+        }
+
+        function handleRowBoat() {
+            if (!gameStarted || isAnimating || boatPassengers.length === 0) return;
+            initAudio();
+
+            const totalWeight = getBoatWeight();
+            const boatEl = document.getElementById('boatWrapper');
+            const btnRow = document.getElementById('btnRow');
+
+            isAnimating = true;
+            btnRow.classList.remove('visible');
+
+            moveCount++;
+            document.getElementById('stepCounter').innerText = `Lượt: ${moveCount}`;
+
+            if (totalWeight > 100) {
+                playSFX('row_water');
+                boatEl.classList.remove('boat-floating');
+                boatEl.style.left = '410px';
+
+                setTimeout(() => {
+                    playSinkCartoonSound();
+                    boatEl.classList.add('at-middle-sinking');
+                    triggerWaterSplash();
+
+                    const namesList = boatPassengers.map(id => `${peopleData[id].name} (${peopleData[id].weight} kg)`).join(' + ');
+
+                    setTimeout(() => {
+                        const modal = document.getElementById('sinkModal');
+                        const textEl = document.getElementById('sinkModalText');
+                        textEl.innerHTML = `
+                            Trên thuyền có: <strong>${namesList} = ${totalWeight} kg</strong>.<br><br>
+                            Vì <strong>${totalWeight} kg &gt; 100 kg (1 tạ)</strong> nên thuyền bị quá tải và chìm xuống sông!<br>
+                            Hãy chọn lại sao cho tổng cân nặng trên thuyền <strong>không quá 100 kg</strong> nhé!
+                        `;
+                        modal.classList.add('active');
+                    }, 950);
+                }, 900);
+
+                return;
+            }
+
+            playSFX('row_water');
+            boatSide = (boatSide === 'right') ? 'left' : 'right';
+
+            if (boatSide === 'left') {
+                boatEl.classList.remove('at-right');
+                boatEl.classList.add('at-left');
+            } else {
+                boatEl.classList.remove('at-left');
+                boatEl.classList.add('at-right');
+            }
+
+            setTimeout(() => {
+                const leftBankCount = Object.values(peopleData).filter(p => p.location === 'left').length;
+                if (boatSide === 'left' && (leftBankCount + boatPassengers.length === 3)) {
+                    boatPassengers.forEach(id => {
+                        peopleData[id].location = 'left';
+                    });
+                    boatPassengers = [];
+                    playSFX('hop_off');
+                    isAnimating = false;
+                    renderScene();
+                    setTimeout(triggerVictory, 400);
+                } else {
+                    isAnimating = false;
+                    renderScene();
+                }
+            }, 1850);
+        }
+
+        function triggerWaterSplash() {
+            const container = document.getElementById('waterSplashFx');
+            container.innerHTML = '';
+            container.classList.add('active');
+
+            const drops = [
+                { tx: '-60px', ty: '-70px', size: '18px' },
+                { tx: '-30px', ty: '-95px', size: '24px' },
+                { tx: '10px', ty: '-100px', size: '22px' },
+                { tx: '45px', ty: '-85px', size: '20px' },
+                { tx: '75px', ty: '-60px', size: '16px' },
+                { tx: '-80px', ty: '-40px', size: '14px' },
+                { tx: '90px', ty: '-35px', size: '15px' }
+            ];
+
+            drops.forEach(d => {
+                const drop = document.createElement('div');
+                drop.className = 'splash-drop';
+                drop.style.width = d.size;
+                drop.style.height = d.size;
+                drop.style.left = '70px';
+                drop.style.top = '40px';
+                drop.style.setProperty('--tx', d.tx);
+                drop.style.setProperty('--ty', d.ty);
+                container.appendChild(drop);
+            });
+
+            setTimeout(() => {
+                container.classList.remove('active');
+            }, 1000);
+        }
+
+        function closeSinkModal() {
+            playSFX('hop_on');
+            document.getElementById('sinkModal').classList.remove('active');
+
+            const boatEl = document.getElementById('boatWrapper');
+            boatEl.classList.remove('at-middle-sinking');
+            boatEl.style.left = '';
+            boatEl.classList.add('boat-floating');
+
+            boatPassengers.forEach(id => {
+                peopleData[id].location = boatSide;
+            });
+            boatPassengers = [];
+            moveCount = Math.max(0, moveCount - 1);
+            document.getElementById('stepCounter').innerText = `Lượt: ${moveCount}`;
+
+            isAnimating = false;
+            renderScene();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2600);
+        }
+
+        function toggleUnitTip() {
+            playSFX('hop_on');
+            showToast('💡 Ghi nhớ: 1 tạ = 100 kg. Tổng cân nặng trên thuyền phải ≤ 100 kg!');
+        }
+
+        function showHintModal() {
+            playSFX('hop_on');
+            document.getElementById('hintModal').classList.add('active');
+        }
+
+        function closeHintModal() {
+            playSFX('hop_off');
+            document.getElementById('hintModal').classList.remove('active');
+        }
+
+        function triggerVictory() {
+            // Stop timer
+            clearInterval(timerInterval);
+            gameStarted = false;
+
+            playVictoryAndApplauseSound();
+            document.getElementById('finalTimeBadge').innerText = `⏱️ Tổng thời gian: ${finalElapsedTimeStr}`;
+            document.getElementById('victoryModal').classList.add('active');
+            launchConfetti();
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            gameStarted = false;
+
+            document.getElementById('victoryModal').classList.remove('active');
+            document.getElementById('sinkModal').classList.remove('active');
+
+            peopleData.p52.location = 'right';
+            peopleData.p50.location = 'right';
+            peopleData.p45.location = 'right';
+            boatPassengers = [];
+            boatSide = 'right';
+            moveCount = 0;
+            isAnimating = false;
+
+            const boatEl = document.getElementById('boatWrapper');
+            boatEl.classList.remove('at-left', 'at-middle-sinking');
+            boatEl.classList.add('at-right', 'boat-floating');
+            boatEl.style.left = '';
+
+            document.getElementById('stepCounter').innerText = 'Lượt: 0';
+            document.getElementById('timerCounter').innerText = '⏱️ 00:00';
+            const scBadge = document.getElementById('sceneTimerBadge');
+            if (scBadge) scBadge.innerText = '⏱️ 00:00';
+
+            // Show start overlay again
+            document.getElementById('startModal').classList.add('active');
+            renderScene();
+        }
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#ef4444', '#f97316', '#facc15', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7', '#ec4899'];
+
+            for (let i = 0; i < 160; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 10 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 4.5 + 2.5,
+                    rotation: Math.random() * 360,
+                    rotSpeed: Math.random() * 8 - 4
+                });
+            }
+
+            let animId;
+            function update() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.speed;
+                    p.rotation += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+
+                    if (p.y > canvas.height) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                animId = requestAnimationFrame(update);
+            }
+            update();
+
+            setTimeout(() => {
+                cancelAnimationFrame(animId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 7500);
+        }
+
+        renderScene();
+
+        // Xử lý menu đổi trò chơi
+        function toggleGameMenu(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('gameNavDropdown');
+            if (panel) panel.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('gameNavDropdown');
+            const btn = document.getElementById('gameMenuBtn');
+            if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+                panel.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
