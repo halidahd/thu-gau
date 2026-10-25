@@ -706,6 +706,9 @@
             <span class="brand-name">HỌC TẬP VUI NHỘN</span>
         </div>
         <div class="top-actions">
+            <button class="action-circle-btn" title="Quét mã QR để mở trên điện thoại" onclick="showQRModal()">
+                📱
+            </button>
             <button class="action-circle-btn" id="soundToggleBtn" title="Bật/Tắt âm thanh" onclick="toggleSound()">
                 🔊
             </button>
@@ -889,6 +892,31 @@
         </div>
     </div>
 
+    <!-- MODAL QUÉT MÃ QR DÀNH CHO ĐIỆN THOẠI -->
+    <div class="modal-overlay" id="qrModal" onclick="closeQROnOverlay(event)">
+        <div class="modal-box" style="max-width: 440px;">
+            <div style="font-size: 40px; margin-bottom: 8px;">📱✨</div>
+            <h3 class="modal-title" style="color: #0284c7; margin-bottom: 4px;">Mã QR Vào Trò Chơi</h3>
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">
+                Mở camera điện thoại hoặc Zalo để quét mã và chơi ngay:
+            </p>
+            <div style="background: #f8fafc; padding: 14px; border-radius: 20px; display: inline-block; border: 3px solid #38bdf8; margin-bottom: 14px; box-shadow: 0 8px 16px rgba(0,0,0,0.06);">
+                <img src="qrcode.png" alt="Mã QR Cổng Trò Chơi" style="width: 200px; height: 200px; display: block; border-radius: 10px;">
+            </div>
+            <div style="background: #e0f2fe; padding: 8px 12px; border-radius: 12px; font-size: 13px; font-weight: 800; color: #0369a1; word-break: break-all; margin-bottom: 16px;">
+                https://halidahd.github.io/thu-gau/index.html
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="modal-close-btn" style="background: #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);" onclick="copySiteLink()">
+                    <span id="copyBtnText">📋 Sao chép link</span>
+                </button>
+                <button class="modal-close-btn" style="background: #64748b; box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);" onclick="closeQRModal()">
+                    Đóng lại ❌
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- HỆ THỐNG ÂM THANH BẰNG WEB AUDIO API (KHÔNG CẦN TẢI FILE MP3 NGOÀI) -->
     <script>
         let audioCtx = null;
@@ -1018,6 +1046,37 @@
             document.getElementById('modalTitle').innerText = 'Cách Tham Gia Chơi';
             document.getElementById('modalMessage').innerHTML = 'Rất đơn giản! Bạn chỉ cần bấm vào nút <strong>"VÀO CHƠI NGAY"</strong> màu cam ở trò chơi bạn muốn thử tài. Chúc bạn rèn luyện thật giỏi nhé!';
             document.getElementById('comingSoonModal').classList.add('active');
+        }
+
+        // Popup QR Code
+        function showQRModal() {
+            playSound('notice');
+            document.getElementById('qrModal').classList.add('active');
+        }
+
+        function closeQRModal() {
+            playSound('click');
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        function closeQROnOverlay(e) {
+            if (e.target.id === 'qrModal') {
+                closeQRModal();
+            }
+        }
+
+        function copySiteLink() {
+            const url = 'https://halidahd.github.io/thu-gau/index.html';
+            navigator.clipboard.writeText(url).then(() => {
+                playSound('launch');
+                const btnText = document.getElementById('copyBtnText');
+                btnText.innerText = 'Đã sao chép! ✔️';
+                setTimeout(() => {
+                    btnText.innerText = '📋 Sao chép link';
+                }, 2500);
+            }).catch(() => {
+                alert('Đã chọn link: ' + url);
+            });
         }
 
         // Hiệu ứng âm thanh nhẹ khi rê chuột vào card
