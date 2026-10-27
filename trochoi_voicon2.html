@@ -769,10 +769,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
             margin-top: 5px;
             background: rgba(15, 23, 42, 0.45);
-            padding: 3px 8px;
+            padding: 3px 10px;
             border-radius: 10px;
             border: 1.5px dashed rgba(254, 240, 138, 0.6);
             transition: all 0.25s ease;
@@ -786,21 +786,6 @@
             box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
         }
 
-        .bridge-input-row.correct {
-            background: rgba(20, 83, 45, 0.85);
-            border-color: #86efac;
-            border-style: solid;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
-        }
-
-        .bridge-input-row.wrong {
-            background: rgba(127, 29, 29, 0.85);
-            border-color: #fca5a5;
-            border-style: solid;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-            animation: shakeInput 0.4s ease;
-        }
-
         .bridge-input-row .eq-sym {
             color: #fef08a;
             font-size: 15px;
@@ -809,7 +794,7 @@
         }
 
         .bridge-input-kg {
-            width: 54px;
+            width: 62px;
             height: 28px;
             background: #ffffff;
             color: #0f172a;
@@ -820,7 +805,7 @@
             font-size: 15px;
             font-weight: 800;
             outline: none;
-            padding: 0 2px;
+            padding: 0 4px;
             transition: all 0.2s ease;
             -moz-appearance: textfield;
             user-select: text;
@@ -838,57 +823,11 @@
             box-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
         }
 
-        .bridge-input-row.correct .bridge-input-kg {
-            background: #dcfce7;
-            color: #14532d;
-            border-color: #22c55e;
-            font-weight: 900;
-        }
-
         .bridge-input-row .unit-lbl {
             color: #fef08a;
             font-size: 14px;
             font-weight: 800;
             user-select: none;
-        }
-
-        .bridge-btn-check {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            border-radius: 6px;
-            width: 25px;
-            height: 25px;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
-            padding: 0;
-            flex-shrink: 0;
-        }
-
-        .bridge-btn-check:hover {
-            background: #7dd3fc;
-            transform: scale(1.15);
-        }
-
-        .bridge-btn-check:active {
-            transform: scale(0.92);
-        }
-
-        .bridge-input-row.correct .bridge-btn-check {
-            background: #22c55e;
-            color: #ffffff;
-            cursor: default;
-        }
-
-        @keyframes shakeInput {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
         }
 
         .bridge-body::before, .bridge-body::after {
@@ -1261,7 +1200,7 @@
     </div>
 
     <div class="guide-banner" id="guideBanner">
-        <span id="guideText">👉 Em hãy <strong>tự nhập số kg quy đổi</strong> vào từng cây cầu, rồi chọn cây cầu chịu tải ≥ <strong>150 kg</strong> để đưa Voi Con qua sông!</span>
+        <span id="guideText">👉 Em có thể <strong>nhập số kg quy đổi</strong> vào từng cây cầu để tính toán, rồi chọn cây cầu chịu tải ≥ <strong>150 kg</strong> để đưa Voi Con qua sông!</span>
         <span style="font-weight: 800; color: #e65100; font-size: 16px; background: #ffe0b2; padding: 4px 12px; border-radius: 10px;">Voi: <strong>150 kg</strong></span>
     </div>
 
@@ -1348,12 +1287,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-0" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(0, this.value)"
-                           onkeydown="onBridgeInputKey(0, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-0" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(0, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1365,12 +1300,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-1" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(1, this.value)"
-                           onkeydown="onBridgeInputKey(1, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-1" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(1, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1382,12 +1313,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-2" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(2, this.value)"
-                           onkeydown="onBridgeInputKey(2, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-2" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(2, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1399,12 +1326,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-3" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(3, this.value)"
-                           onkeydown="onBridgeInputKey(3, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-3" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(3, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1416,12 +1339,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-4" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(4, this.value)"
-                           onkeydown="onBridgeInputKey(4, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-4" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(4, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1433,12 +1352,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-5" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(5, this.value)"
-                           onkeydown="onBridgeInputKey(5, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-5" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(5, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1450,12 +1365,8 @@
                     <span class="eq-sym">=</span>
                     <input type="number" id="bridge-input-6" class="bridge-input-kg" placeholder="?" min="0" max="9999"
                            inputmode="numeric"
-                           oninput="onBridgeInputChange(6, this.value)"
-                           onkeydown="onBridgeInputKey(6, event)"
                            onclick="event.stopPropagation()">
                     <span class="unit-lbl">kg</span>
-                    <button type="button" class="bridge-btn-check" id="bridge-check-6" title="Kiểm tra kết quả quy đổi"
-                            onclick="checkBridgeKg(6, event)">✓</button>
                 </div>
             </div>
         </div>
@@ -1845,109 +1756,8 @@
             });
         }
 
-        /* HỆ THỐNG QUẢN LÝ QUY ĐỔI SỐ KG DO HỌC SINH TỰ NHẬP (VER 2) */
-        let bridgeKgStatus = [false, false, false, false, false, false, false];
+        /* TRẠNG THÁI & ĐIỀU HƯỚNG GAME (VER 2: HỌC SINH TỰ NHẬP QUY ĐỔI) */
         let alertIsCollapse = false;
-        let pendingFocusBridge = null;
-
-        function markBridgeCorrect(bridgeIndex) {
-            const b = bridgesData[bridgeIndex];
-            const row = document.getElementById(`bridge-input-row-${bridgeIndex}`);
-            const btn = document.getElementById(`bridge-check-${bridgeIndex}`);
-            const inputEl = document.getElementById(`bridge-input-${bridgeIndex}`);
-            if (row) {
-                row.classList.remove('wrong');
-                row.classList.add('correct');
-            }
-            if (btn) {
-                btn.innerHTML = '✅';
-                btn.title = 'Đã quy đổi chính xác!';
-            }
-            if (inputEl) {
-                inputEl.value = b.correctKg;
-            }
-            bridgeKgStatus[bridgeIndex] = true;
-        }
-
-        function flashBridgeInput(bridgeIndex, type) {
-            const row = document.getElementById(`bridge-input-row-${bridgeIndex}`);
-            const inputEl = document.getElementById(`bridge-input-${bridgeIndex}`);
-            if (row) {
-                row.classList.remove('wrong');
-                void row.offsetWidth;
-                row.classList.add(type);
-            }
-            if (inputEl) {
-                inputEl.focus();
-                inputEl.select();
-            }
-        }
-
-        function onBridgeInputChange(bridgeIndex, val) {
-            const b = bridgesData[bridgeIndex];
-            const row = document.getElementById(`bridge-input-row-${bridgeIndex}`);
-            if (row) row.classList.remove('wrong');
-
-            const num = parseInt(val.trim(), 10);
-            if (!isNaN(num) && num === b.correctKg) {
-                initAudio();
-                playSound('reveal_click');
-                markBridgeCorrect(bridgeIndex);
-            }
-        }
-
-        function onBridgeInputKey(bridgeIndex, event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                checkBridgeKg(bridgeIndex, event);
-            }
-        }
-
-        function checkBridgeKg(bridgeIndex, e) {
-            if (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            initAudio();
-            const b = bridgesData[bridgeIndex];
-            const inputEl = document.getElementById(`bridge-input-${bridgeIndex}`);
-            const val = inputEl ? inputEl.value.trim() : '';
-
-            if (val === '') {
-                playSound('btn_click');
-                flashBridgeInput(bridgeIndex, 'wrong');
-                showCenterAlert(
-                    `Em hãy nhập số kg quy đổi của cây cầu <strong>${b.rawName}</strong> vào ô trống trước nhé!`,
-                    'HÃY NHẬP SỐ KG',
-                    '✏️',
-                    false,
-                    bridgeIndex
-                );
-                return;
-            }
-
-            const num = parseInt(val, 10);
-            if (num === b.correctKg) {
-                playSound('reveal_click');
-                markBridgeCorrect(bridgeIndex);
-                showCenterAlert(
-                    `🎉 <strong>Chính xác!</strong><br><br><strong>${b.rawName} = ${b.correctKg} kg</strong>.<br><br>${b.correctKg >= 150 ? 'Cây cầu này chịu được <strong>' + b.correctKg + ' kg</strong> (≥ 150 kg của Voi) - Là cây cầu vững chắc và an toàn! 🌟' : 'Cây cầu này chỉ chịu được <strong>' + b.correctKg + ' kg</strong> (< 150 kg của Voi) - Voi đi lên sẽ bị sập cầu đấy nhé! ⚠️'}`,
-                    'QUY ĐỔI CHÍNH XÁC! 👏',
-                    '🌟✅',
-                    false
-                );
-            } else {
-                playSound('btn_click');
-                flashBridgeInput(bridgeIndex, 'wrong');
-                showCenterAlert(
-                    `Ôi, em tính <strong>${b.rawName} = ${num} kg</strong> là chưa chính xác rồi!<br><br>👉 Em hãy nhẩm lại: <em>1 tấn = 1000 kg, 1 tạ = 100 kg, 1 yến = 10 kg</em> rồi thử tính lại nhé! 💪`,
-                    'HÃY TÍNH LẠI NHÉ!',
-                    '💡✏️',
-                    false,
-                    bridgeIndex
-                );
-            }
-        }
 
         function selectBridge(bridgeIndex) {
             if (isMoving) return;
@@ -1972,40 +1782,7 @@
 
             if (brokenStatus[bridgeIndex]) return;
 
-            // KIỂM TRA SỐ QUY ĐỔI HỌC SINH TỰ NHẬP
-            const inputEl = document.getElementById(`bridge-input-${bridgeIndex}`);
-            const inputVal = inputEl ? inputEl.value.trim() : '';
-
-            if (inputVal === '') {
-                playSound('btn_click');
-                flashBridgeInput(bridgeIndex, 'wrong');
-                showCenterAlert(
-                    `Em hãy tự tính và nhập số quy đổi sang <strong>kg</strong> cho cây cầu <strong>${b.rawName}</strong> trước khi dẫn Voi Con bước qua nhé! ✏️`,
-                    'CHƯA NHẬP SỐ QUY ĐỔI',
-                    '✏️⚖️',
-                    false,
-                    bridgeIndex
-                );
-                return;
-            }
-
-            const parsedVal = parseInt(inputVal, 10);
-            if (isNaN(parsedVal) || parsedVal !== b.correctKg) {
-                playSound('btn_click');
-                flashBridgeInput(bridgeIndex, 'wrong');
-                showCenterAlert(
-                    `Số quy đổi <strong>${b.rawName} = ${inputVal} kg</strong> chưa chính xác rồi! Em hãy tính lại xem cây cầu này chịu được bao nhiêu <strong>kg</strong> nhé! 🤔<br><br>Gợi ý: <em>1 tấn = 1000 kg, 1 tạ = 100 kg, 1 yến = 10 kg</em>`,
-                    'TÍNH LẠI QUY ĐỔI',
-                    '💡❌',
-                    false,
-                    bridgeIndex
-                );
-                return;
-            }
-
-            // Ghi nhận quy đổi đúng
-            markBridgeCorrect(bridgeIndex);
-
+            // Việc nhập quy đổi không ảnh hưởng đến việc di chuyển của voi
             isMoving = true;
             playSound('step');
 
@@ -2019,10 +1796,6 @@
                     playSound('success_stage');
                     card.classList.add('passed');
                     passedBridges.push(bridgeIndex);
-
-                    if (inputEl) inputEl.readOnly = true;
-                    const checkBtn = document.getElementById(`bridge-check-${bridgeIndex}`);
-                    if (checkBtn) checkBtn.disabled = true;
 
                     setTimeout(() => {
                         elephant.style.left = b.targetPos.left + 'px';
@@ -2090,7 +1863,7 @@
             splash.classList.add('splash-animate');
         }
 
-        function showCenterAlert(htmlContent, title = 'THÔNG BÁO', icon = '💡', isCollapse = false, focusBridgeId = null) {
+        function showCenterAlert(htmlContent, title = 'THÔNG BÁO', icon = '💡', isCollapse = false) {
             const modal = document.getElementById('alertModal');
             const content = document.getElementById('alertModalContent');
             const titleEl = document.getElementById('alertModalTitle');
@@ -2103,7 +1876,6 @@
             if (btnOk) btnOk.innerText = isCollapse ? 'Đã hiểu (Thử lại) 👍' : 'Đã hiểu rồi! 👍';
 
             alertIsCollapse = isCollapse;
-            pendingFocusBridge = focusBridgeId;
 
             if (modal) modal.classList.add('active');
         }
@@ -2115,16 +1887,7 @@
 
             if (alertIsCollapse) {
                 resetElephantToCurrentLocation();
-            } else if (pendingFocusBridge !== null) {
-                const el = document.getElementById(`bridge-input-${pendingFocusBridge}`);
-                if (el) {
-                    setTimeout(() => {
-                        el.focus();
-                        el.select();
-                    }, 150);
-                }
             }
-            pendingFocusBridge = null;
             alertIsCollapse = false;
         }
 
