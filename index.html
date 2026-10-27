@@ -388,6 +388,9 @@
         .thumb-bg-voicon {
             background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
         }
+        .thumb-bg-voicon2 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
+        }
         .thumb-bg-banguoi {
             background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0284c7 100%);
         }
@@ -781,13 +784,13 @@
             <div class="section-header-row">
                 <h2 class="section-title">
                     <span>🎮 Danh Sách Trò Chơi</span>
-                    <span class="game-count-badge" id="gameCountBadge">2 Đang Mở • 2 Sắp Có</span>
+                    <span class="game-count-badge" id="gameCountBadge">3 Đang Mở • 2 Sắp Có</span>
                 </h2>
             </div>
 
             <div class="games-grid" id="gamesGrid">
 
-                <!-- GAME 1: VOI CON VƯỢT SÔNG (ĐANG CHẠY CỰC HOT) -->
+                <!-- GAME 1: VOI CON VƯỢT SÔNG (VER 1 - GỢI Ý ĐỔI KG) -->
                 <article class="game-card" data-category="toan">
                     <div class="game-thumb-box thumb-bg-voicon">
                         <span class="thumb-badge-floating badge-ready">🔥 Đang Mở Chơi</span>
@@ -797,14 +800,37 @@
                     <div class="game-info">
                         <div class="game-tags-row">
                             <span class="game-tag tag-toan">Toán Lớp 4</span>
-                            <span class="game-tag">Khối Lượng (Tạ, Tấn, Yến, Kg)</span>
+                            <span class="game-tag">Khối Lượng (Ver 1)</span>
                         </div>
-                        <h3 class="game-name">Voi Con Vượt Sông</h3>
+                        <h3 class="game-name">Voi Con Vượt Sông (Ver 1)</h3>
                         <p class="game-desc">
                             Giúp bạn Voi Con tính toán khối lượng chính xác để chọn cây cầu an toàn, vượt qua các đảo nhỏ giữa dòng sông xiết để về với mẹ!
                         </p>
                         <a href="trochoi_voicon.html" class="game-btn btn-play-active" onclick="playSound('launch')">
-                            <span>VÀO CHƠI NGAY</span>
+                            <span>VÀO CHƠI VER 1</span>
+                            <span>🚀</span>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- GAME 1B: VOI CON VƯỢT SÔNG 2 (VER 2 - HỌC SINH TỰ NHẬP QUY ĐỔI) -->
+                <article class="game-card" data-category="toan">
+                    <div class="game-thumb-box thumb-bg-voicon2">
+                        <span class="thumb-badge-floating badge-ready">✨ Bản Mới (Ver 2)</span>
+                        <div class="thumb-illustration">🐘✍️⚖️</div>
+                        <div class="rating-chip">⭐ 5.0 (Tự Nhập)</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-tags-row">
+                            <span class="game-tag tag-toan">Toán Lớp 4</span>
+                            <span class="game-tag" style="background: #e0e7ff; color: #4338ca;">Tự Nhập Quy Đổi kg</span>
+                        </div>
+                        <h3 class="game-name">Voi Con Vượt Sông (Ver 2)</h3>
+                        <p class="game-desc">
+                            Phiên bản rèn luyện thực hành: Học sinh tự tính và nhập số kg quy đổi vào từng cây cầu trước khi chọn đường đưa Voi Con qua sông!
+                        </p>
+                        <a href="trochoi_voicon2.html" class="game-btn btn-play-active" onclick="playSound('launch')">
+                            <span>VÀO CHƠI VER 2</span>
                             <span>🚀</span>
                         </a>
                     </div>
