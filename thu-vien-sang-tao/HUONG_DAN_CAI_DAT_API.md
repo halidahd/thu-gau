@@ -25,7 +25,7 @@ Hệ thống lưu trữ sử dụng **Google Sheets** làm cơ sở dữ liệu 
    - Trên thanh công cụ, tại menu chọn hàm (cạnh nút Gỡ lỗi/Chạy), bấm chọn hàm **`setupDatabase`**.
    - Bấm nút **Chạy (Run)**.
    - Lần đầu tiên chạy, Google sẽ yêu cầu cấp quyền: Bấm **Xem xét quyền** > chọn tài khoản Gmail của bạn > bấm **Nâng cao (Advanced)** > bấm **Đi tới dự án (không an toàn)** > bấm **Cho phép (Allow)**.
-   - Sau vài giây, hệ thống tự động tạo 2 sheet: `Posts` và `Categories`, đồng thời **nạp sẵn toàn bộ 4 tác phẩm truyện mẫu hiện có của Lớp 4B** với trạng thái đã duyệt (`status: "approved"`).
+   - Sau vài giây, hệ thống tự động tạo 4 sheet: `Posts`, `Categories`, `PhysicalBooks` và `Wishes2011`, đồng thời **nạp sẵn toàn bộ truyện mẫu, danh mục thể loại, 10 sách truyện giấy và lời chúc tri ân 20/11 của Lớp 4B**.
 
 ---
 

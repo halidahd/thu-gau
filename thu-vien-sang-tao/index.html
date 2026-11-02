@@ -3,480 +3,748 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tủ Sách Số 4B - Nâng Bước Tuổi Thơ</title>
-    <!-- Tailwind CSS -->
+    <title>Tủ Sách Số 4B - Thư Viện Sáng Tạo Lớp 4B</title>
+    
+    <!-- Google Fonts: Baloo 2 (Tiêu đề thân thiện, nét tròn rõ ràng cho trẻ) & Nunito (Đọc nội dung dễ nhìn) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
-                        serif: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['"Baloo 2"', 'cursive', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 10px -2px rgba(0, 0, 0, 0.05), 0 1px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'card': '0 4px 16px -3px rgba(0, 0, 0, 0.06), 0 2px 6px -2px rgba(0, 0, 0, 0.04)',
+                        'lift': '0 10px 25px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -3px rgba(0, 0, 0, 0.04)',
                     }
                 }
             }
         }
     </script>
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        * {
-            font-family: Cambria, "Times New Roman", Times, serif;
-        }
-        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a, label {
-            font-family: Cambria, "Times New Roman", Times, serif;
-        }
-        h1, h2, h3, .font-heading {
-            font-family: Cambria, "Times New Roman", Times, serif;
-        }
-        /* Giữ nguyên font icons Font Awesome */
-        .fa, .fa-solid, .fa-regular, .fa-brands, [class*=" fa-"], [class^="fa-"] {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
-        }
         body {
-            background-color: #f4f9ff;
+            font-family: 'Nunito', sans-serif;
+            background-color: #f9faf8;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Festive Banner Animation */
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Baloo 2', cursive, sans-serif;
         }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        /* Custom Scrollbar */
+
+        /* Tối ưu thanh cuộn thân thiện */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 7px;
+            height: 7px;
         }
         ::-webkit-scrollbar-track {
-            background: #e2e8f0;
-            border-radius: 4px;
+            background: #f1f5f9;
+            border-radius: 8px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 4px;
+            background: #cbd5e1;
+            border-radius: 8px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Ẩn scrollbar cho category pills khi cuộn trên mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Thẻ sách có hiệu ứng nâng tự nhiên */
         .book-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
         .book-card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-4px);
         }
+
+        /* Nút tương tác cảm ứng tối ưu cho trẻ em */
+        .touch-action-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .fade-in {
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.25s ease-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hiệu ứng sinh động chào mừng 20/11 */
+        @keyframes flowerSway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(12deg); }
+        }
+        .flower-sway {
+            display: inline-block;
+            animation: flowerSway 3s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
+        }
+        .badge-pulse {
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.6; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+        .animate-sparkle {
+            animation: sparkle 1.8s ease-in-out infinite;
+        }
+
+        /* Banner rực rỡ sắc hoa 20/11 */
+        .banner-2011 {
+            background: linear-gradient(135deg, #dc2626 0%, #e11d48 45%, #ea580c 85%, #d97706 100%);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-800">
+<body class="min-h-screen flex flex-col bg-[#F9FAF8] text-slate-800">
 
     <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
-    <!-- Top Banner Chào mừng 20/11 -->
-    <div class="bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 text-white shadow-md relative overflow-hidden py-2 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-center sm:text-left relative z-10">
-            <div class="flex items-center space-x-2 my-1">
-                <span class="text-2xl animate-float">🎉</span>
-                <span class="font-bold text-sm sm:text-base tracking-wide">CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11</span>
-                <span class="text-2xl animate-float">🌺</span>
+    <!-- ============================================== -->
+    <!-- BANNER ĐẶC BIỆT: CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11 -->
+    <!-- Rực rỡ, trang trọng, sinh động và tôn vinh Thầy Cô -->
+    <!-- ============================================== -->
+    <div class="banner-2011 text-white shadow-md border-b-2 border-amber-300 relative overflow-hidden py-2.5 px-3 sm:px-4">
+        <!-- Họa tiết hoa văn chìm lễ hội -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#fff_1.5px,transparent_1.5px)] [background-size:14px_14px]"></div>
+        
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left relative z-10">
+            
+            <!-- Tiêu điểm 20/11 & Biểu tượng Bông Hoa Tri Ân -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-400 text-red-700 flex items-center justify-center text-xl shadow-md shrink-0 badge-pulse border-2 border-white/60">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <div class="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                        <span class="bg-amber-300 text-red-950 font-black text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-star text-amber-600 text-[10px]"></i> 20/11 ĐẶC BIỆT
+                        </span>
+                        <h2 class="text-sm sm:text-base md:text-lg font-black tracking-wide text-white drop-shadow-sm font-heading flex items-center gap-1.5">
+                            <span class="flower-sway text-amber-200">🌺</span>
+                            CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11
+                            <span class="flower-sway text-amber-200" style="animation-delay: 1.5s;">💐</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs sm:text-sm text-amber-100 font-medium mt-0.5 flex items-center justify-center md:justify-start gap-1.5">
+                        <i class="fa-solid fa-heart text-amber-300 text-[11px] animate-sparkle"></i>
+                        <span>Tri ân Thầy Cô – Người lái đò thầm lặng nâng bước ước mơ tuổi thơ</span>
+                    </p>
+                </div>
             </div>
-            <div class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border border-white/30">
-                ⭐ Chủ đề: "Tủ sách chia sẻ – Góc học tập vì bạn"
+
+            <!-- Chủ đề thi đua & Nút Gửi lời chúc tri ân -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <div class="bg-black/20 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/30 text-xs text-amber-100 font-bold flex items-center gap-1.5 shadow-inner">
+                    <i class="fa-solid fa-book-bookmark text-amber-300"></i>
+                    <span>Chủ đề: "Tủ sách chia sẻ – Ngàn hoa điểm mười dâng Thầy Cô"</span>
+                </div>
+
+                <button onclick="openWishModal()" class="touch-action-btn bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-red-950 font-extrabold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-1.5 active:scale-95 shrink-0 border border-amber-200">
+                    <i class="fa-solid fa-envelope-open-text text-red-800"></i>
+                    <span>Gửi Lời Chúc Thầy Cô</span>
+                </button>
             </div>
+
         </div>
     </div>
 
-    <!-- Navigation Bar -->
-    <header class="bg-white shadow-sm sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
-                <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-200 animate-float">
-                    📚
+    <!-- Navigation Header -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+            
+            <!-- Logo & Tên Tủ Sách -->
+            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="resetFilters()">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-600 rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-sky-600/20 shrink-0">
+                    <i class="fa-solid fa-book-open-reader"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-blue-600 leading-tight">TỦ SÁCH SỐ 4B</h1>
-                    <p class="text-xs text-amber-600 font-bold tracking-wider uppercase">Nâng Bước Tuổi Thơ • Trường TH Nam Đồng</p>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-sky-900 leading-tight tracking-tight flex items-center gap-1.5">
+                        TỦ SÁCH SỐ 4B
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-500 font-semibold tracking-wide">
+                        Góc Đọc & Sáng Tạo Tuổi Thơ
+                    </p>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center space-x-2 sm:space-x-3">
-                <a href="admin.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center space-x-1.5" title="Khu vực Ban Quản Trị">
-                    <i class="fa-solid fa-lock text-sm"></i>
-                    <span class="hidden md:inline">Quản Trị</span>
+            <!-- Các nút hành động chính -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="admin.html" class="touch-action-btn bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-colors flex items-center gap-2 border border-slate-200/70" title="Dành cho Thầy Cô và Ban Quản Trị">
+                    <i class="fa-solid fa-user-shield text-slate-500"></i>
+                    <span class="hidden md:inline">Thầy Cô Duyệt</span>
                 </a>
 
-                <button onclick="openUploadModal()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-200 transition-all flex items-center space-x-2 active:scale-95">
-                    <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                    <span class="hidden sm:inline">Đăng Truyện Mới</span>
-                    <span class="sm:hidden">Đăng Bài</span>
+                <button onclick="openUploadModal()" class="touch-action-btn bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-feather-pointed text-emerald-200 text-base"></i>
+                    <span class="hidden sm:inline">Gửi Bài Sáng Tác</span>
+                    <span class="sm:hidden">Gửi Bài</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6">
 
-        <!-- Hero & Info Banner -->
-        <div class="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
-            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-            
-            <div class="space-y-3 max-w-2xl text-center md:text-left z-10">
-                <span class="bg-amber-400 text-amber-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider inline-block">
-                    🤖 Góc Năng Lực Số & AI
-                </span>
-                <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight">Thư Viện Sáng Tạo Số Lớp 4B</h2>
-                <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
-                    Nơi lưu trữ những tác phẩm truyện tranh, truyện song ngữ do các bạn học sinh Lớp 4B tự tay viết, vẽ và <strong class="text-amber-200">sáng tác cùng Trí tuệ nhân tạo (AI)</strong>. Cùng nhau chia sẻ tri thức và lan tỏa niềm đam mê đọc sách!
-                </p>
-                <div class="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
-                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-book-bookmark text-amber-300"></i>
-                        <span id="total-books-count">0</span> Tác phẩm số
+        <!-- Hero Section: Góc Đọc Sách Tự Nhiên & Ấm Áp (Không dùng gradient tím AI) -->
+        <section class="bg-gradient-to-r from-amber-50/80 via-white to-sky-50/70 border border-amber-200/60 rounded-3xl p-5 sm:p-7 shadow-soft relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+                
+                <!-- Nội dung giới thiệu -->
+                <div class="space-y-3.5 max-w-2xl text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-amber-100/80 text-amber-900 border border-amber-300/60 px-3 py-1 rounded-full text-xs font-bold">
+                        <i class="fa-solid fa-lightbulb text-amber-600"></i>
+                        <span>Góc Học Tập & Năng Lực Số Học Sinh</span>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-book text-emerald-300"></i>
-                        <span id="total-physical-count">10</span> Sách truyện giấy
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-eye text-sky-300"></i>
-                        <span id="total-views-count">0</span> Lượt đọc
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-wand-magic-sparkles text-pink-300"></i>
-                        <span>AI Co-Author</span>
+
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-snug tracking-tight">
+                        Chào mừng bạn đến với Thư Viện Lớp 4B!
+                    </h2>
+
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Nơi trưng bày những mẩu truyện tranh, bài thơ và câu chuyện do chính các bạn học sinh Lớp 4B tự tay viết, vẽ minh họa và cùng thầy cô sáng tác với sự hỗ trợ của công nghệ số.
+                    </p>
+
+                    <!-- Huy hiệu thống kê (Được cập nhật tự động từ CSDL) -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-1">
+                        <div class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200/90 shadow-sm text-xs font-bold text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                            <span><strong id="total-books-count" class="text-sky-700 text-sm">0</strong> Tác phẩm online</span>
+                        </div>
+                        <div class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200/90 shadow-sm text-xs font-bold text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <span><strong id="total-physical-count" class="text-emerald-700 text-sm">0</strong> Sách truyện giấy</span>
+                        </div>
+                        <div class="bg-white px-3.5 py-1.5 rounded-xl border border-slate-200/90 shadow-sm text-xs font-bold text-slate-700 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            <span><strong id="total-views-count" class="text-amber-700 text-sm">0</strong> Lượt đọc</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Thẻ QR Code đọc trên Mobile cùng phụ huynh -->
+                <div class="shrink-0 flex flex-col items-center justify-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-card text-center w-full sm:w-auto">
+                    <div id="hero-qr" class="p-1.5 bg-white rounded-xl border border-slate-100 flex items-center justify-center"></div>
+                    <div class="mt-2.5 space-y-0.5">
+                        <p class="text-xs font-extrabold text-slate-800 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-mobile-screen-button text-sky-600"></i>
+                            <span>Đọc trên Điện Thoại</span>
+                        </p>
+                        <p class="text-[11px] text-slate-500">Quét mã bằng Camera hoặc Zalo</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- GÓC TRI ÂN 20/11: BỨC TƯỜNG HOA ĐIỂM 10 DÂNG THẦY CÔ -->
+        <!-- ============================================== -->
+        <section class="bg-gradient-to-r from-rose-50/90 via-amber-50/80 to-red-50/90 border border-rose-200 rounded-3xl p-4 sm:p-6 shadow-soft space-y-4 relative overflow-hidden">
+            <!-- Họa tiết hoa trang trí nhẹ -->
+            <div class="absolute -right-6 -bottom-6 text-7xl opacity-15 pointer-events-none select-none text-rose-500">
+                💐
             </div>
 
-            <!-- Decorative Graphic / Quick QR code to mobile -->
-            <div class="mt-6 md:mt-0 z-10 flex flex-col items-center bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center">
-                <div id="hero-qr" class="bg-white p-2 rounded-xl shadow-inner"></div>
-                <p class="text-xs mt-2 font-bold text-amber-200">Quét mã đọc trên Điện thoại</p>
-            </div>
-        </div>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-rose-200/70 pb-3 relative z-10">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center text-lg shadow-sm shrink-0">
+                        <i class="fa-solid fa-heart"></i>
+                    </span>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black text-rose-950 font-heading">
+                                Bức Tường Tri Ân 20/11 • Lớp 4B
+                            </h3>
+                            <span id="wishes-total-count-badge" class="bg-red-100 text-red-900 text-[11px] font-black px-2.5 py-0.5 rounded-full border border-red-200 flex items-center gap-1">
+                                <i class="fa-solid fa-seedling text-red-600"></i> Lời chúc tri ân
+                            </span>
+                        </div>
+                        <p class="text-xs text-rose-900/80 font-medium">Những lời chúc hồn nhiên, chân thành của các bạn học sinh Lớp 4B kính dâng Thầy Cô</p>
+                    </div>
+                </div>
 
-        <!-- Mode Switcher: Tủ Sách Số & Sách Truyện Giấy -->
-        <div class="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
-            <button onclick="switchMainTab('digital')" id="btn-tab-digital" class="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-blue-600 text-white shadow-sm transition-all whitespace-nowrap">
-                <i class="fa-solid fa-laptop-code"></i>
+                <button onclick="openWishModal()" class="touch-action-btn bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-sm transition-all flex items-center gap-1.5 shrink-0 border border-rose-400">
+                    <i class="fa-solid fa-pen-fancy"></i>
+                    <span>Viết Thiệp Chúc Mừng</span>
+                </button>
+            </div>
+
+            <!-- Danh sách thiệp chúc mừng sinh động của học sinh -->
+            <div id="wishes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 relative z-10">
+                <!-- Rendered dynamically by JS -->
+            </div>
+
+            <!-- Nút Xem thêm / Thu gọn lời chúc (Hiển thị tối đa 6 theo yêu cầu) -->
+            <div id="wishes-toggle-container" class="hidden text-center pt-1 relative z-10">
+                <button id="btn-toggle-wishes" onclick="toggleWishesExpand()" class="touch-action-btn bg-white hover:bg-rose-50 active:bg-rose-100 text-rose-800 border border-rose-200/90 shadow-sm px-5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 mx-auto active:scale-95">
+                    <span id="btn-toggle-wishes-text">Xem thêm lời chúc</span>
+                    <i id="btn-toggle-wishes-icon" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Bộ chuyển đổi Tab (To, rõ ràng, dễ bấm trên mobile) -->
+        <div class="flex items-center gap-2.5 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
+            <button onclick="switchMainTab('digital')" id="btn-tab-digital" class="touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-sky-700 text-white shadow-sm transition-all whitespace-nowrap">
+                <i class="fa-solid fa-laptop-code text-amber-300"></i>
                 <span>Tủ Sách Số 4B (Đọc Online)</span>
             </button>
-            <button onclick="switchMainTab('physical')" id="btn-tab-physical" class="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap">
-                <i class="fa-solid fa-book-bookmark text-amber-500"></i>
+            <button onclick="switchMainTab('physical')" id="btn-tab-physical" class="touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap">
+                <i class="fa-solid fa-bookmark text-amber-600"></i>
                 <span>Sách Truyện Giấy Lớp 4B</span>
-                <span id="tab-physical-count" class="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded-full">...</span>
+                <span id="tab-physical-count" class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full ml-1">...</span>
             </button>
         </div>
 
         <!-- ============================================== -->
-        <!-- SECTION 1: TỦ SÁCH SỐ & AI CO-AUTHOR -->
+        <!-- SECTION 1: TỦ SÁCH SỐ & SÁNG TÁC HỌC SINH -->
         <!-- ============================================== -->
-        <section id="section-digital" class="space-y-6">
-            <!-- Search & Filter Section -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+        <section id="section-digital" class="space-y-5">
+            
+            <!-- Hộp Tìm kiếm & Thanh lọc thể loại -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft space-y-4">
+                <div class="flex flex-col md:flex-row gap-3.5 items-stretch md:items-center justify-between">
                     
-                    <!-- Search Box -->
-                    <div class="relative w-full md:w-80">
+                    <!-- Search Input -->
+                    <div class="relative flex-1 max-w-md">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="search-input" oninput="filterBooks()" placeholder="Tìm tên truyện, tác giả..." 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        <input type="text" id="search-input" oninput="filterBooks()" placeholder="Tìm tên truyện, tác giả, bạn học sinh..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all placeholder:text-slate-400">
                     </div>
 
-                    <!-- Category Pills (Được render động từ CSDL) -->
-                    <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="category-pills">
-                        <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                    <!-- Category Pills (Cuộn ngang êm ái trên mobile) -->
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0" id="category-pills">
+                        <button onclick="setCategory('all')" class="cat-btn active touch-action-btn bg-sky-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
                             Tất cả
                         </button>
-                        <!-- Pills render via JS -->
+                        <!-- Dynamic Pills injected by JS -->
                     </div>
+
                 </div>
             </div>
 
             <!-- Loading Indicator -->
             <div id="loading-state" class="py-16 text-center space-y-3">
-                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p class="text-sm font-bold text-slate-500">Đang tải tủ sách trực tuyến...</p>
+                <div class="w-10 h-10 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p class="text-sm font-bold text-slate-500">Đang mở tủ sách lớp 4B...</p>
             </div>
 
             <!-- Books Grid -->
-            <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
                 <!-- Dynamic Cards inserted via JS -->
             </div>
 
             <!-- Empty State -->
-            <div id="empty-state" class="hidden text-center py-12 space-y-3 bg-white rounded-2xl border border-dashed border-slate-300">
-                <div class="text-5xl">🔍</div>
-                <h3 class="text-lg font-bold text-slate-700">Không tìm thấy tác phẩm phù hợp</h3>
-                <p class="text-sm text-slate-500">Hãy thử tìm kiếm từ khóa khác hoặc chọn thể loại khác nhé!</p>
+            <div id="empty-state" class="hidden text-center py-14 space-y-3 bg-white rounded-3xl border border-dashed border-slate-300 p-6">
+                <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-amber-200">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3 class="text-lg font-extrabold text-slate-800">Chưa tìm thấy truyện phù hợp</h3>
+                <p class="text-sm text-slate-500 max-w-sm mx-auto">Bạn hãy thử gõ từ khóa khác hoặc bấm nút "Tất cả" để khám phá thêm nhé!</p>
+                <button onclick="resetFilters()" class="touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-all mt-2">
+                    Xem tất cả truyện
+                </button>
             </div>
         </section>
 
         <!-- ============================================== -->
-        <!-- SECTION 2: SÁCH TRUYỆN GIẤY HIỆN CÓ TẠI LỚP 4B -->
+        <!-- SECTION 2: SÁCH TRUYỆN GIẤY TẠI KỆ LỚP 4B -->
         <!-- ============================================== -->
         <section id="section-physical" class="hidden space-y-4">
-            <!-- Header bar & Search -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+            
+            <!-- Bảng điều khiển tra cứu -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft space-y-4">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl font-bold">
-                            📖
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center text-lg font-bold shrink-0">
+                            <i class="fa-solid fa-book-bookmark"></i>
                         </div>
                         <div>
-                            <h3 class="font-extrabold text-slate-800 text-base">Danh Mục Sách Truyện Giấy Lớp 4B</h3>
-                            <p class="text-xs text-slate-500">Tra cứu nhanh tình trạng các đầu sách hiện có tại góc thư viện lớp để mượn đọc</p>
+                            <h3 class="font-extrabold text-slate-800 text-base sm:text-lg">Danh Mục Sách Truyện Giấy Lớp 4B</h3>
+                            <p class="text-xs text-slate-500">Tra cứu nhanh tình trạng sách tại góc thư viện lớp để mượn đọc</p>
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-                        <span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200">
-                            <i class="fa-solid fa-circle-check"></i> <span id="home-available-count">0</span> cuốn sẵn sàng
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600 shrink-0">
+                        <span class="bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                            <span><strong id="home-available-count">0</strong> sẵn sàng</span>
                         </span>
-                        <span class="bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl border border-amber-200">
-                            <i class="fa-solid fa-clock"></i> <span id="home-borrowed-count">0</span> đang mượn
+                        <span class="bg-amber-50 text-amber-900 px-3 py-1.5 rounded-xl border border-amber-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock text-amber-600"></i>
+                            <span><strong id="home-borrowed-count">0</strong> đang mượn</span>
                         </span>
                     </div>
                 </div>
 
-                <!-- Search & Status filter -->
-                <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-                    <div class="relative w-full sm:w-80">
+                <!-- Ô tìm kiếm và bộ lọc sách giấy -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="home-physical-search" oninput="renderHomePhysicalBooks()" placeholder="Tìm tên sách giấy, tác giả, mã..." 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                        <input type="text" id="home-physical-search" oninput="renderHomePhysicalBooks()" placeholder="Tìm tên sách giấy, tác giả, mã số sách..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all placeholder:text-slate-400">
                     </div>
-
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Lọc tình trạng:</label>
-                        <select id="home-physical-filter" onchange="renderHomePhysicalBooks()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
-                            <option value="all">Tất cả sách giấy</option>
-                            <option value="available">✅ Có thể mượn</option>
-                            <option value="borrowed">⏳ Đang được mượn</option>
-                        </select>
-                    </div>
+                    <select id="home-physical-filter" onchange="renderHomePhysicalBooks()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-sky-500">
+                        <option value="all">Tất cả tình trạng</option>
+                        <option value="available">Sẵn sàng mượn</option>
+                        <option value="borrowed">Đang được bạn mượn</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Table of Physical Books -->
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <!-- Bảng danh sách sách giấy (Cuộn ngang trơn tru) -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-soft overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                        <thead class="bg-slate-50/80 text-slate-600 border-b border-slate-200 text-xs uppercase font-extrabold tracking-wider">
                             <tr>
-                                <th class="py-3 px-4">Mã số</th>
-                                <th class="py-3 px-4">Tên tác phẩm & Tác giả</th>
-                                <th class="py-3 px-4">Thể loại & Kệ</th>
-                                <th class="py-3 px-4 text-center">Tình trạng</th>
-                                <th class="py-3 px-4">Thông tin mượn đọc</th>
+                                <th class="py-3 px-4">Mã Sách</th>
+                                <th class="py-3 px-4">Tên Sách & Tác Giả</th>
+                                <th class="py-3 px-4">Thể Loại & Vị Trí</th>
+                                <th class="py-3 px-4 text-center">Tình Trạng</th>
+                                <th class="py-3 px-4">Thông Tin Mượn</th>
                             </tr>
                         </thead>
                         <tbody id="home-physical-table-body" class="divide-y divide-slate-100">
-                            <!-- Dynamic rows via JS -->
+                            <!-- Injected by JS -->
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Empty state khi không có sách khớp tìm kiếm -->
+                <div id="home-physical-empty" class="hidden text-center py-12 space-y-2 bg-white">
+                    <div class="text-3xl text-slate-400"><i class="fa-solid fa-book"></i></div>
+                    <p class="text-sm font-bold text-slate-600">Không tìm thấy sách giấy phù hợp</p>
+                    <p class="text-xs text-slate-400">Bạn thử kiểm tra lại mã số hoặc tên sách nhé.</p>
+                </div>
             </div>
 
-            <!-- Empty physical state -->
-            <div id="home-physical-empty" class="hidden text-center py-10 space-y-2 bg-white rounded-2xl border border-dashed border-slate-300">
-                <div class="text-4xl">📚</div>
-                <h4 class="text-sm font-bold text-slate-700">Không tìm thấy sách truyện giấy phù hợp</h4>
-                <p class="text-xs text-slate-400">Hãy thử nhập từ khóa tìm kiếm khác nhé!</p>
-            </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+    <!-- Footer Thân Thiện -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-10">
         <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-            <p class="text-sm font-bold text-slate-700">Tủ Sách Số Lớp 4B • Trường TH Nam Đồng</p>
-            <p class="text-xs text-slate-500">Chào mừng Hội thi Trang trí thư viện góc lớp - Ngày Nhà giáo Việt Nam 20/11</p>
-            <div class="pt-2">
-                <a href="admin.html" class="text-xs text-blue-500 hover:text-blue-700 font-bold inline-flex items-center gap-1">
-                    <i class="fa-solid fa-shield-halved"></i> Cổng Quản Trị Viên (Dành Cho Giáo Viên & Ban Quản Trị)
-                </a>
-            </div>
+            <p class="text-xs font-bold text-slate-600">
+                Tủ Sách Số & Sách Truyện Giấy Lớp 4B • Trường Tiểu Học Nam Đồng
+            </p>
+            <p class="text-[11px] text-slate-400">
+                Sản phẩm học tập sáng tạo nhằm lan tỏa niềm say mê đọc sách và phát triển năng lực số cho học sinh tiểu học.
+            </p>
         </div>
     </footer>
 
-    <!-- MODAL 1: ĐỌC SÁCH TRỰC TUYẾN (READER MODAL) -->
-    <div id="reader-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white w-full max-w-4xl h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden relative fade-in">
+    <!-- ============================================== -->
+    <!-- MODAL 1: GIAO DIỆN ĐỌC TRUYỆN (READER MODAL) -->
+    <!-- Thiết kế như một trang sách thật: ấm áp, dịu mắt -->
+    <!-- ============================================== -->
+    <div id="reader-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
+        <div class="bg-[#FCFCF9] border border-amber-200/80 rounded-3xl shadow-lift max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden fade-in">
             
-            <!-- Reader Header -->
-            <div class="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
-                <div class="flex items-center space-x-3 overflow-hidden">
-                    <span id="modal-cat-badge" class="bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
-                        Thể Loại
+            <!-- Modal Header -->
+            <div class="bg-white/95 border-b border-slate-200 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 truncate">
+                    <span id="modal-cat-badge" class="bg-sky-100 text-sky-800 text-[11px] font-extrabold px-2.5 py-1 rounded-lg uppercase tracking-wider shrink-0">
+                        Thể loại
                     </span>
-                    <h3 id="modal-book-title" class="text-base sm:text-lg font-extrabold truncate">Tên Tác Phẩm</h3>
+                    <h3 id="modal-book-title" class="text-base sm:text-lg font-extrabold text-slate-900 truncate">
+                        Tên Tác Phẩm
+                    </h3>
                 </div>
-                
-                <div class="flex items-center space-x-2">
-                    <!-- Music Toggle -->
-                    <button id="music-btn" onclick="toggleBackgroundMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
-                        <i class="fa-solid fa-music"></i>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- Nút Bật / Tắt Nhạc Nền Thư Giãn -->
+                    <button id="music-btn" onclick="toggleBackgroundMusic()" class="touch-action-btn bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors border border-amber-200/80" title="Nhạc không lời êm dịu giúp tập trung đọc sách">
+                        <i class="fa-solid fa-music text-amber-600"></i>
                         <span id="music-text" class="hidden sm:inline">Nhạc đọc sách</span>
                     </button>
-                    <!-- Close -->
-                    <button onclick="closeReaderModal()" class="text-slate-400 hover:text-white p-2 rounded-xl transition-all">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+
+                    <!-- Nút Đóng -->
+                    <button onclick="closeReaderModal()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-500 hover:text-slate-800 transition-colors" title="Đóng cửa sổ đọc">
+                        <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Reader Body (Split View) -->
-            <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-                <!-- Book Info Sidebar -->
-                <div class="w-full md:w-72 bg-slate-50 p-4 border-r border-slate-200 overflow-y-auto space-y-4 flex-shrink-0">
-                    <img id="modal-book-cover" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200" src="" alt="Bìa sách">
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Tác giả (Học sinh)</p>
-                        <p id="modal-book-author" class="text-sm font-extrabold text-blue-600">Nguyễn Văn A</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Tóm tắt tác phẩm</p>
-                        <p id="modal-book-summary" class="text-xs text-slate-600 mt-1 leading-relaxed">Nội dung tóm tắt...</p>
-                    </div>
+            <!-- Modal Body (Trang Sách) -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-7 space-y-6">
+                <div class="flex flex-col md:flex-row gap-6 items-start">
                     
-                    <!-- QR Code for this book -->
-                    <div class="pt-3 border-t border-slate-200 flex flex-col items-center text-center">
-                        <p class="text-[11px] font-bold text-slate-500 mb-2">Quét mã QR để chia sẻ bài viết này</p>
-                        <div id="modal-qr" class="bg-white p-2 rounded-xl shadow-sm border border-slate-200"></div>
-                    </div>
-                </div>
-
-                <!-- Book Reading Viewer -->
-                <div class="flex-1 bg-amber-50/40 p-4 sm:p-8 overflow-y-auto text-slate-800 relative">
-                    <div class="max-w-2xl mx-auto bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-amber-100 min-h-full space-y-6">
-                        <div class="text-center border-b border-slate-100 pb-4">
-                            <h2 id="modal-reader-title" class="text-2xl font-black text-slate-800">Tên Tác Phẩm</h2>
-                            <p class="text-xs text-slate-400 mt-1">Sáng tác bởi <span id="modal-reader-author" class="font-bold text-slate-600">...</span></p>
-                        </div>
+                    <!-- Bìa Sách & QR di động -->
+                    <div class="w-full md:w-56 shrink-0 flex flex-col items-center gap-3">
+                        <img id="modal-book-cover" class="w-full max-w-[220px] md:max-w-none h-52 sm:h-60 object-cover rounded-2xl shadow-card border border-slate-200" src="" alt="Bìa sách">
                         
-                        <!-- Content Area -->
-                        <div id="modal-reader-content" class="text-base leading-relaxed text-slate-700 whitespace-pre-line font-serif space-y-4">
-                            <!-- Story Text -->
+                        <div class="w-full bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-soft text-center space-y-1">
+                            <div class="text-[11px] font-semibold text-slate-400">Tác giả</div>
+                            <p id="modal-book-author" class="text-sm font-extrabold text-sky-800">Tên Tác Giả</p>
+                            <p id="modal-book-summary" class="text-xs text-slate-600 mt-1 leading-relaxed italic border-t border-slate-100 pt-2 text-left">
+                                Nội dung tóm tắt...
+                            </p>
+                        </div>
+
+                        <!-- QR Code để phụ huynh quét đọc trên điện thoại -->
+                        <div class="w-full bg-white p-3 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-center gap-3">
+                            <div id="modal-qr" class="p-1 bg-white rounded-lg border border-slate-100"></div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">Quét đọc tiếp</p>
+                                <p class="text-[10px] text-slate-500">Mở trên điện thoại</p>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Nội Dung Đọc Chi Tiết (Không gian đọc lớn, dịu mắt) -->
+                    <div class="flex-1 w-full bg-white p-5 sm:p-8 rounded-2xl border border-amber-100 shadow-soft space-y-4">
+                        <div class="border-b border-slate-100 pb-4">
+                            <h2 id="modal-reader-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-snug">
+                                Tên Tác Phẩm
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5">
+                                <span>Sáng tác bởi:</span>
+                                <strong id="modal-reader-author" class="text-sky-700 font-bold">...</strong>
+                            </p>
+                        </div>
+
+                        <!-- Khung chữ nội dung to rõ, dễ đọc cho học sinh lớp 1-5 -->
+                        <div id="modal-reader-content" class="text-base sm:text-lg leading-relaxed text-slate-800 whitespace-pre-line space-y-4 font-sans font-medium">
+                            Nội dung đang được hiển thị...
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Reader Footer Bar -->
-            <div class="bg-white border-t border-slate-200 p-3 px-6 flex items-center justify-between text-xs text-slate-500">
-                <span>📖 Đang ở chế độ đọc tập trung</span>
-                <span id="modal-view-counter" class="font-bold text-emerald-600"><i class="fa-solid fa-eye"></i> 0 lượt đọc</span>
+            <!-- Modal Footer -->
+            <div class="bg-white border-t border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between text-xs text-slate-500">
+                <span id="modal-view-counter" class="font-bold text-emerald-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye text-emerald-600"></i>
+                    <span>0 lượt đọc</span>
+                </span>
+                <button onclick="closeReaderModal()" class="touch-action-btn bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold px-4 py-1.5 rounded-xl transition-colors">
+                    Hoàn Tất Đọc
+                </button>
             </div>
 
         </div>
     </div>
 
-    <!-- MODAL 2: FORM ĐĂNG TRUYỆN MỚI (UPLOAD MODAL) -->
-    <div id="upload-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative fade-in">
+    <!-- ============================================== -->
+    <!-- MODAL 2: GỬI BÀI SÁNG TÁC MỚI (UPLOAD MODAL) -->
+    <!-- ============================================== -->
+    <div id="upload-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl shadow-lift max-w-lg w-full overflow-hidden fade-in border border-slate-200">
             
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-pen-to-square text-xl"></i>
+            <div class="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-feather-pointed"></i>
+                    </div>
                     <div>
-                        <h3 class="text-lg font-bold">Đăng Tác Phẩm Mới</h3>
-                        <p class="text-xs text-blue-100">Bài viết sẽ được Ban Quản Trị duyệt trước khi hiển thị</p>
+                        <h3 class="font-extrabold text-slate-800 text-base">Gửi Bài Viết / Sáng Tác Mới</h3>
+                        <p class="text-xs text-slate-500">Dành cho các bạn học sinh Lớp 4B</p>
                     </div>
                 </div>
-                <button onclick="closeUploadModal()" class="text-white/80 hover:text-white text-xl">
-                    <i class="fa-solid fa-xmark"></i>
+                <button onclick="closeUploadModal()" class="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
-            <form id="upload-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form id="upload-form" onsubmit="handleFormSubmit(event)" class="p-5 sm:p-6 space-y-4 max-h-[78vh] overflow-y-auto">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Tác Phẩm *</label>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Tên Tác Phẩm Của Bạn *</label>
                     <input type="text" id="form-title" required placeholder="Ví dụ: Chuyến phiêu lưu của Chú Thỏ Thông Minh" 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác Giả (Học Sinh) *</label>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Họ Và Tên Tác Giả *</label>
                         <input type="text" id="form-author" required placeholder="Ví dụ: Nguyễn Minh Anh (Lớp 4B)" 
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể Loại *</label>
-                        <select id="form-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <!-- Options populate from JS -->
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Thể Loại Truyện *</label>
+                        <select id="form-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none bg-white font-medium text-slate-700">
+                            <!-- Injected by JS -->
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tóm Tắt Ngắn *</label>
-                    <textarea id="form-summary" required rows="2" placeholder="Ghi 1-2 câu tóm tắt nội dung câu chuyện..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Tóm Tắt Ngắn (1 - 2 câu) *</label>
+                    <textarea id="form-summary" required rows="2" placeholder="Ghi 1-2 câu tóm tắt nội dung để các bạn khác cùng biết..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nội Dung Bài Viết / Truyện *</label>
-                    <textarea id="form-content" required rows="5" placeholder="Nhập toàn bộ nội dung câu chuyện hoặc thơ do học sinh sáng tác tại đây..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Toàn Bộ Nội Dung Tác Phẩm *</label>
+                    <textarea id="form-content" required rows="5" placeholder="Nhập toàn bộ nội dung câu chuyện, bài thơ do bạn sáng tác tại đây..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ảnh Bìa (Tùy chọn - URL)</label>
-                    <input type="url" id="form-cover" placeholder="Dán link ảnh hoặc để trống hệ thống tự chọn ảnh đẹp" 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Link Ảnh Bìa (Tùy chọn)</label>
+                    <input type="url" id="form-cover" placeholder="Dán link ảnh hoặc để trống hệ thống sẽ tự chọn ảnh đẹp" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400">
+                    <p class="text-[11px] text-slate-400 mt-1">Gợi ý: Nếu chưa có ảnh bìa, bạn cứ để trống nhé!</p>
                 </div>
 
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-amber-600 text-base flex-shrink-0"></i>
-                    <span>Tác phẩm sau khi gửi sẽ ở trạng thái <strong>Chờ kiểm duyệt</strong> để đảm bảo nội dung phù hợp lứa tuổi học sinh.</span>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/70 text-xs text-amber-900 flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+                    <span>Tác phẩm sau khi gửi sẽ được Thầy Cô giáo chủ nhiệm thẩm định duyệt trước khi xuất hiện trên Tủ Sách Số 4B.</span>
                 </div>
 
-                <div class="pt-2 flex justify-end space-x-3">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-sm font-bold hover:bg-slate-100">
+                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeUploadModal()" class="touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors">
                         Hủy
                     </button>
-                    <button type="submit" id="btn-submit-post" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-200 flex items-center gap-2">
-                        <span>Gửi Duyệt Bài Viết</span>
+                    <button type="submit" id="btn-submit-post" class="touch-action-btn bg-sky-700 hover:bg-sky-800 text-white px-5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        <span>Gửi Bài Viết</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 3: THÔNG BÁO GỬI BÀI THÀNH CÔNG (SUCCESS CONFIRMATION) -->
+    <!-- ============================================== -->
+    <!-- MODAL 3: THÔNG BÁO GỬI THÀNH CÔNG -->
+    <!-- ============================================== -->
     <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 text-center space-y-4 fade-in">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md shadow-emerald-200">
-                🎉
+        <div class="bg-white rounded-3xl shadow-lift max-w-sm w-full p-6 text-center space-y-4 fade-in border border-slate-200">
+            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mx-auto">
+                <i class="fa-solid fa-circle-check"></i>
             </div>
-            <h3 class="text-xl font-black text-slate-800">Gửi Bài Viết Thành Công!</h3>
+            <h3 class="text-xl font-extrabold text-slate-800">Gửi Bài Thành Công!</h3>
             <p class="text-sm text-slate-600 leading-relaxed">
-                Bài viết đã gửi thành công và đang chờ Ban Quản Trị duyệt trước khi hiển thị trên Tủ Sách Số 4B!
+                Tác phẩm của bạn đã được chuyển đến Thầy Cô giáo và Ban Quản Trị để kiểm duyệt trước khi đưa lên tủ sách.
             </p>
             <div class="bg-slate-50 p-3 rounded-xl text-xs text-slate-500">
-                Thầy cô và Ban Quản Trị sẽ đọc thẩm định tác phẩm của bạn sớm nhất nhé.
+                Cảm ơn bạn đã đóng góp câu chuyện sáng tạo cho lớp 4B!
             </div>
-            <button onclick="closeSuccessModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-200 text-sm transition-all">
+            <button onclick="closeSuccessModal()" class="w-full touch-action-btn bg-sky-700 hover:bg-sky-800 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition-all">
                 Đồng Ý
             </button>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- ============================================== -->
+    <!-- MODAL 4: VIẾT THIỆP TRI ÂN THẦY CÔ 20/11 -->
+    <!-- ============================================== -->
+    <div id="wish-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl shadow-lift max-w-lg w-full overflow-hidden fade-in border border-rose-200">
+            <div class="bg-gradient-to-r from-red-600 via-rose-600 to-amber-500 text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-300 text-red-900 flex items-center justify-center text-lg shadow-sm shrink-0">
+                        💐
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-base font-heading">Viết Thiệp Tri Ân Thầy Cô 20/11</h3>
+                        <p class="text-xs text-amber-100">Gửi trọn tình cảm yêu thương tới Thầy Cô Lớp 4B</p>
+                    </div>
+                </div>
+                <button onclick="closeWishModal()" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white/20 hover:bg-white/30 text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <form id="wish-form" onsubmit="handleWishSubmit(event)" class="p-5 sm:p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Tên Của Em (Học Sinh) *</label>
+                    <input type="text" id="wish-sender" required placeholder="Ví dụ: Nguyễn Minh Anh - Lớp 4B" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-rose-500 outline-none transition-all placeholder:text-slate-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Bông Hoa Em Muốn Dâng Tặng</label>
+                    <div class="grid grid-cols-3 gap-2 text-xs font-bold" id="flower-picker">
+                        <label class="border border-rose-200 rounded-xl p-2.5 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-rose-50 has-[:checked]:bg-rose-100 has-[:checked]:border-rose-400 text-slate-700">
+                            <input type="radio" name="wish-flower" value="🌹 Hoa Hồng Điểm 10" checked class="hidden">
+                            <span>🌹 Hoa Điểm 10</span>
+                        </label>
+                        <label class="border border-amber-200 rounded-xl p-2.5 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-amber-50 has-[:checked]:bg-amber-100 has-[:checked]:border-amber-400 text-slate-700">
+                            <input type="radio" name="wish-flower" value="🌻 Hướng Dương Tri Ân" class="hidden">
+                            <span>🌻 Hướng Dương</span>
+                        </label>
+                        <label class="border border-pink-200 rounded-xl p-2.5 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-pink-50 has-[:checked]:bg-pink-100 has-[:checked]:border-pink-400 text-slate-700">
+                            <input type="radio" name="wish-flower" value="💐 Bó Hoa Tươi Thắm" class="hidden">
+                            <span>💐 Bó Hoa Thắm</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Lời Chúc Tri Ân Của Em Tới Thầy Cô *</label>
+                    <textarea id="wish-message" required rows="3" placeholder="Ví dụ: Kính chúc Thầy Cô luôn mạnh khỏe, vui vẻ và luôn yêu thương chúng em thật nhiều ạ!" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-rose-500 outline-none transition-all placeholder:text-slate-400"></textarea>
+                </div>
+
+                <!-- Gợi ý lời chúc nhanh -->
+                <div class="space-y-1">
+                    <span class="text-[11px] font-bold text-slate-400">Gợi ý câu chúc nhanh:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" onclick="setQuickWish('Kính chúc Thầy Cô luôn dồi dào sức khỏe, tràn đầy niềm vui và hạnh phúc ạ!')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-rose-200/60 transition-colors">
+                            "Dồi dào sức khỏe, niềm vui"
+                        </button>
+                        <button type="button" onclick="setQuickWish('Em cảm ơn Thầy Cô đã luôn kiên nhẫn dạy dỗ và yêu thương chúng em!')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-200/60 transition-colors">
+                            "Kiên nhẫn dạy dỗ, yêu thương"
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeWishModal()" class="touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors">
+                        Đóng
+                    </button>
+                    <button type="submit" class="touch-action-btn bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 active:scale-95 text-white px-5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Gửi Thiệp Chúc Mừng</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- LOGIC JAVASCRIPT: GIỮ NGUYÊN 100% API & CHỨC NĂNG -->
+    <!-- ============================================== -->
     <script src="config.js?v=2.3"></script>
     <script>
         const APP_URL = window.location.href.split('#')[0].split('?')[0];
@@ -492,6 +760,7 @@
         // Initialize App
         window.addEventListener('DOMContentLoaded', async () => {
             renderHeroQR();
+            renderWishes();
             await loadCategories();
             await Promise.all([
                 fetchApprovedBooks(),
@@ -513,16 +782,15 @@
 
         function renderCategoryPills() {
             const container = document.getElementById('category-pills');
-            // Giữ nút "Tất cả"
             container.innerHTML = `
-                <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                <button onclick="setCategory('all')" class="cat-btn active touch-action-btn bg-sky-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
                     Tất cả
                 </button>
             `;
 
             categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = 'cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all';
+                btn.className = 'cat-btn touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all border border-slate-200/60';
                 btn.innerHTML = `${cat.icon || '📖'} ${cat.name}`;
                 btn.onclick = () => setCategory(cat.name);
                 container.appendChild(btn);
@@ -540,7 +808,7 @@
             });
         }
 
-        // 2. Tải danh sách truyện đã được duyệt (status === 'approved')
+        // 2. Tải danh sách truyện đã được duyệt
         async function fetchApprovedBooks() {
             const loadingState = document.getElementById('loading-state');
             const booksGrid = document.getElementById('books-grid');
@@ -549,7 +817,6 @@
             booksGrid.classList.add('hidden');
 
             try {
-                // Chỉ lấy các bài viết có status === 'approved'
                 const data = await StorageService.getPosts('approved');
                 books = data || [];
             } catch (err) {
@@ -563,7 +830,7 @@
             }
         }
 
-        // 2.5. XỬ LÝ CHUYỂN TAB CHÍNH & SÁCH TRUYỆN GIẤY
+        // 2.5. Xử lý chuyển đổi Tab (Tủ Sách Số vs Sách Giấy)
         function switchMainTab(mode) {
             const btnDigital = document.getElementById('btn-tab-digital');
             const btnPhysical = document.getElementById('btn-tab-physical');
@@ -571,13 +838,13 @@
             const secPhysical = document.getElementById('section-physical');
 
             if (mode === 'digital') {
-                btnDigital.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-blue-600 text-white shadow-sm transition-all whitespace-nowrap';
-                btnPhysical.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap';
+                btnDigital.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-sky-700 text-white shadow-sm transition-all whitespace-nowrap';
+                btnPhysical.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap';
                 secDigital.classList.remove('hidden');
                 secPhysical.classList.add('hidden');
             } else {
-                btnPhysical.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-amber-500 text-white shadow-sm transition-all whitespace-nowrap';
-                btnDigital.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap';
+                btnPhysical.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-amber-600 text-white shadow-sm transition-all whitespace-nowrap';
+                btnDigital.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap';
                 secPhysical.classList.remove('hidden');
                 secDigital.classList.add('hidden');
                 renderHomePhysicalBooks();
@@ -645,45 +912,48 @@
             filtered.forEach(book => {
                 const isAvailable = book.status === 'available';
                 const statusBadge = isAvailable
-                    ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Có thể mượn</span>'
-                    : '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Đang mượn</span>';
+                    ? '<span class="bg-emerald-50 text-emerald-800 text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap inline-flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Có thể mượn</span>'
+                    : '<span class="bg-amber-50 text-amber-900 text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap inline-flex items-center gap-1.5"><i class="fa-solid fa-clock text-amber-600"></i> Đang mượn</span>';
 
-                let borrowInfo = '<span class="text-slate-400 text-xs italic">Sách đang ở kệ lớp, có thể mượn đọc</span>';
+                let borrowInfo = '<span class="text-slate-400 text-xs italic">Sách đang ở kệ lớp 4B</span>';
                 if (!isAvailable) {
                     borrowInfo = `
-                        <div class="text-xs text-amber-900 font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-graduate text-amber-600"></i>
+                        <div class="text-xs text-amber-950 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-graduate text-amber-700"></i>
                             <span>${book.borrower || 'Bạn học sinh'}</span>
                         </div>
                         <div class="text-[11px] text-slate-500 mt-0.5">
-                            Ngày mượn: <strong>${book.borrowDate || 'Gần đây'}</strong> • Hẹn trả: <strong class="text-amber-700">${book.returnDate || 'Sắp tới'}</strong>
+                            Mượn: <strong>${book.borrowDate || 'Gần đây'}</strong> • Hẹn trả: <strong class="text-amber-800">${book.returnDate || 'Sắp tới'}</strong>
                         </div>
                     `;
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-amber-50/40 transition-colors';
+                tr.className = 'hover:bg-amber-50/50 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">
+                    <td class="py-3.5 px-4 font-mono font-bold text-xs text-sky-700 whitespace-nowrap">
                         ${book.code || '-'}
                     </td>
-                    <td class="py-3 px-4">
+                    <td class="py-3.5 px-4">
                         <div class="font-extrabold text-slate-800 text-sm line-clamp-1">
                             ${book.title}
                         </div>
-                        <div class="text-xs text-slate-400 mt-0.5">
-                            Tác giả: <span class="text-slate-600 font-medium">${book.author || 'Nhiều tác giả'}</span>
-                            ${book.note ? ` • <span class="italic text-[11px]">${book.note}</span>` : ''}
+                        <div class="text-xs text-slate-500 mt-0.5">
+                            Tác giả: <span class="font-medium text-slate-700">${book.author || 'Nhiều tác giả'}</span>
+                            ${book.note ? ` • <span class="italic text-[11px] text-slate-400">${book.note}</span>` : ''}
                         </div>
                     </td>
-                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
-                        <div class="font-semibold text-slate-700">${book.category || 'Văn học thiếu nhi'}</div>
-                        <div class="text-[11px] text-slate-400 font-medium"><i class="fa-solid fa-location-dot text-rose-400 mr-1"></i>${book.shelf || 'Kệ sách lớp'}</div>
+                    <td class="py-3.5 px-4 text-xs whitespace-nowrap">
+                        <div class="font-bold text-slate-700">${book.category || 'Văn học thiếu nhi'}</div>
+                        <div class="text-[11px] text-slate-400 font-medium flex items-center gap-1 mt-0.5">
+                            <i class="fa-solid fa-location-dot text-rose-400"></i>
+                            <span>${book.shelf || 'Kệ sách lớp'}</span>
+                        </div>
                     </td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
                         ${statusBadge}
                     </td>
-                    <td class="py-3 px-4">
+                    <td class="py-3.5 px-4">
                         ${borrowInfo}
                     </td>
                 `;
@@ -697,11 +967,11 @@
             heroQrEl.innerHTML = '';
             new QRCode(heroQrEl, {
                 text: APP_URL,
-                width: 72,
-                height: 72,
-                colorDark: "#1e293b",
+                width: 76,
+                height: 76,
+                colorDark: "#0f172a",
                 colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+                correctLevel: QRCode.CorrectLevel.M
             });
         }
 
@@ -717,11 +987,9 @@
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 if ((cat === 'all' && btn.innerText.includes('Tất cả')) || btn.innerText.includes(cat)) {
-                    btn.classList.add('bg-blue-600', 'text-white');
-                    btn.classList.remove('bg-slate-100', 'text-slate-700');
+                    btn.className = 'cat-btn active touch-action-btn bg-sky-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm';
                 } else {
-                    btn.classList.remove('bg-blue-600', 'text-white');
-                    btn.classList.add('bg-slate-100', 'text-slate-700');
+                    btn.className = 'cat-btn touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all border border-slate-200/60';
                 }
             });
             filterBooks();
@@ -759,54 +1027,56 @@
             }
 
             listToRender.forEach(book => {
-                const isAI = (book.category || '').includes('AI');
+                const isAI = (book.category || '').includes('AI') || (book.summary || '').includes('AI');
                 const defaultImage = isAI 
-                    ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop'
-                    : 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
+                    ? 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop'
+                    : 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop';
 
                 const cardHtml = `
-                    <div class="book-card bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm flex flex-col justify-between">
+                    <div class="book-card bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-soft flex flex-col justify-between hover:border-amber-300/80 hover:shadow-card">
                         <div>
-                            <!-- Cover & Badge -->
-                            <div class="relative h-44 overflow-hidden bg-slate-100">
+                            <!-- Cover & Badges -->
+                            <div class="relative h-44 overflow-hidden bg-slate-100 cursor-pointer" onclick="openReaderModal('${book.id}')">
                                 <img src="${book.cover || defaultImage}" alt="${book.title}" 
-                                    class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                                     onerror="this.src='${defaultImage}'">
+                                
                                 <div class="absolute top-3 left-3 flex flex-wrap gap-1">
-                                    <span class="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                    <span class="bg-slate-900/75 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                                         ${book.category}
                                     </span>
                                 </div>
+
                                 ${isAI ? `
-                                    <div class="absolute top-3 right-3 bg-amber-400 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
-                                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Co-Author
+                                    <div class="absolute top-3 right-3 ai-stamp text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i> Cùng sáng tác AI
                                     </div>
                                 ` : ''}
                             </div>
 
                             <!-- Info -->
-                            <div class="p-4 space-y-2">
-                                <h3 class="font-extrabold text-base text-slate-800 line-clamp-2 leading-snug hover:text-blue-600 transition-colors cursor-pointer" onclick="openReaderModal('${book.id}')">
+                            <div class="p-4 sm:p-5 space-y-2">
+                                <h3 class="font-extrabold text-base text-slate-900 line-clamp-2 leading-snug hover:text-sky-700 transition-colors cursor-pointer" onclick="openReaderModal('${book.id}')">
                                     ${book.title}
                                 </h3>
-                                <div class="flex items-center space-x-1 text-xs text-blue-600 font-bold">
-                                    <i class="fa-solid fa-user-pen"></i>
+                                <div class="flex items-center gap-1.5 text-xs text-sky-800 font-bold">
+                                    <i class="fa-solid fa-pen-nib text-slate-400 text-[11px]"></i>
                                     <span>${book.author}</span>
                                 </div>
-                                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed pt-1">
                                     ${book.summary}
                                 </p>
                             </div>
                         </div>
 
                         <!-- Card Footer -->
-                        <div class="p-4 pt-0 border-t border-slate-50 mt-3 flex items-center justify-between">
-                            <span class="text-[11px] font-semibold text-slate-400">
-                                <i class="fa-solid fa-eye text-slate-400"></i> ${book.views || 0} lượt đọc
+                        <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fa-regular fa-eye"></i> ${book.views || 0} lượt đọc
                             </span>
                             <button onclick="openReaderModal('${book.id}')" 
-                                class="bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 text-xs font-bold px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-book-open"></i> Đọc Sách
+                                class="touch-action-btn bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 text-xs font-bold px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-sky-100">
+                                <i class="fa-solid fa-book-open text-xs"></i> Đọc Sách
                             </button>
                         </div>
                     </div>
@@ -815,13 +1085,12 @@
             });
         }
 
-        // 7. READER MODAL
+        // 7. Reader Modal
         function openReaderModal(bookId) {
             const book = books.find(b => b.id === bookId);
             if (!book) return;
 
             activeBook = book;
-            // Tăng lượt xem lên cơ sở dữ liệu
             StorageService.incrementViews(book.id);
             book.views = (Number(book.views) || 0) + 1;
             updateHeaderStats();
@@ -835,18 +1104,21 @@
             document.getElementById('modal-reader-title').innerText = book.title;
             document.getElementById('modal-reader-author').innerText = book.author;
             document.getElementById('modal-reader-content').innerText = book.content || 'Nội dung đang được cập nhật...';
-            document.getElementById('modal-view-counter').innerHTML = `<i class="fa-solid fa-eye"></i> ${book.views} lượt đọc`;
+            document.getElementById('modal-view-counter').innerHTML = `<i class="fa-solid fa-eye text-emerald-600"></i> ${book.views} lượt đọc`;
             
             const coverEl = document.getElementById('modal-book-cover');
-            coverEl.src = book.cover || 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
+            coverEl.src = book.cover || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop';
 
-            // Tạo QR Code cho riêng bài đọc này
+            // QR Code cho riêng bài đọc này
             const qrEl = document.getElementById('modal-qr');
             qrEl.innerHTML = '';
             new QRCode(qrEl, {
                 text: `${APP_URL}?book=${book.id}`,
-                width: 80,
-                height: 80
+                width: 76,
+                height: 76,
+                colorDark: "#0f172a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
             });
 
             document.getElementById('reader-modal').classList.remove('hidden');
@@ -867,7 +1139,7 @@
             }
         }
 
-        // 8. BACKGROUND MUSIC SYNTHESIZER
+        // 8. Background Music Synthesizer (Êm ái, pentatonic dịu nhẹ)
         function toggleBackgroundMusic() {
             const musicBtn = document.getElementById('music-btn');
             const musicText = document.getElementById('music-text');
@@ -875,12 +1147,12 @@
             if (!isMusicPlaying) {
                 startCalmMusic();
                 isMusicPlaying = true;
-                musicBtn.classList.add('bg-amber-500', 'text-slate-950');
+                musicBtn.className = 'touch-action-btn bg-amber-500 text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm';
                 musicText.innerText = 'Tắt nhạc';
             } else {
                 stopCalmMusic();
                 isMusicPlaying = false;
-                musicBtn.classList.remove('bg-amber-500', 'text-slate-950');
+                musicBtn.className = 'touch-action-btn bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors border border-amber-200/80';
                 musicText.innerText = 'Nhạc đọc sách';
             }
         }
@@ -891,7 +1163,7 @@
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
 
-            const notes = [261.63, 293.66, 329.63, 392.00, 440.00]; // Pentatonic notes
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00]; // Pentatonic notes dịu êm
             let noteIdx = 0;
 
             musicInterval = setInterval(() => {
@@ -903,14 +1175,14 @@
                 osc.frequency.setValueAtTime(notes[noteIdx % notes.length], audioContext.currentTime);
                 
                 gain.gain.setValueAtTime(0.01, audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.5);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 2.5);
+                gain.gain.exponentialRampToValueAtTime(0.07, audioContext.currentTime + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 2.4);
 
                 osc.connect(gain);
                 gain.connect(audioContext.destination);
 
                 osc.start();
-                osc.stop(audioContext.currentTime + 2.6);
+                osc.stop(audioContext.currentTime + 2.5);
 
                 noteIdx = Math.floor(Math.random() * notes.length);
             }, 2000);
@@ -920,7 +1192,7 @@
             if (musicInterval) clearInterval(musicInterval);
         }
 
-        // 9. UPLOAD MODAL LOGIC & FORM SUBMIT
+        // 9. Upload Form & Modals
         function openUploadModal() {
             document.getElementById('upload-modal').classList.remove('hidden');
         }
@@ -946,12 +1218,10 @@
             const content = document.getElementById('form-content').value.trim();
             const cover = document.getElementById('form-cover').value.trim();
 
-            // Disable nút và hiện hiệu ứng tải
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi bài...';
 
             try {
-                // Gửi bài qua StorageService (Lưu status: "pending")
                 await StorageService.createPost({
                     title,
                     author,
@@ -963,8 +1233,6 @@
 
                 closeUploadModal();
                 document.getElementById('upload-form').reset();
-
-                // Hiển thị Modal thông báo thân thiện
                 document.getElementById('success-modal').classList.remove('hidden');
 
             } catch (err) {
@@ -976,24 +1244,24 @@
             }
         }
 
-        // 10. TOAST NOTIFICATION UTILITY
+        // 10. Toast Notification Utility
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
             let bg = 'bg-slate-800 text-white';
-            let icon = 'fa-info-circle';
+            let icon = 'fa-circle-info';
             if (type === 'success') {
-                bg = 'bg-emerald-600 text-white shadow-emerald-200';
+                bg = 'bg-emerald-700 text-white shadow-card';
                 icon = 'fa-circle-check';
             } else if (type === 'error') {
-                bg = 'bg-rose-600 text-white shadow-rose-200';
+                bg = 'bg-rose-700 text-white shadow-card';
                 icon = 'fa-circle-exclamation';
             }
 
-            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in`;
+            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in border border-white/20`;
             toast.innerHTML = `
-                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <i class="fa-solid ${icon} text-base shrink-0"></i>
                 <span class="flex-1">${message}</span>
             `;
 
@@ -1002,9 +1270,201 @@
             setTimeout(() => {
                 toast.style.transition = 'all 0.3s ease-out';
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-10px)';
+                toast.style.transform = 'translateY(-8px)';
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
+        }
+
+        // ==============================================
+        // 11. XỬ LÝ LỜI CHÚC TRI ÂN THẦY CÔ 20/11
+        // ==============================================
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function formatWishDate(dateVal) {
+            if (!dateVal) return '20/11';
+            if (typeof dateVal === 'string') {
+                const cleanDateMatch = dateVal.trim().match(/^(\d{1,2})[\/\-](\d{1,2})([\/\-](\d{2,4}))?$/);
+                if (cleanDateMatch) {
+                    const d = cleanDateMatch[1].padStart(2, '0');
+                    const m = cleanDateMatch[2].padStart(2, '0');
+                    const y = cleanDateMatch[4] ? ('/' + cleanDateMatch[4]) : '';
+                    return d + '/' + m + y;
+                }
+            }
+            try {
+                const d = new Date(dateVal);
+                if (!isNaN(d.getTime())) {
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            } catch(e) {}
+            return String(dateVal).slice(0, 10);
+        }
+
+        let cachedWishes = [];
+        let isWishesExpanded = false;
+        const WISHES_DEFAULT_LIMIT = 6;
+
+        function buildWishCardHtml(w) {
+            return `
+                <div class="bg-white p-3.5 rounded-2xl border border-rose-100 shadow-sm flex flex-col justify-between hover:border-rose-300 hover:shadow-md transition-all duration-200 group">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-1 text-[11px]">
+                            <span class="font-extrabold text-rose-800 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/50">${escapeHtml(w.flower || '💐 Tri ân')}</span>
+                            <span class="text-slate-400 font-semibold shrink-0 text-[11px]" title="${escapeHtml(String(w.date || w.createdAt || ''))}">${formatWishDate(w.date || w.createdAt)}</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium line-clamp-3 italic">
+                            "${escapeHtml(w.message || '')}"
+                        </p>
+                    </div>
+                    <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 text-xs text-slate-500 font-bold">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-user-pen text-rose-500 text-[11px] shrink-0"></i>
+                            <span class="truncate text-slate-700">${escapeHtml(w.sender || 'Học sinh 4B')}</span>
+                        </div>
+                        <span class="text-[10px] text-rose-400 font-normal opacity-0 group-hover:opacity-100 transition-opacity">❤️ 20/11</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderWishes() {
+            const container = document.getElementById('wishes-container');
+            const toggleContainer = document.getElementById('wishes-toggle-container');
+            const toggleBtnText = document.getElementById('btn-toggle-wishes-text');
+            const toggleBtnIcon = document.getElementById('btn-toggle-wishes-icon');
+            const totalCountBadge = document.getElementById('wishes-total-count-badge');
+            if (!container) return;
+
+            try {
+                if (typeof StorageService.getWishes === 'function') {
+                    cachedWishes = await StorageService.getWishes();
+                } else {
+                    cachedWishes = JSON.parse(localStorage.getItem('thuvien_4b_2011_wishes') || '[]');
+                }
+            } catch(e) {
+                cachedWishes = window.INITIAL_WISHES || [];
+            }
+
+            if (!Array.isArray(cachedWishes)) cachedWishes = [];
+
+            if (totalCountBadge) {
+                totalCountBadge.innerHTML = `<i class="fa-solid fa-seedling text-red-600"></i> ${cachedWishes.length} Lời chúc tri ân`;
+            }
+
+            const displayWishes = isWishesExpanded ? cachedWishes : cachedWishes.slice(0, WISHES_DEFAULT_LIMIT);
+
+            if (displayWishes.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-slate-400 text-xs font-semibold bg-rose-50/50 rounded-2xl border border-dashed border-rose-200">
+                        Chưa có lời chúc nào. Em hãy là người đầu tiên gửi thiệp tri ân Thầy Cô nhé! 💐
+                    </div>
+                `;
+            } else {
+                container.innerHTML = displayWishes.map(buildWishCardHtml).join('');
+            }
+
+            if (toggleContainer) {
+                if (cachedWishes.length > WISHES_DEFAULT_LIMIT) {
+                    toggleContainer.classList.remove('hidden');
+                    const remaining = cachedWishes.length - WISHES_DEFAULT_LIMIT;
+                    if (isWishesExpanded) {
+                        if (toggleBtnText) toggleBtnText.textContent = 'Thu gọn danh sách';
+                        if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-chevron-up text-xs transition-transform duration-200';
+                    } else {
+                        if (toggleBtnText) toggleBtnText.textContent = `Xem thêm (${remaining} lời chúc khác)`;
+                        if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-chevron-down text-xs transition-transform duration-200';
+                    }
+                } else {
+                    toggleContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleWishesExpand() {
+            isWishesExpanded = !isWishesExpanded;
+            const container = document.getElementById('wishes-container');
+            const toggleContainer = document.getElementById('wishes-toggle-container');
+            const toggleBtnText = document.getElementById('btn-toggle-wishes-text');
+            const toggleBtnIcon = document.getElementById('btn-toggle-wishes-icon');
+            if (!container) return;
+
+            const displayWishes = isWishesExpanded ? cachedWishes : cachedWishes.slice(0, WISHES_DEFAULT_LIMIT);
+            container.innerHTML = displayWishes.map(buildWishCardHtml).join('');
+
+            if (toggleContainer) {
+                const remaining = cachedWishes.length - WISHES_DEFAULT_LIMIT;
+                if (isWishesExpanded) {
+                    if (toggleBtnText) toggleBtnText.textContent = 'Thu gọn danh sách';
+                    if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-chevron-up text-xs transition-transform duration-200';
+                } else {
+                    if (toggleBtnText) toggleBtnText.textContent = `Xem thêm (${remaining} lời chúc khác)`;
+                    if (toggleBtnIcon) toggleBtnIcon.className = 'fa-solid fa-chevron-down text-xs transition-transform duration-200';
+                    document.getElementById('wishes-tribute-wall')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        function openWishModal() {
+            document.getElementById('wish-modal').classList.remove('hidden');
+        }
+
+        function closeWishModal() {
+            document.getElementById('wish-modal').classList.add('hidden');
+        }
+
+        function setQuickWish(text) {
+            document.getElementById('wish-message').value = text;
+        }
+
+        async function handleWishSubmit(e) {
+            e.preventDefault();
+            const sender = document.getElementById('wish-sender').value.trim();
+            const flower = document.querySelector('input[name="wish-flower"]:checked')?.value || '💐 Bó Hoa Tươi Thắm';
+            const message = document.getElementById('wish-message').value.trim();
+
+            if (!sender || !message) return;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+
+            try {
+                const today = new Date();
+                const d = String(today.getDate()).padStart(2, '0');
+                const m = String(today.getMonth() + 1).padStart(2, '0');
+                const y = today.getFullYear();
+                const dateStr = `${d}/${m}/${y}`;
+
+                await StorageService.createWish({
+                    sender,
+                    flower,
+                    message,
+                    date: dateStr
+                });
+
+                await renderWishes();
+                closeWishModal();
+                document.getElementById('wish-form').reset();
+                showToast('Em đã gửi thiệp tri ân 20/11 tới Thầy Cô thành công! 💐', 'success');
+            } catch(err) {
+                console.error('Lỗi gửi lời chúc:', err);
+                showToast('Lỗi khi gửi thiệp: ' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            }
         }
     </script>
 </body>

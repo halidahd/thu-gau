@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Quản Trị - Tủ Sách Số 4B</title>
+    <title>Bảng Quản Trị - Thư Viện Sáng Tạo Lớp 4B</title>
+
+    <!-- Google Fonts: Baloo 2 (Headings) & Nunito (UI/Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,103 +17,139 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
-                        serif: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                        sans: ['Nunito', 'sans-serif'],
+                        heading: ['"Baloo 2"', 'cursive', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 10px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03)',
+                        'card': '0 4px 16px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -2px rgba(15, 23, 42, 0.04)',
                     }
                 }
             }
         }
     </script>
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * {
-            font-family: Cambria, "Times New Roman", Times, serif;
-        }
-        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a, label {
-            font-family: Cambria, "Times New Roman", Times, serif;
-        }
-        .fa, .fa-solid, .fa-regular, .fa-brands, [class*=" fa-"], [class^="fa-"] {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+        html {
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
         }
         body {
+            font-family: 'Nunito', sans-serif;
             background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h1, h2, h3, h4, h5, .font-heading {
+            font-family: 'Baloo 2', cursive, sans-serif;
         }
         .fade-in {
-            animation: fadeIn 0.25s ease-out;
+            animation: fadeIn 0.2s ease-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        /* No scrollbar utility */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Interactive touch button minimum height */
+        .btn-touch {
+            min-height: 40px;
+        }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col">
+<body class="min-h-screen text-slate-800 flex flex-col antialiased selection:bg-sky-100 selection:text-sky-900">
 
-    <!-- TOAST CONTAINER -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
     <!-- ========================================== -->
     <!-- MÀN HÌNH ĐĂNG NHẬP (AUTH MODAL / SCREEN) -->
     <!-- ========================================== -->
-    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 border border-slate-100 relative fade-in">
+    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-7 sm:p-8 border border-slate-150 relative fade-in ring-1 ring-slate-900/5">
             <div class="text-center space-y-2 mb-6">
-                <div class="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl mx-auto shadow-lg shadow-blue-200">
-                    🔐
+                <div class="w-16 h-16 bg-sky-50 text-sky-700 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-sky-100 shadow-sm">
+                    📚
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-800">Quản Trị Tủ Sách Số 4B</h2>
-                <p class="text-xs text-slate-500">Vui lòng đăng nhập để kiểm duyệt và quản lý tác phẩm</p>
+                <h2 class="text-2xl font-black text-slate-800 font-heading">Quản Trị Thư Viện Lớp 4B</h2>
+                <p class="text-xs text-slate-500 font-medium">Trường Tiểu Học Nam Đồng • Đăng nhập để kiểm duyệt tác phẩm</p>
             </div>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1.5">Tài khoản</label>
                     <div class="relative">
-                        <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="login-username" required placeholder="Nhập tên tài khoản" 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="login-username" required placeholder="Nhập tên tài khoản giáo viên" 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1.5">Mật khẩu</label>
                     <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="password" id="login-password" required placeholder="••••••••" 
-                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                            <i id="eye-icon" class="fa-solid fa-eye"></i>
+                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1" title="Hiện/ẩn mật khẩu">
+                            <i id="eye-icon" class="fa-solid fa-eye text-sm"></i>
                         </button>
                     </div>
                 </div>
 
-                <div id="login-error" class="hidden text-rose-600 text-xs font-bold text-center bg-rose-50 p-2 rounded-lg border border-rose-200">
+                <div class="bg-sky-50 text-sky-800 p-3 rounded-2xl text-xs flex items-center justify-between border border-sky-100 font-medium">
+                    <span>Mặc định: <strong>admin</strong> | <strong>admin123@@</strong></span>
+                    <button type="button" onclick="fillDefaultCredentials()" class="text-sky-700 font-extrabold underline hover:text-sky-900 cursor-pointer">
+                        Điền nhanh
+                    </button>
+                </div>
+
+                <div id="login-error" class="hidden text-rose-700 text-xs font-bold text-center bg-rose-50 p-2.5 rounded-xl border border-rose-200">
                     Tài khoản hoặc mật khẩu không chính xác!
                 </div>
 
-                <button type="submit" id="btn-login-submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-98">
-                    Đăng Nhập Quản Trị
+                <button type="submit" id="btn-login-submit" class="w-full bg-sky-700 hover:bg-sky-800 active:scale-98 text-white font-extrabold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-amber-300"></i>
+                    <span>Đăng Nhập Quản Trị</span>
                 </button>
             </form>
 
             <div class="mt-6 text-center border-t border-slate-100 pt-4">
-                <a href="index.html" class="text-xs text-slate-500 hover:text-blue-600 font-bold inline-flex items-center gap-1.5">
+                <a href="index.html" class="text-xs text-slate-500 hover:text-sky-700 font-bold inline-flex items-center gap-1.5 transition-colors">
                     <i class="fa-solid fa-arrow-left"></i> Quay lại Thư Viện Lớp 4B
                 </a>
             </div>
@@ -118,43 +160,43 @@
     <!-- BẢNG ĐIỀU KHIỂN CHÍNH (ADMIN DASHBOARD) -->
     <!-- ========================================== -->
     <div id="admin-dashboard" class="hidden flex-1 flex flex-col">
-        <!-- Header -->
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+        <!-- Topbar / Header -->
+        <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
                 <div class="flex items-center space-x-3">
-                    <a href="index.html" class="flex items-center space-x-2.5 group">
-                        <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform shadow-md shadow-blue-200">
+                    <a href="index.html" class="flex items-center space-x-3 group">
+                        <div class="w-10 h-10 bg-sky-700 text-white rounded-xl flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform shadow-sm">
                             📚
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h1 class="text-lg sm:text-xl font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                <h1 class="text-lg sm:text-xl font-black text-slate-800 font-heading group-hover:text-sky-700 transition-colors leading-tight">
                                     Tủ Sách Số 4B
                                 </h1>
-                                <span class="bg-blue-100 text-blue-700 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-blue-200">
+                                <span class="bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-sky-200">
                                     Admin
                                 </span>
                             </div>
-                            <p class="text-xs text-slate-500">Ban Quản Trị • Trường Tiểu Học Nam Đồng</p>
+                            <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Ban Quản Trị • Trường Tiểu Học Nam Đồng</p>
                         </div>
                     </a>
                 </div>
 
                 <!-- Right actions -->
-                <div class="flex items-center space-x-3">
-                    <!-- Status indicator -->
-                    <div id="api-status-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                <div class="flex items-center space-x-2.5">
+                    <!-- Google Sheets status indicator -->
+                    <div id="api-status-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200/80">
                         <span class="w-2 h-2 rounded-full bg-slate-400" id="api-status-dot"></span>
                         <span id="api-status-text">Đang kiểm tra CSDL...</span>
                     </div>
 
-                    <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all">
-                        <i class="fa-solid fa-earth-americas"></i>
-                        <span class="hidden sm:inline">Xem Trang Chủ</span>
+                    <a href="index.html" class="bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-earth-americas text-sky-600"></i>
+                        <span class="hidden sm:inline">Xem Thư Viện</span>
                     </a>
 
-                    <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border border-rose-200">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+                    <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition-all border border-rose-200/80" title="Đăng xuất khỏi hệ thống">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         <span class="hidden sm:inline">Đăng Xuất</span>
                     </button>
                 </div>
@@ -162,77 +204,91 @@
         </header>
 
         <!-- Main Body -->
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
-            <!-- Stats Overview Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+            <!-- Stats Overview Cards (4 Bento KPI Cards) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <!-- KPI 1 -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-between hover:border-amber-300 hover:shadow-card transition-all">
                     <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Chờ Kiểm Duyệt</p>
-                        <h3 id="stat-pending-count" class="text-2xl sm:text-3xl font-black text-amber-600 mt-1">0</h3>
+                        <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Chờ Kiểm Duyệt</p>
+                        <h3 id="stat-pending-count" class="text-2xl sm:text-3xl font-black text-amber-600 font-heading mt-0.5">0</h3>
+                        <p class="text-[10px] text-amber-600 font-bold mt-0.5">Cần duyệt xuất bản</p>
                     </div>
-                    <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-xl border border-amber-100">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-lg sm:text-xl border border-amber-200/60 shrink-0">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <!-- KPI 2 -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-between hover:border-emerald-300 hover:shadow-card transition-all">
                     <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Đã Xuất Bản</p>
-                        <h3 id="stat-approved-count" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</h3>
+                        <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Đã Xuất Bản</p>
+                        <h3 id="stat-approved-count" class="text-2xl sm:text-3xl font-black text-emerald-600 font-heading mt-0.5">0</h3>
+                        <p class="text-[10px] text-emerald-600 font-bold mt-0.5">Đang hiển thị trên web</p>
                     </div>
-                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-xl border border-emerald-100">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-lg sm:text-xl border border-emerald-200/60 shrink-0">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <!-- KPI 3 -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-between hover:border-sky-300 hover:shadow-card transition-all">
                     <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Tổng Tác Phẩm</p>
-                        <h3 id="stat-total-count" class="text-2xl sm:text-3xl font-black text-blue-600 mt-1">0</h3>
+                        <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Tổng Tác Phẩm</p>
+                        <h3 id="stat-total-count" class="text-2xl sm:text-3xl font-black text-sky-700 font-heading mt-0.5">0</h3>
+                        <p class="text-[10px] text-sky-700 font-bold mt-0.5">Sáng tác của học sinh</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-xl border border-blue-100">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-700 text-lg sm:text-xl border border-sky-200/60 shrink-0">
                         <i class="fa-solid fa-book-bookmark"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                <!-- KPI 4 -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-between hover:border-indigo-300 hover:shadow-card transition-all">
                     <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Tổng Lượt Đọc</p>
-                        <h3 id="stat-views-count" class="text-2xl sm:text-3xl font-black text-indigo-600 mt-1">0</h3>
+                        <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Tổng Lượt Đọc</p>
+                        <h3 id="stat-views-count" class="text-2xl sm:text-3xl font-black text-indigo-600 font-heading mt-0.5">0</h3>
+                        <p class="text-[10px] text-indigo-600 font-bold mt-0.5">Lượt tương tác học tập</p>
                     </div>
-                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-xl border border-indigo-100">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-lg sm:text-xl border border-indigo-200/60 shrink-0">
                         <i class="fa-solid fa-eye"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Navigation Tabs -->
-            <div class="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-1">
-                <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn active px-4 py-3 font-extrabold text-sm border-b-2 border-blue-600 text-blue-600 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-inbox"></i>
+            <!-- Segmented Navigation Tabs (Thanh chuyển Tab chống xô lệch layout 100%) -->
+            <div class="bg-slate-200/70 p-1 rounded-2xl flex items-center gap-1 overflow-x-auto no-scrollbar border border-slate-200/90">
+                <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-sky-800 shadow-sm flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-slate-200/60">
+                    <i class="fa-solid fa-inbox text-amber-500"></i>
                     <span>Hàng đợi kiểm duyệt</span>
-                    <span id="pending-badge-count" class="hidden bg-amber-500 text-white text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                    <span id="pending-badge-count" class="hidden bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
                 </button>
 
-                <button onclick="switchTab('posts')" id="tab-btn-posts" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-list-check"></i>
+                <button onclick="switchTab('posts')" id="tab-btn-posts" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
+                    <i class="fa-solid fa-list-check text-sky-600"></i>
                     <span>Quản lý bài viết</span>
                 </button>
 
-                <button onclick="switchTab('categories')" id="tab-btn-categories" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-tags"></i>
+                <button onclick="switchTab('categories')" id="tab-btn-categories" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
+                    <i class="fa-solid fa-tags text-indigo-600"></i>
                     <span>Quản lý Thể loại</span>
                 </button>
 
-                <button onclick="switchTab('physical')" id="tab-btn-physical" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-book"></i>
-                    <span>Sách Truyện Giấy & Mượn Trả</span>
-                    <span id="physical-badge-count" class="bg-blue-100 text-blue-700 text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                <button onclick="switchTab('physical')" id="tab-btn-physical" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
+                    <i class="fa-solid fa-book text-amber-600"></i>
+                    <span>Sách Truyện Giấy 4B</span>
+                    <span id="physical-badge-count" class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
                 </button>
 
-                <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-database"></i>
+                <button onclick="switchTab('wishes')" id="tab-btn-wishes" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
+                    <i class="fa-solid fa-award text-rose-500"></i>
+                    <span>Tri Ân 20/11</span>
+                    <span id="wishes-badge-count" class="bg-rose-100 text-rose-800 text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
+                </button>
+
+                <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
+                    <i class="fa-solid fa-database text-emerald-600"></i>
                     <span>CSDL & Cài đặt API</span>
                 </button>
             </div>
@@ -241,29 +297,31 @@
             <!-- TAB 1: HÀNG ĐỢI KIỂM DUYỆT (PENDING REVIEW) -->
             <!-- ============================================== -->
             <section id="tab-pending" class="tab-pane space-y-4">
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-soft">
                     <div class="flex items-center gap-3">
-                        <span class="text-2xl">⏳</span>
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl shrink-0">
+                            ⏳
+                        </div>
                         <div>
-                            <h4 class="font-bold text-amber-900 text-sm">Hàng đợi bài viết học sinh gửi về</h4>
-                            <p class="text-xs text-amber-700">Chỉ các bài viết được <strong>Duyệt bài</strong> mới chính thức xuất hiện trên Trang chủ Tủ Sách Số 4B.</p>
+                            <h4 class="font-black text-amber-900 text-sm font-heading">Hàng đợi bài viết học sinh gửi về</h4>
+                            <p class="text-xs text-amber-800/80 font-medium">Chỉ các bài viết được <strong>Duyệt bài</strong> mới chính thức xuất hiện trên Trang chủ Tủ Sách Số 4B.</p>
                         </div>
                     </div>
-                    <button onclick="loadAllData()" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                    <button onclick="loadAllData()" class="btn-touch bg-white hover:bg-amber-100 active:bg-amber-200 text-amber-900 border border-amber-300 px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition-all shrink-0">
                         <i class="fa-solid fa-rotate"></i> Làm mới danh sách
                     </button>
                 </div>
 
                 <!-- Pending Posts List -->
-                <div id="pending-list" class="space-y-4">
+                <div id="pending-list" class="space-y-3">
                     <!-- Dynamic rendering -->
                 </div>
 
                 <!-- Empty Pending State -->
-                <div id="pending-empty" class="hidden bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300 space-y-3">
+                <div id="pending-empty" class="hidden bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300 space-y-3 shadow-soft">
                     <div class="text-5xl">🎉</div>
-                    <h3 class="text-base font-bold text-slate-700">Tuyệt vời! Không còn bài viết nào đang chờ duyệt</h3>
-                    <p class="text-xs text-slate-400 max-w-sm mx-auto">Khi học sinh gửi tác phẩm mới từ trang chủ, bài viết sẽ tự động xuất hiện tại đây để Ban Quản Trị thẩm định.</p>
+                    <h3 class="text-base font-black text-slate-700 font-heading">Tuyệt vời! Không còn bài viết nào đang chờ duyệt</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto font-medium">Khi học sinh gửi tác phẩm mới từ trang chủ, bài viết sẽ tự động xuất hiện tại đây để Thầy Cô thẩm định.</p>
                 </div>
             </section>
 
@@ -271,42 +329,42 @@
             <!-- TAB 2: QUẢN LÝ BÀI VIẾT (POST MANAGEMENT) -->
             <!-- ============================================== -->
             <section id="tab-posts" class="tab-pane hidden space-y-4">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-soft flex flex-col md:flex-row items-center justify-between gap-3">
                     <!-- Search input -->
                     <div class="relative w-full md:w-80">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" id="admin-search-input" oninput="renderPostsTable()" placeholder="Tìm tên bài, tác giả, thể loại..." 
-                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all">
                     </div>
 
                     <!-- Filter by status -->
                     <div class="flex items-center gap-2 w-full md:w-auto">
-                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Trạng thái:</label>
-                        <select id="admin-status-filter" onchange="renderPostsTable()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                        <label class="text-xs font-extrabold text-slate-500 whitespace-nowrap">Trạng thái:</label>
+                        <select id="admin-status-filter" onchange="renderPostsTable()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-sky-500">
                             <option value="all">Tất cả bài viết</option>
                             <option value="approved" selected>Đã duyệt (Hiển thị web)</option>
                             <option value="pending">Đang chờ duyệt</option>
                             <option value="rejected">Đã từ chối</option>
                         </select>
-                        <button onclick="loadAllData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-sm" title="Làm mới">
+                        <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all" title="Làm mới dữ liệu">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Table Container -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-soft overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                            <thead class="bg-slate-50/90 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200/80">
                                 <tr>
-                                    <th class="py-3 px-4">Tác phẩm</th>
-                                    <th class="py-3 px-4">Tác giả</th>
-                                    <th class="py-3 px-4">Thể loại</th>
-                                    <th class="py-3 px-4 text-center">Lượt đọc</th>
-                                    <th class="py-3 px-4 text-center">Trạng thái</th>
-                                    <th class="py-3 px-4 text-center">Ngày tạo</th>
-                                    <th class="py-3 px-4 text-right">Thao tác</th>
+                                    <th class="py-3.5 px-4">Tác phẩm</th>
+                                    <th class="py-3.5 px-4">Tác giả</th>
+                                    <th class="py-3.5 px-4">Thể loại</th>
+                                    <th class="py-3.5 px-4 text-center">Lượt đọc</th>
+                                    <th class="py-3.5 px-4 text-center">Trạng thái</th>
+                                    <th class="py-3.5 px-4 text-center">Ngày tạo</th>
+                                    <th class="py-3.5 px-4 text-right">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="posts-table-body" class="divide-y divide-slate-100">
@@ -323,24 +381,24 @@
             <section id="tab-categories" class="tab-pane hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Form thêm thể loại -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
-                            <i class="fa-solid fa-folder-plus text-blue-600 text-lg"></i>
-                            <h3 class="font-extrabold text-slate-800 text-base">Thêm Thể Loại Mới</h3>
+                    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-soft space-y-4">
+                        <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                            <i class="fa-solid fa-folder-plus text-sky-700 text-lg"></i>
+                            <h3 class="font-black text-slate-800 text-base font-heading">Thêm Thể Loại Mới</h3>
                         </div>
 
                         <form id="add-category-form" onsubmit="handleAddCategory(event)" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Thể Loại *</label>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1.5">Tên Thể Loại *</label>
                                 <input type="text" id="cat-name-input" required placeholder="Ví dụ: Truyện Cổ Tích, STEM & Khoa Học..." 
-                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Biểu tượng / Emoji</label>
+                                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1.5">Biểu tượng / Emoji</label>
                                 <div class="flex items-center gap-2">
                                     <input type="text" id="cat-icon-input" maxlength="4" value="📖" placeholder="📖" 
-                                        class="w-16 text-center text-xl py-2 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-blue-500">
+                                        class="w-16 text-center text-xl py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-sky-500 font-semibold">
                                     <div class="flex gap-1.5 flex-wrap text-lg">
                                         <button type="button" onclick="selectEmoji('✨')" class="hover:scale-125 transition-transform">✨</button>
                                         <button type="button" onclick="selectEmoji('🌐')" class="hover:scale-125 transition-transform">🌐</button>
@@ -352,20 +410,20 @@
                                 </div>
                             </div>
 
-                            <button type="submit" id="btn-add-cat" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-200 text-sm flex items-center justify-center gap-2">
+                            <button type="submit" id="btn-add-cat" class="w-full bg-sky-700 hover:bg-sky-800 text-white font-extrabold py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-2 active:scale-98 transition-all">
                                 <i class="fa-solid fa-plus"></i> Thêm Thể Loại
                             </button>
                         </form>
                     </div>
 
                     <!-- Danh sách thể loại hiện tại -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-soft space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-2.5">
                                 <i class="fa-solid fa-tags text-indigo-600 text-lg"></i>
-                                <h3 class="font-extrabold text-slate-800 text-base">Danh Sách Thể Loại Đang Hoạt Động</h3>
+                                <h3 class="font-black text-slate-800 text-base font-heading">Danh Sách Thể Loại Đang Hoạt Động</h3>
                             </div>
-                            <span id="cat-count-badge" class="bg-indigo-50 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full border border-indigo-100">0 thể loại</span>
+                            <span id="cat-count-badge" class="bg-indigo-50 text-indigo-700 text-xs font-black px-3 py-1 rounded-full border border-indigo-100">0 thể loại</span>
                         </div>
 
                         <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -376,60 +434,60 @@
             </section>
 
             <!-- ============================================== -->
-            <!-- TAB 3.5: QUẢN LÝ SÁCH TRUYỆN GIẤY & MƯỢN TRẢ -->
+            <!-- TAB 4: QUẢN LÝ SÁCH TRUYỆN GIẤY & MƯỢN TRẢ -->
             <!-- ============================================== -->
             <section id="tab-physical" class="tab-pane hidden space-y-4">
                 <!-- Overview & Actions Bar -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-12 h-12 bg-amber-50 text-amber-700 rounded-2xl flex items-center justify-center text-2xl font-bold border border-amber-200/60 shrink-0">
                             📖
                         </div>
                         <div>
-                            <h3 class="font-extrabold text-slate-800 text-base">Sổ Quản Lý Sách Truyện Giấy Lớp 4B</h3>
-                            <p class="text-xs text-slate-500">Cập nhật danh mục sách hiện có tại góc thư viện lớp, theo dõi học sinh mượn và ngày trả</p>
+                            <h3 class="font-black text-slate-800 text-base font-heading">Sổ Quản Lý Sách Truyện Giấy Lớp 4B</h3>
+                            <p class="text-xs text-slate-500 font-medium">Cập nhật danh mục sách hiện có tại góc thư viện lớp, theo dõi học sinh mượn và ngày trả</p>
                         </div>
                     </div>
 
-                    <button onclick="openPhysicalModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-200 flex items-center gap-2 active:scale-95 whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> Thêm Sách Mới
+                    <button onclick="openPhysicalModal()" class="bg-sky-700 hover:bg-sky-800 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-xs flex items-center gap-2 active:scale-95 whitespace-nowrap transition-all">
+                        <i class="fa-solid fa-plus text-amber-300"></i> Thêm Sách Mới
                     </button>
                 </div>
 
                 <!-- Search & Filters -->
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-soft flex flex-col md:flex-row items-center justify-between gap-3">
                     <div class="relative w-full md:w-80">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" id="physical-search-input" oninput="renderPhysicalBooksTable()" placeholder="Tìm tên sách, mã, học sinh..." 
-                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                     </div>
 
                     <div class="flex items-center gap-2 w-full md:w-auto">
-                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Tình trạng:</label>
-                        <select id="physical-status-filter" onchange="renderPhysicalBooksTable()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                        <label class="text-xs font-extrabold text-slate-500 whitespace-nowrap">Tình trạng:</label>
+                        <select id="physical-status-filter" onchange="renderPhysicalBooksTable()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-sky-500">
                             <option value="all">Tất cả (Đầy đủ)</option>
                             <option value="available">✅ Có thể mượn</option>
                             <option value="borrowed">⏳ Đang được mượn</option>
                         </select>
-                        <button onclick="loadAllData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-sm" title="Làm mới">
+                        <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all" title="Làm mới">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Table Container -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-soft overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                            <thead class="bg-slate-50/90 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200/80">
                                 <tr>
-                                    <th class="py-3 px-4">Mã sách</th>
-                                    <th class="py-3 px-4">Tên sách truyện giấy</th>
-                                    <th class="py-3 px-4">Thể loại & Kệ</th>
-                                    <th class="py-3 px-4 text-center">Tình trạng</th>
-                                    <th class="py-3 px-4">Học sinh mượn</th>
-                                    <th class="py-3 px-4">Ngày mượn - Hạn trả</th>
-                                    <th class="py-3 px-4 text-right">Thao tác</th>
+                                    <th class="py-3.5 px-4">Mã sách</th>
+                                    <th class="py-3.5 px-4">Tên sách truyện giấy</th>
+                                    <th class="py-3.5 px-4">Thể loại & Kệ</th>
+                                    <th class="py-3.5 px-4 text-center">Tình trạng</th>
+                                    <th class="py-3.5 px-4">Học sinh mượn</th>
+                                    <th class="py-3.5 px-4">Ngày mượn - Hạn trả</th>
+                                    <th class="py-3.5 px-4 text-right">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="physical-books-table-body" class="divide-y divide-slate-100">
@@ -441,59 +499,124 @@
             </section>
 
             <!-- ============================================== -->
-            <!-- TAB 4: CSDL & CÀI ĐẶT API (SETTINGS & SYNC) -->
+            <!-- TAB 5: QUẢN LÝ LỜI CHÚC TRI ÂN 20/11 -->
+            <!-- ============================================== -->
+            <section id="tab-wishes" class="tab-pane hidden space-y-4">
+                <!-- Overview & Actions Bar -->
+                <div class="bg-gradient-to-r from-rose-50 via-amber-50/50 to-red-50 p-5 rounded-2xl border border-rose-200 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-12 h-12 bg-rose-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-sm shrink-0">
+                            💐
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-black text-slate-800 text-base font-heading">Quản Lý Lời Chúc Tri Ân Thầy Cô 20/11</h3>
+                                <span class="bg-rose-100 text-rose-800 text-[11px] font-black px-2.5 py-0.5 rounded-full border border-rose-200">Lớp 4B</span>
+                            </div>
+                            <p class="text-xs text-slate-500 font-medium">Xem chi tiết, chỉnh sửa hoặc xóa các thiệp chúc mừng, hoa tri ân do học sinh gửi tới Thầy Cô</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openWishAdminModal()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-xs flex items-center gap-2 active:scale-95 whitespace-nowrap transition-all">
+                        <i class="fa-solid fa-plus text-amber-200"></i> Thêm Lời Chúc Mới
+                    </button>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-soft flex flex-col md:flex-row items-center justify-between gap-3">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="wishes-search-input" oninput="renderWishesTable()" placeholder="Tìm tên học sinh, lời chúc..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-colors" title="Làm mới dữ liệu">
+                            <i class="fa-solid fa-rotate"></i> Làm mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-soft overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50/90 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200/80">
+                                <tr>
+                                    <th class="py-3.5 px-4">Học Sinh Gửi</th>
+                                    <th class="py-3.5 px-4">Hoa Dâng Tặng</th>
+                                    <th class="py-3.5 px-4">Nội Dung Lời Chúc</th>
+                                    <th class="py-3.5 px-4">Ngày Gửi</th>
+                                    <th class="py-3.5 px-4 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wishes-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Empty state -->
+                    <div id="wishes-empty-state" class="hidden text-center py-12 space-y-2">
+                        <div class="text-3xl text-slate-300"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <p class="text-sm font-extrabold text-slate-500 font-heading">Chưa có lời chúc nào</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 6: CSDL & CÀI ĐẶT API (SETTINGS & SYNC) -->
             <!-- ============================================== -->
             <section id="tab-settings" class="tab-pane hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Card Thiết lập API -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                    <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-soft space-y-5">
+                        <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
                             <i class="fa-solid fa-cloud-arrow-up text-emerald-600 text-xl"></i>
                             <div>
-                                <h3 class="font-extrabold text-slate-800 text-base">Cấu Hình Google Sheets API Endpoint</h3>
-                                <p class="text-xs text-slate-500">Kết nối cơ sở dữ liệu đám mây Google Apps Script để mọi thiết bị đọc/ghi tập trung</p>
+                                <h3 class="font-black text-slate-800 text-base font-heading">Cấu Hình Google Sheets API Endpoint</h3>
+                                <p class="text-xs text-slate-500 font-medium">Kết nối cơ sở dữ liệu đám mây Google Apps Script để mọi thiết bị đọc/ghi tập trung</p>
                             </div>
                         </div>
 
                         <div class="space-y-3">
-                            <label class="block text-xs font-bold text-slate-700 uppercase">
+                            <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide">
                                 Google Apps Script Web App URL:
                             </label>
                             <div class="flex flex-col sm:flex-row gap-2">
                                 <input type="url" id="api-endpoint-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec" 
-                                    class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                <button onclick="saveApiUrl()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-emerald-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                    class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none transition-all">
+                                <button onclick="saveApiUrl()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-extrabold shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-98 transition-all">
                                     <i class="fa-solid fa-floppy-disk"></i> Lưu URL
                                 </button>
                             </div>
-                            <p class="text-[11px] text-slate-400">
+                            <p class="text-[11px] text-slate-400 font-medium">
                                 * Lưu ý: URL phải có đuôi <strong>/exec</strong> và được cấp quyền "Ai có quyền truy cập: Bất kỳ ai" (Anyone).
                             </p>
                         </div>
 
                         <!-- Actions bar -->
                         <div class="flex flex-wrap items-center gap-3 pt-2">
-                            <button onclick="testApiConnection()" id="btn-test-conn" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2">
+                            <button onclick="testApiConnection()" id="btn-test-conn" class="btn-touch bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 px-4 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 transition-all">
                                 <i class="fa-solid fa-tower-broadcast"></i> Kiểm tra kết nối (Ping)
                             </button>
 
-                            <button onclick="handleMigrateInitialData()" id="btn-seed-data" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-purple-200 flex items-center gap-2">
-                                <i class="fa-solid fa-upload"></i> Đẩy 4 Truyện Mẫu Hiện Có Lên Google Sheets
+                            <button onclick="handleMigrateInitialData()" id="btn-seed-data" class="btn-touch bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-extrabold shadow-xs flex items-center gap-2 active:scale-98 transition-all">
+                                <i class="fa-solid fa-upload text-amber-300"></i> Đẩy Dữ Liệu Mẫu Lên Google Sheets
                             </button>
                         </div>
 
                         <!-- Ping result box -->
-                        <div id="ping-result-box" class="hidden p-3.5 rounded-xl text-xs"></div>
+                        <div id="ping-result-box" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
                     </div>
 
                     <!-- Card Hướng dẫn 3 bước -->
-                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3">
+                    <div class="bg-slate-50/80 p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-soft space-y-4">
+                        <div class="flex items-center space-x-2 border-b border-slate-200/80 pb-3">
                             <span class="text-xl">🚀</span>
-                            <h3 class="font-extrabold text-slate-800 text-sm">3 Bước Kích Hoạt CSDL</h3>
+                            <h3 class="font-black text-slate-800 text-sm font-heading">3 Bước Kích Hoạt CSDL</h3>
                         </div>
 
-                        <ol class="space-y-3 text-xs text-slate-600 list-decimal pl-4 leading-relaxed font-sans">
+                        <ol class="space-y-3 text-xs text-slate-600 list-decimal pl-4 leading-relaxed font-sans font-medium">
                             <li>
                                 <strong>Tạo Google Sheet:</strong> Tạo trang tính mới tại Google Drive, đặt tên <em>"CSDL Tu Sach So 4B"</em>.
                             </li>
@@ -505,7 +628,7 @@
                             </li>
                         </ol>
 
-                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800 font-sans">
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 font-sans font-medium">
                             💡 Xem tài liệu đầy đủ tại file <strong class="underline">HUONG_DAN_CAI_DAT_API.md</strong> nằm ngay trong thư mục mã nguồn.
                         </div>
                     </div>
@@ -518,17 +641,17 @@
     <!-- ============================================== -->
     <!-- MODAL XEM CHI TIẾT BÀI VIẾT (PREVIEW MODAL) -->
     <!-- ============================================== -->
-    <div id="preview-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
+    <div id="preview-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100">
             <!-- Modal Header -->
             <div class="bg-slate-900 text-white p-4 px-6 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span id="preview-modal-badge" class="bg-blue-600 text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
+                <div class="flex items-center gap-2 truncate">
+                    <span id="preview-modal-badge" class="bg-sky-600 text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full shrink-0">
                         Thể loại
                     </span>
-                    <h3 id="preview-modal-title" class="font-black text-base truncate max-w-md">Tiêu đề tác phẩm</h3>
+                    <h3 id="preview-modal-title" class="font-black text-base truncate font-heading">Tiêu đề tác phẩm</h3>
                 </div>
-                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white text-xl">
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white text-xl p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -537,35 +660,35 @@
             <div class="p-6 overflow-y-auto space-y-4 flex-1">
                 <div class="flex items-center justify-between text-xs text-slate-500 border-b border-slate-100 pb-3">
                     <div>
-                        Tác giả: <strong id="preview-modal-author" class="text-blue-600 text-sm">...</strong>
+                        Tác giả: <strong id="preview-modal-author" class="text-sky-700 text-sm font-extrabold">...</strong>
                     </div>
                     <div>
-                        Ngày gửi: <span id="preview-modal-date">...</span>
+                        Ngày gửi: <span id="preview-modal-date" class="font-semibold text-slate-600">...</span>
                     </div>
                 </div>
 
                 <div id="preview-modal-cover-wrapper" class="hidden">
-                    <img id="preview-modal-cover" src="" alt="Bìa sách" class="w-full max-h-56 object-cover rounded-xl border border-slate-200">
+                    <img id="preview-modal-cover" src="" alt="Bìa sách" class="w-full max-h-56 object-cover rounded-2xl border border-slate-200">
                 </div>
 
                 <div>
-                    <h5 class="text-xs font-bold text-slate-400 uppercase mb-1">Tóm tắt ngắn:</h5>
-                    <p id="preview-modal-summary" class="text-sm text-slate-600 italic bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <h5 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Tóm tắt ngắn:</h5>
+                    <p id="preview-modal-summary" class="text-sm text-slate-700 italic bg-slate-50 p-3.5 rounded-2xl border border-slate-100 font-medium leading-relaxed">
                         ...
                     </p>
                 </div>
 
                 <div>
-                    <h5 class="text-xs font-bold text-slate-400 uppercase mb-1">Nội dung đầy đủ:</h5>
-                    <div id="preview-modal-content" class="text-sm leading-relaxed text-slate-700 bg-amber-50/30 p-4 rounded-xl border border-amber-100 whitespace-pre-line font-serif">
+                    <h5 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nội dung đầy đủ:</h5>
+                    <div id="preview-modal-content" class="text-sm leading-relaxed text-slate-800 bg-amber-50/40 p-4 sm:p-5 rounded-2xl border border-amber-100 whitespace-pre-line font-medium">
                         ...
                     </div>
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div id="preview-modal-actions" class="bg-slate-50 border-t border-slate-100 p-4 px-6 flex items-center justify-end gap-3">
-                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
+            <div id="preview-modal-actions" class="bg-slate-50 border-t border-slate-100 p-4 px-6 flex items-center justify-end gap-2.5">
+                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors">
                     Đóng
                 </button>
             </div>
@@ -575,14 +698,14 @@
     <!-- ============================================== -->
     <!-- MODAL THÊM / CẬP NHẬT SÁCH GIẤY (PHYSICAL BOOK MODAL) -->
     <!-- ============================================== -->
-    <div id="physical-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-book-open text-xl"></i>
-                    <h3 id="physical-modal-header" class="text-lg font-bold">Thêm Sách Truyện Giấy</h3>
+    <div id="physical-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100">
+            <div class="bg-sky-700 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <i class="fa-solid fa-book-open text-xl text-amber-300"></i>
+                    <h3 id="physical-modal-header" class="text-lg font-black font-heading">Thêm Sách Truyện Giấy</h3>
                 </div>
-                <button onclick="closePhysicalModal()" class="text-white/80 hover:text-white text-xl">
+                <button onclick="closePhysicalModal()" class="text-white/80 hover:text-white text-xl p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -592,83 +715,83 @@
 
                 <div class="grid grid-cols-3 gap-3">
                     <div class="col-span-1">
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã sách *</label>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Mã sách *</label>
                         <input type="text" id="pform-code" required placeholder="SG-01" 
-                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-mono font-bold uppercase focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono font-bold uppercase focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                     </div>
                     <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên sách / truyện giấy *</label>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên sách / truyện giấy *</label>
                         <input type="text" id="pform-title" required placeholder="Ví dụ: Dế Mèn Phiêu Lưu Ký" 
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác giả</label>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tác giả</label>
                         <input type="text" id="pform-author" placeholder="Ví dụ: Tô Hoài" 
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Vị trí / Kệ sách</label>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Vị trí / Kệ sách</label>
                         <input type="text" id="pform-shelf" placeholder="Kệ A1, Tủ giữa..." 
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể loại</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể loại</label>
                     <input type="text" id="pform-category" placeholder="Văn học thiếu nhi, Truyện tranh..." 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                 </div>
 
                 <!-- Tình trạng mượn trả -->
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                    <label class="block text-xs font-black text-slate-700 uppercase">Tình Trạng & Mượn Trả Tại Lớp</label>
+                <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/90 space-y-3">
+                    <label class="block text-xs font-black text-slate-700 uppercase tracking-wide">Tình Trạng & Mượn Trả Tại Lớp</label>
                     
                     <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs font-extrabold text-slate-700">
                             <input type="radio" name="pform-status" value="available" checked onchange="toggleBorrowerFields()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
                             <span>✅ Có thể mượn</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs font-extrabold text-slate-700">
                             <input type="radio" name="pform-status" value="borrowed" onchange="toggleBorrowerFields()" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
                             <span>⏳ Đang được mượn</span>
                         </label>
                     </div>
 
-                    <div id="pform-borrower-box" class="hidden space-y-3 pt-2 border-t border-slate-200">
+                    <div id="pform-borrower-box" class="hidden space-y-3 pt-2.5 border-t border-slate-200">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Học sinh mượn</label>
+                            <label class="block text-[11px] font-extrabold text-slate-600 uppercase mb-1">Học sinh mượn</label>
                             <input type="text" id="pform-borrower" placeholder="Tên học sinh mượn (Ví dụ: Lê Minh Khôi 4B)" 
-                                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Ngày mượn</label>
+                                <label class="block text-[11px] font-extrabold text-slate-600 uppercase mb-1">Ngày mượn</label>
                                 <input type="date" id="pform-borrow-date" 
-                                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Hạn trả / Ngày trả</label>
+                                <label class="block text-[11px] font-extrabold text-slate-600 uppercase mb-1">Hạn trả / Ngày trả</label>
                                 <input type="date" id="pform-return-date" 
-                                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ghi chú (Tùy chọn)</label>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Ghi chú (Tùy chọn)</label>
                     <input type="text" id="pform-note" placeholder="Tình trạng sách, bìa, số trang..." 
-                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-3">
-                    <button type="button" onclick="closePhysicalModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100">
+                    <button type="button" onclick="closePhysicalModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100 transition-colors">
                         Hủy
                     </button>
-                    <button type="submit" id="btn-submit-pform" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2">
+                    <button type="submit" id="btn-submit-pform" class="bg-sky-700 hover:bg-sky-800 text-white px-5 py-2.5 rounded-xl text-xs font-extrabold shadow-xs flex items-center gap-2 active:scale-98 transition-all">
                         <span>Lưu Sách</span>
                     </button>
                 </div>
@@ -679,17 +802,17 @@
     <!-- ============================================== -->
     <!-- MODAL CHỈNH SỬA BÀI VIẾT (EDIT POST MODAL) -->
     <!-- ============================================== -->
-    <div id="edit-post-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
-            <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
+    <div id="edit-post-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100">
+            <div class="bg-amber-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
                     <i class="fa-solid fa-pen-to-square text-xl"></i>
                     <div>
-                        <h3 class="text-lg font-bold">Chỉnh Sửa Bài Viết / Tác Phẩm</h3>
-                        <p class="text-xs text-amber-100">Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết</p>
+                        <h3 class="text-lg font-black font-heading leading-tight">Chỉnh Sửa Bài Viết / Tác Phẩm</h3>
+                        <p class="text-xs text-amber-100 font-medium">Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết</p>
                     </div>
                 </div>
-                <button onclick="closeEditPostModal()" class="text-white/80 hover:text-white text-xl">
+                <button onclick="closeEditPostModal()" class="text-white/80 hover:text-white text-xl p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -698,23 +821,23 @@
                 <input type="hidden" id="edit-post-id">
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Tác Phẩm *</label>
-                    <input type="text" id="edit-post-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên Tác Phẩm *</label>
+                    <input type="text" id="edit-post-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="sm:col-span-1">
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác Giả (Học Sinh) *</label>
-                        <input type="text" id="edit-post-author" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tác Giả (Học Sinh) *</label>
+                        <input type="text" id="edit-post-author" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                     </div>
                     <div class="sm:col-span-1">
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể Loại *</label>
-                        <select id="edit-post-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể Loại *</label>
+                        <select id="edit-post-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
                         </select>
                     </div>
                     <div class="sm:col-span-1">
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trạng Thái *</label>
-                        <select id="edit-post-status" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái *</label>
+                        <select id="edit-post-status" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-extrabold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
                             <option value="approved">✅ Đã duyệt (Xuất bản)</option>
                             <option value="pending">⏳ Chờ kiểm duyệt</option>
                             <option value="rejected">❌ Bị từ chối</option>
@@ -723,25 +846,25 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tóm Tắt Ngắn *</label>
-                    <textarea id="edit-post-summary" required rows="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tóm Tắt Ngắn *</label>
+                    <textarea id="edit-post-summary" required rows="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none transition-all"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nội Dung Toàn Văn *</label>
-                    <textarea id="edit-post-content" required rows="7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-serif leading-relaxed focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Nội Dung Toàn Văn *</label>
+                    <textarea id="edit-post-content" required rows="7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium leading-relaxed focus:ring-2 focus:ring-amber-500 outline-none transition-all"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ảnh Bìa (URL)</label>
-                    <input type="url" id="edit-post-cover" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Ảnh Bìa (URL)</label>
+                    <input type="url" id="edit-post-cover" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-3">
-                    <button type="button" onclick="closeEditPostModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100">
+                    <button type="button" onclick="closeEditPostModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100 transition-colors">
                         Hủy
                     </button>
-                    <button type="submit" id="btn-save-edit-post" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-amber-200 flex items-center gap-2">
+                    <button type="submit" id="btn-save-edit-post" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl text-xs font-extrabold shadow-xs flex items-center gap-2 active:scale-98 transition-all">
                         <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi
                     </button>
                 </div>
@@ -749,48 +872,158 @@
         </div>
     </div>
 
+    <!-- ============================================== -->
+    <!-- MODAL THÊM / SỬA LỜI CHÚC 20/11 (WISH ADMIN MODAL) -->
+    <!-- ============================================== -->
+    <div id="wish-admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100">
+            <div class="bg-rose-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <span class="text-xl">💐</span>
+                    <div>
+                        <h3 id="wish-admin-modal-title" class="text-base sm:text-lg font-black font-heading leading-tight">Thêm Lời Chúc Tri Ân 20/11</h3>
+                        <p class="text-xs text-rose-100 font-medium">Cập nhật nội dung thiệp chúc mừng gửi tới Thầy Cô Lớp 4B</p>
+                    </div>
+                </div>
+                <button onclick="closeWishAdminModal()" class="text-white/80 hover:text-white text-xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="wish-admin-form" onsubmit="handleWishAdminSubmit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="wish-admin-id">
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên Học Sinh / Người Gửi *</label>
+                    <input type="text" id="wish-admin-sender" required placeholder="Ví dụ: Nguyễn Minh Anh (Lớp 4B)" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Bông Hoa Dâng Tặng *</label>
+                        <select id="wish-admin-flower" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold focus:ring-2 focus:ring-rose-500 outline-none bg-white text-slate-700">
+                            <option value="🌹 Hoa Hồng Điểm 10">🌹 Hoa Hồng Điểm 10</option>
+                            <option value="🌻 Hướng Dương Tri Ân">🌻 Hướng Dương Tri Ân</option>
+                            <option value="💐 Bó Hoa Tươi Thắm">💐 Bó Hoa Tươi Thắm</option>
+                            <option value="🪷 Búp Sen Dâng Thầy Cô">🪷 Búp Sen Dâng Thầy Cô</option>
+                            <option value="🌺 Hoa Điểm Mười Rực Rỡ">🌺 Hoa Điểm Mười Rực Rỡ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Ngày Gửi *</label>
+                        <input type="text" id="wish-admin-date" placeholder="20/11/2026" 
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Nội Dung Lời Chúc Tri Ân *</label>
+                    <textarea id="wish-admin-message" required rows="4" placeholder="Nhập lời chúc tri ân của học sinh..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:ring-2 focus:ring-rose-500 outline-none transition-all"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" onclick="closeWishAdminModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100 transition-colors">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btn-save-wish-admin" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl text-xs font-extrabold shadow-xs flex items-center gap-2 active:scale-98 transition-all">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Lời Chúc
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL XEM CHI TIẾT LỜI CHÚC 20/11 (WISH VIEW MODAL) -->
+    <!-- ============================================== -->
+    <div id="wish-view-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-rose-100">
+            <div class="bg-rose-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">💌</span>
+                    <h3 class="text-base font-black font-heading">Thiệp Tri Ân Thầy Cô 20/11</h3>
+                </div>
+                <button onclick="closeWishViewModal()" class="text-white/80 hover:text-white text-xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wide">Người gửi</span>
+                        <h4 id="wish-view-sender" class="font-black text-base text-slate-800 font-heading">...</h4>
+                    </div>
+                    <span id="wish-view-flower" class="bg-rose-50 text-rose-800 border border-rose-200 px-3 py-1 rounded-full text-xs font-extrabold">
+                        ...
+                    </span>
+                </div>
+
+                <div>
+                    <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wide">Nội dung lời chúc</span>
+                    <p id="wish-view-message" class="text-sm text-slate-700 italic leading-relaxed bg-rose-50/50 p-4 rounded-2xl border border-rose-100 mt-1 whitespace-pre-line font-medium">
+                        ...
+                    </p>
+                </div>
+
+                <div class="text-right text-xs text-slate-400 pt-1">
+                    Ngày gửi: <strong id="wish-view-date" class="text-slate-600 font-bold">...</strong>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="button" onclick="closeWishViewModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-xs font-extrabold transition-colors">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="config.js?v=2.3"></script>
     <script>
         // TRẠNG THÁI TOÀN CỤC CỦA ADMIN
-        const AUTH_KEY = 'thuvien_admin_authenticated';
-        // Mã băm SHA-256 bảo mật xác thực tài khoản quản trị
-        const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
-        const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d';
+        const AUTH_KEY = 'admin_auth';
+        // Mã băm SHA-256 của tài khoản & mật khẩu
+        const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // 'admin'
+        const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d'; // 'admin123@@'
 
-        // Hàm tính băm SHA-256 chuẩn Web Crypto API
-        async function hashText(str) {
-            const buf = new TextEncoder().encode(str);
-            const digest = await crypto.subtle.digest('SHA-256', buf);
-            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        let currentTab = 'pending';
         let allPosts = [];
         let allCategories = [];
         let allPhysicalBooks = [];
+        let allWishes = [];
         let previewingPostId = null;
+        let currentTab = 'pending';
 
-        // Khởi chạy khi DOM sẵn sàng
-        window.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            initSettingsTab();
-        });
+        // Điền nhanh thông tin tài khoản mẫu
+        function fillDefaultCredentials() {
+            document.getElementById('login-username').value = 'admin';
+            document.getElementById('login-password').value = 'admin123@@';
+        }
 
-        // 1. AUTHENTICATION LOGIC
+        // 1. QUẢN LÝ ĐĂNG NHẬP (AUTH)
+        async function hashText(str) {
+            const buffer = new TextEncoder().encode(str);
+            const digest = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         function checkAuth() {
-            const isAuth = sessionStorage.getItem(AUTH_KEY) === 'true';
+            const isAuth = sessionStorage.getItem('admin_auth') === 'true' || sessionStorage.getItem('thuvien_admin_authenticated') === 'true';
             const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('admin-dashboard');
+            const adminDashboard = document.getElementById('admin-dashboard');
 
             if (isAuth) {
                 loginScreen.classList.add('hidden');
-                dashboard.classList.remove('hidden');
+                adminDashboard.classList.remove('hidden');
                 loadAllData();
+                initSettingsTab();
                 checkApiHealth();
             } else {
                 loginScreen.classList.remove('hidden');
-                dashboard.classList.add('hidden');
+                adminDashboard.classList.add('hidden');
             }
         }
 
@@ -798,75 +1031,75 @@
             e.preventDefault();
             const u = document.getElementById('login-username').value.trim();
             const p = document.getElementById('login-password').value.trim();
-            const errBox = document.getElementById('login-error');
+            const errEl = document.getElementById('login-error');
 
             const [uHash, pHash] = await Promise.all([hashText(u), hashText(p)]);
 
+            // YÊU CẦU DUY NHẤT: Tài khoản "admin" và Mật khẩu "admin123@@"
             if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
-                sessionStorage.setItem(AUTH_KEY, 'true');
-                errBox.classList.add('hidden');
-                showToast('Đăng nhập thành công! Chào mừng Ban Quản Trị.', 'success');
+                sessionStorage.setItem('admin_auth', 'true');
+                sessionStorage.setItem('thuvien_admin_authenticated', 'true');
+                errEl.classList.add('hidden');
                 checkAuth();
+                showToast('Chào mừng Thầy Cô đã đăng nhập bảng quản trị!', 'success');
             } else {
-                errBox.classList.remove('hidden');
+                errEl.classList.remove('hidden');
             }
         }
 
         function handleLogout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi Bảng Quản Trị?')) {
-                sessionStorage.removeItem(AUTH_KEY);
-                checkAuth();
-                showToast('Đã đăng xuất an toàn.', 'info');
-            }
+            sessionStorage.removeItem('admin_auth');
+            sessionStorage.removeItem('thuvien_admin_authenticated');
+            checkAuth();
+            showToast('Đã đăng xuất thành công.', 'info');
         }
 
         function togglePasswordVisibility() {
-            const passInput = document.getElementById('login-password');
+            const input = document.getElementById('login-password');
             const icon = document.getElementById('eye-icon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-sm';
             } else {
-                passInput.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye text-sm';
             }
         }
 
-        // 2. DATA LOADING & TABS
+        // 2. TẢI DỮ LIỆU TỔNG HỢP
         async function loadAllData() {
             try {
-                // Kiểm tra an toàn hàm getPhysicalBooks (phòng trường hợp trình duyệt lưu cache file JS cũ)
-                const fetchPhysical = (typeof StorageService.getPhysicalBooks === 'function')
-                    ? StorageService.getPhysicalBooks()
-                    : Promise.resolve(JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || JSON.stringify(window.INITIAL_PHYSICAL_BOOKS || [])));
-
-                // Tải song song danh sách bài viết, categories và sách truyện giấy
-                const [posts, categories, physicalBooks] = await Promise.all([
-                    StorageService.getPosts('all'),
+                showToast('Đang làm mới dữ liệu...', 'info');
+                const [posts, categories, physical, wishes] = await Promise.all([
+                    StorageService.getPosts(),
                     StorageService.getCategories(),
-                    fetchPhysical
+                    StorageService.getPhysicalBooks(),
+                    typeof StorageService.getWishes === 'function' ? StorageService.getWishes() : []
                 ]);
 
                 allPosts = posts || [];
                 allCategories = categories || [];
-                allPhysicalBooks = physicalBooks || [];
+                allPhysicalBooks = physical || [];
+                allWishes = wishes || [];
 
                 updateDashboardStats();
                 renderPendingPosts();
                 renderPostsTable();
                 renderCategoriesGrid();
                 renderPhysicalBooksTable();
-            } catch (error) {
-                console.error('Lỗi nạp dữ liệu:', error);
-                showToast('Không thể tải dữ liệu mới nhất: ' + error.message, 'error');
+                renderWishesTable();
+
+            } catch (err) {
+                console.error('Lỗi khi tải dữ liệu admin:', err);
+                showToast('Lỗi khi tải dữ liệu: ' + err.message, 'error');
             }
         }
 
         function switchTab(tabName) {
             currentTab = tabName;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
-                btn.classList.add('border-transparent', 'text-slate-500');
+                btn.classList.remove('active', 'bg-white', 'text-sky-800', 'shadow-sm', 'border-slate-200/60');
+                btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'border-transparent');
             });
             document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
 
@@ -874,8 +1107,8 @@
             const targetPane = document.getElementById(`tab-${tabName}`);
 
             if (targetBtn && targetPane) {
-                targetBtn.classList.add('active', 'border-blue-600', 'text-blue-600');
-                targetBtn.classList.remove('border-transparent', 'text-slate-500');
+                targetBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'border-transparent');
+                targetBtn.classList.add('active', 'bg-white', 'text-sky-800', 'shadow-sm', 'border-slate-200/60');
                 targetPane.classList.remove('hidden');
             }
         }
@@ -904,6 +1137,12 @@
             if (pBadge) {
                 pBadge.innerText = allPhysicalBooks.length;
             }
+
+            // Badge trên tab Tri Ân 20/11
+            const wBadge = document.getElementById('wishes-badge-count');
+            if (wBadge) {
+                wBadge.innerText = allWishes.length;
+            }
         }
 
         // 3. TAB 1: PENDING REVIEW
@@ -927,42 +1166,42 @@
                 }) : 'Vừa xong';
 
                 const cardHtml = `
-                    <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-amber-400">
-                        <div class="space-y-1.5 flex-1">
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200/90 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-amber-400 hover:shadow-card">
+                        <div class="space-y-1.5 flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-amber-200">
+                                <span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-200">
                                     ${post.category || 'Chưa phân loại'}
                                 </span>
-                                <span class="text-xs text-slate-400">Gửi lúc: ${dateStr}</span>
+                                <span class="text-xs text-slate-400 font-semibold">Gửi lúc: ${dateStr}</span>
                             </div>
-                            <h3 class="text-base font-extrabold text-slate-800 hover:text-blue-600 cursor-pointer" onclick="openPreviewModal('${post.id}')">
+                            <h3 class="text-base font-black text-slate-800 font-heading hover:text-sky-700 cursor-pointer transition-colors leading-tight truncate" onclick="openPreviewModal('${post.id}')">
                                 ${post.title}
                             </h3>
-                            <div class="text-xs text-blue-600 font-bold flex items-center gap-1.5">
+                            <div class="text-xs text-sky-700 font-extrabold flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-pen"></i> Tác giả: ${post.author}
                             </div>
-                            <p class="text-xs text-slate-500 line-clamp-2">
+                            <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">
                                 ${post.summary}
                             </p>
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                        <div class="flex items-center gap-2 w-full md:w-auto justify-end pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 shrink-0">
                             <button onclick="openPreviewModal('${post.id}')" 
-                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                                <i class="fa-solid fa-eye"></i> Đọc bài
+                                class="btn-touch bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-eye text-sky-600"></i> Đọc bài
                             </button>
                             <button onclick="openEditPostModal('${post.id}')" 
-                                class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                                class="btn-touch bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-3 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all"
                                 title="Sửa nội dung bài viết trước khi duyệt">
                                 <i class="fa-solid fa-pen-to-square"></i> Sửa
                             </button>
                             <button onclick="rejectPost('${post.id}')" 
-                                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                class="btn-touch bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all">
                                 <i class="fa-solid fa-ban"></i> Từ chối
                             </button>
                             <button onclick="approvePost('${post.id}')" 
-                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-200 active:scale-95">
+                                class="btn-touch bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-xs transition-all">
                                 <i class="fa-solid fa-check"></i> Duyệt bài
                             </button>
                         </div>
@@ -1009,16 +1248,16 @@
 
             const filtered = allPosts.filter(p => {
                 const matchesStatus = (statusFilter === 'all') || (p.status === statusFilter);
-                const matchesSearch = p.title.toLowerCase().includes(searchKeyword) || 
-                                      p.author.toLowerCase().includes(searchKeyword) ||
-                                      p.category.toLowerCase().includes(searchKeyword);
+                const matchesSearch = (p.title || '').toLowerCase().includes(searchKeyword) || 
+                                      (p.author || '').toLowerCase().includes(searchKeyword) ||
+                                      (p.category || '').toLowerCase().includes(searchKeyword);
                 return matchesStatus && matchesSearch;
             });
 
             if (filtered.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center py-8 text-xs text-slate-400">
+                        <td colspan="7" class="text-center py-10 text-xs font-bold text-slate-400">
                             Không tìm thấy bài viết nào phù hợp với bộ lọc.
                         </td>
                     </tr>
@@ -1029,58 +1268,58 @@
             filtered.forEach(post => {
                 let statusBadge = '';
                 if (post.status === 'approved') {
-                    statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200">Đã duyệt</span>';
+                    statusBadge = '<span class="bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200">Đã duyệt</span>';
                 } else if (post.status === 'pending') {
-                    statusBadge = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200">Chờ duyệt</span>';
+                    statusBadge = '<span class="bg-amber-50 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200">Chờ duyệt</span>';
                 } else {
-                    statusBadge = '<span class="bg-rose-100 text-rose-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-rose-200">Từ chối</span>';
+                    statusBadge = '<span class="bg-rose-50 text-rose-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-rose-200">Từ chối</span>';
                 }
 
                 const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN') : '-';
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-4">
-                        <div class="font-extrabold text-slate-800 text-xs sm:text-sm hover:text-blue-600 cursor-pointer line-clamp-1" onclick="openPreviewModal('${post.id}')">
+                    <td class="py-3.5 px-4 max-w-xs sm:max-w-md">
+                        <div class="font-black text-slate-800 text-xs sm:text-sm hover:text-sky-700 cursor-pointer line-clamp-1 font-heading" onclick="openPreviewModal('${post.id}')">
                             ${post.title}
                         </div>
-                        <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">${post.summary || ''}</div>
+                        <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5 font-medium">${post.summary || ''}</div>
                     </td>
-                    <td class="py-3 px-4 text-xs font-bold text-blue-600 whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-xs font-extrabold text-sky-700 whitespace-nowrap">
                         ${post.author}
                     </td>
-                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
-                        ${post.category}
+                    <td class="py-3.5 px-4 text-xs text-slate-600 font-semibold whitespace-nowrap">
+                        <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/60">${post.category || 'Chưa rõ'}</span>
                     </td>
-                    <td class="py-3 px-4 text-xs text-center text-slate-500 font-semibold whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-xs text-center text-slate-500 font-bold whitespace-nowrap">
                         ${post.views || 0}
                     </td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
                         ${statusBadge}
                     </td>
-                    <td class="py-3 px-4 text-xs text-center text-slate-400 whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-xs text-center text-slate-400 font-semibold whitespace-nowrap">
                         ${dateStr}
                     </td>
-                    <td class="py-3 px-4 text-right whitespace-nowrap">
-                        <div class="flex items-center justify-end gap-1.5">
-                            <button onclick="openPreviewModal('${post.id}')" class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" title="Xem chi tiết">
-                                <i class="fa-solid fa-eye"></i>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1">
+                            <button onclick="openPreviewModal('${post.id}')" class="p-2 text-slate-400 hover:text-sky-700 rounded-lg hover:bg-sky-50 transition-colors" title="Xem chi tiết">
+                                <i class="fa-solid fa-eye text-xs"></i>
                             </button>
-                            <button onclick="openEditPostModal('${post.id}')" class="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50" title="Chỉnh sửa bài viết">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                            <button onclick="openEditPostModal('${post.id}')" class="p-2 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors" title="Chỉnh sửa bài viết">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
                             </button>
                             ${post.status !== 'approved' ? `
-                                <button onclick="approvePost('${post.id}')" class="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50" title="Duyệt bài">
-                                    <i class="fa-solid fa-check"></i>
+                                <button onclick="approvePost('${post.id}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors" title="Duyệt bài">
+                                    <i class="fa-solid fa-check text-xs"></i>
                                 </button>
                             ` : `
-                                <button onclick="rejectPost('${post.id}')" class="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50" title="Gỡ bài (chuyển Từ chối)">
-                                    <i class="fa-solid fa-ban"></i>
+                                <button onclick="rejectPost('${post.id}')" class="p-2 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors" title="Gỡ bài (chuyển Từ chối)">
+                                    <i class="fa-solid fa-ban text-xs"></i>
                                 </button>
                             `}
-                            <button onclick="handleDeletePost('${post.id}', '${post.title.replace(/'/g, "\\'")}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Xóa bài vĩnh viễn">
-                                <i class="fa-solid fa-trash-can"></i>
+                            <button onclick="handleDeletePost('${post.id}', '${post.title.replace(/'/g, "\'")}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa bài vĩnh viễn">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
                             </button>
                         </div>
                     </td>
@@ -1090,7 +1329,10 @@
         }
 
         async function handleDeletePost(id, title) {
-            if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn tác phẩm:\n"${title}"?\n\nHành động này không thể hoàn tác.`)) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn tác phẩm:
+"${title}"?
+
+Hành động này không thể hoàn tác.`)) {
                 return;
             }
 
@@ -1169,7 +1411,7 @@
             const btn = document.getElementById('btn-save-edit-post');
             const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu thay đổi...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
 
             showToast('Đang cập nhật bài viết...', 'info');
 
@@ -1207,16 +1449,16 @@
                 const bookCount = allPosts.filter(p => p.category === cat.name).length;
 
                 const card = document.createElement('div');
-                card.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between';
+                card.className = 'p-4 rounded-2xl border border-slate-200 bg-slate-50/70 flex items-center justify-between hover:border-slate-300 transition-colors';
                 card.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span class="text-2xl">${cat.icon || '📖'}</span>
                         <div>
-                            <h4 class="font-extrabold text-slate-800 text-sm">${cat.name}</h4>
-                            <p class="text-[11px] text-slate-500">${bookCount} tác phẩm</p>
+                            <h4 class="font-black text-slate-800 text-sm font-heading">${cat.name}</h4>
+                            <p class="text-[11px] text-slate-500 font-semibold">${bookCount} tác phẩm</p>
                         </div>
                     </div>
-                    <button onclick="handleDeleteCategory('${cat.id}', '${cat.name}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa thể loại">
+                    <button onclick="handleDeleteCategory('${cat.id}', '${cat.name}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-xl hover:bg-rose-50 transition-colors" title="Xóa thể loại">
                         <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
                 `;
@@ -1290,7 +1532,7 @@
             if (filtered.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center py-8 text-xs text-slate-400">
+                        <td colspan="7" class="text-center py-10 text-xs font-bold text-slate-400">
                             Không tìm thấy sách truyện giấy nào phù hợp.
                         </td>
                     </tr>
@@ -1301,8 +1543,8 @@
             filtered.forEach(book => {
                 const isAvailable = book.status === 'available';
                 const statusBadge = isAvailable
-                    ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Có thể mượn</span>'
-                    : '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Đang mượn</span>';
+                    ? '<span class="bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Có thể mượn</span>'
+                    : '<span class="bg-amber-50 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Đang mượn</span>';
 
                 let borrowDatesInfo = '-';
                 if (!isAvailable && (book.borrowDate || book.returnDate)) {
@@ -1311,48 +1553,48 @@
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">
-                        ${book.code || '-'}
+                    <td class="py-3.5 px-4 font-mono font-bold text-xs text-sky-700 whitespace-nowrap">
+                        <span class="bg-sky-50 px-2 py-0.5 rounded border border-sky-100">${book.code || '-'}</span>
                     </td>
-                    <td class="py-3 px-4">
-                        <div class="font-extrabold text-slate-800 text-xs sm:text-sm line-clamp-1">
+                    <td class="py-3.5 px-4 max-w-xs">
+                        <div class="font-black text-slate-800 text-xs sm:text-sm line-clamp-1 font-heading">
                             ${book.title}
                         </div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">${book.author ? 'Tác giả: ' + book.author : ''}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5 font-medium">${book.author ? 'Tác giả: ' + book.author : ''}</div>
                     </td>
-                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
-                        <div>${book.category || 'Chưa phân loại'}</div>
+                    <td class="py-3.5 px-4 text-xs text-slate-600 whitespace-nowrap">
+                        <div class="font-semibold text-slate-700">${book.category || 'Chưa phân loại'}</div>
                         <div class="text-[11px] text-slate-400 font-medium">${book.shelf || 'Kệ sách lớp'}</div>
                     </td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-center whitespace-nowrap">
                         ${statusBadge}
                     </td>
-                    <td class="py-3 px-4 text-xs font-bold whitespace-nowrap ${isAvailable ? 'text-slate-400' : 'text-amber-800'}">
+                    <td class="py-3.5 px-4 text-xs font-bold whitespace-nowrap ${isAvailable ? 'text-slate-400' : 'text-amber-800'}">
                         ${isAvailable ? '—' : `<i class="fa-solid fa-user-graduate text-amber-600 mr-1"></i>${book.borrower || 'Chưa ghi tên'}`}
                     </td>
-                    <td class="py-3 px-4 text-xs whitespace-nowrap">
+                    <td class="py-3.5 px-4 text-xs whitespace-nowrap">
                         ${borrowDatesInfo}
                     </td>
-                    <td class="py-3 px-4 text-right whitespace-nowrap">
-                        <div class="flex items-center justify-end gap-1.5">
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1">
                             ${!isAvailable ? `
-                                <button onclick="handleQuickReturn('${book.id}', '${book.title.replace(/'/g, "\\'")}')" 
-                                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1" 
+                                <button onclick="handleQuickReturn('${book.id}', '${book.title.replace(/'/g, "\'")}')" 
+                                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1 transition-colors" 
                                     title="Ghi nhận học sinh đã trả sách">
                                     <i class="fa-solid fa-arrow-rotate-left"></i> Trả sách
                                 </button>
                             ` : ''}
                             <button onclick="openPhysicalModal('${book.id}')" 
-                                class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" 
+                                class="p-2 text-slate-400 hover:text-sky-700 rounded-lg hover:bg-sky-50 transition-colors" 
                                 title="Sửa thông tin / Ghi nhận mượn">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
                             </button>
-                            <button onclick="handleDeletePhysicalBook('${book.id}', '${book.title.replace(/'/g, "\\'")}')" 
-                                class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" 
+                            <button onclick="handleDeletePhysicalBook('${book.id}', '${book.title.replace(/'/g, "\'")}')" 
+                                class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" 
                                 title="Xóa sách">
-                                <i class="fa-solid fa-trash-can"></i>
+                                <i class="fa-solid fa-trash-can text-xs"></i>
                             </button>
                         </div>
                     </td>
@@ -1473,7 +1715,8 @@
         }
 
         async function handleDeletePhysicalBook(id, title) {
-            if (!confirm(`Bạn có chắc chắn muốn xóa cuốn sách:\n"${title}" khỏi sổ theo dõi?`)) return;
+            if (!confirm(`Bạn có chắc chắn muốn xóa cuốn sách:
+"${title}" khỏi sổ theo dõi?`)) return;
 
             try {
                 await StorageService.deletePhysicalBook(id);
@@ -1484,7 +1727,7 @@
             }
         }
 
-        // 6. TAB 4: SETTINGS & SYNC
+        // 6. TAB 6: SETTINGS & SYNC
         function initSettingsTab() {
             const input = document.getElementById('api-endpoint-input');
             const savedUrl = getApiEndpoint();
@@ -1519,7 +1762,7 @@
                 resultBox.innerHTML = `✅ ${res.message}`;
                 showToast('Kết nối Google Sheets API hoàn toàn thông suốt!', 'success');
             } else {
-                resultBox.className = 'p-3.5 rounded-xl text-xs bg-rose-50 text-rose-800 border border-rose-200';
+                resultBox.className = 'p-3.5 rounded-xl text-xs bg-rose-50 text-rose-800 border border-rose-200 font-semibold';
                 resultBox.innerHTML = `❌ ${res.message}<br><span class="text-[11px] font-normal">Hãy đảm bảo bạn đã cấp quyền "Anyone" khi Deploy Apps Script.</span>`;
                 showToast('Kết nối thất bại. Vui lòng kiểm tra lại URL.', 'error');
             }
@@ -1538,7 +1781,7 @@
 
             const btn = document.getElementById('btn-seed-data');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đồng bộ lên Google Sheets...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đồng bộ...';
 
             try {
                 const res = await StorageService.seedInitialDataToRemote();
@@ -1548,7 +1791,7 @@
                 showToast('Lỗi đồng bộ: ' + err.message, 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-upload"></i> Đẩy 4 Truyện Mẫu Hiện Có Lên Google Sheets';
+                btn.innerHTML = '<i class="fa-solid fa-upload text-amber-300"></i> Đẩy Dữ Liệu Mẫu Lên Google Sheets';
             }
         }
 
@@ -1558,7 +1801,7 @@
             const text = document.getElementById('api-status-text');
 
             if (!StorageService.hasApi()) {
-                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200';
                 dot.className = 'w-2 h-2 rounded-full bg-amber-500';
                 text.innerText = 'Chưa cấu hình API (Dùng Local)';
                 return;
@@ -1566,11 +1809,11 @@
 
             const res = await StorageService.testConnection();
             if (res.ok) {
-                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-                dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200';
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
                 text.innerText = 'Google Sheets Connected';
             } else {
-                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200';
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200';
                 dot.className = 'w-2 h-2 rounded-full bg-rose-500';
                 text.innerText = 'Lỗi kết nối API';
             }
@@ -1603,20 +1846,20 @@
             // Action buttons in modal
             const actionsBox = document.getElementById('preview-modal-actions');
             actionsBox.innerHTML = `
-                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
+                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors">
                     Đóng
                 </button>
-                <button onclick="closePreviewModal(); openEditPostModal('${post.id}');" class="bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa bài viết
+                <button onclick="closePreviewModal(); openEditPostModal('${post.id}');" class="bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-pen-to-square"></i> Sửa bài viết
                 </button>
             `;
 
             if (post.status === 'pending') {
                 actionsBox.innerHTML += `
-                    <button onclick="rejectPost('${post.id}'); closePreviewModal();" class="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 px-4 py-2 rounded-xl text-xs font-bold">
+                    <button onclick="rejectPost('${post.id}'); closePreviewModal();" class="bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 px-4 py-2 rounded-xl text-xs font-extrabold transition-colors">
                         Từ chối
                     </button>
-                    <button onclick="approvePost('${post.id}'); closePreviewModal();" class="bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 rounded-xl text-xs font-bold shadow-md shadow-emerald-200">
+                    <button onclick="approvePost('${post.id}'); closePreviewModal();" class="bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 rounded-xl text-xs font-extrabold shadow-xs transition-colors">
                         Duyệt bài ngay
                     </button>
                 `;
@@ -1630,27 +1873,215 @@
             previewingPostId = null;
         }
 
+        // ==========================================
+        // 9. QUẢN LÝ LỜI CHÚC TRI ÂN 20/11 (TAB 5)
+        // ==========================================
+        function formatWishDate(dateVal) {
+            if (!dateVal) return '20/11';
+            if (typeof dateVal === 'string') {
+                const cleanDateMatch = dateVal.trim().match(/^(\d{1,2})[\/\-](\d{1,2})([\/\-](\d{2,4}))?$/);
+                if (cleanDateMatch) {
+                    const d = cleanDateMatch[1].padStart(2, '0');
+                    const m = cleanDateMatch[2].padStart(2, '0');
+                    const y = cleanDateMatch[4] ? ('/' + cleanDateMatch[4]) : '';
+                    return d + '/' + m + y;
+                }
+            }
+            try {
+                const d = new Date(dateVal);
+                if (!isNaN(d.getTime())) {
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            } catch(e) {}
+            return String(dateVal).slice(0, 10);
+        }
+
+        function renderWishesTable() {
+            const tbody = document.getElementById('wishes-table-body');
+            const emptyEl = document.getElementById('wishes-empty-state');
+            if (!tbody) return;
+
+            const keyword = (document.getElementById('wishes-search-input')?.value || '').toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            const filtered = allWishes.filter(w => {
+                return (w.sender || '').toLowerCase().includes(keyword) ||
+                       (w.message || '').toLowerCase().includes(keyword) ||
+                       (w.flower || '').toLowerCase().includes(keyword);
+            });
+
+            if (filtered.length === 0) {
+                emptyEl?.classList.remove('hidden');
+                return;
+            } else {
+                emptyEl?.classList.add('hidden');
+            }
+
+            filtered.forEach(wish => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-rose-50/40 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-black text-slate-800 whitespace-nowrap font-heading">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-pen text-rose-500 text-xs"></i>
+                            <span>${wish.sender}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <span class="bg-rose-50 text-rose-800 font-extrabold text-xs px-2.5 py-1 rounded-full border border-rose-200">
+                            ${wish.flower || '💐 Tri ân'}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 max-w-xs md:max-w-md">
+                        <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed italic font-medium">
+                            "${wish.message}"
+                        </p>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs font-bold text-slate-500 whitespace-nowrap">
+                        ${formatWishDate(wish.date || wish.createdAt)}
+                    </td>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1">
+                            <button onclick="openWishViewModal('${wish.id}')" class="p-2 text-slate-400 hover:text-sky-700 rounded-lg hover:bg-sky-50 transition-colors" title="Xem chi tiết">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                            <button onclick="openWishAdminModal('${wish.id}')" class="p-2 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors" title="Chỉnh sửa">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteWishAdmin('${wish.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openWishAdminModal(wishId = null) {
+            const modal = document.getElementById('wish-admin-modal');
+            const titleEl = document.getElementById('wish-admin-modal-title');
+            const idInput = document.getElementById('wish-admin-id');
+            const senderInput = document.getElementById('wish-admin-sender');
+            const flowerSelect = document.getElementById('wish-admin-flower');
+            const dateInput = document.getElementById('wish-admin-date');
+            const messageInput = document.getElementById('wish-admin-message');
+
+            if (wishId) {
+                const wish = allWishes.find(w => w.id === wishId);
+                if (!wish) return;
+                titleEl.innerText = 'Chỉnh Sửa Lời Chúc Tri Ân 20/11';
+                idInput.value = wish.id;
+                senderInput.value = wish.sender || '';
+                flowerSelect.value = wish.flower || '🌹 Hoa Hồng Điểm 10';
+                dateInput.value = formatWishDate(wish.date || wish.createdAt);
+                messageInput.value = wish.message || '';
+            } else {
+                titleEl.innerText = 'Thêm Lời Chúc Tri Ân 20/11 Mới';
+                idInput.value = '';
+                document.getElementById('wish-admin-form').reset();
+                const today = new Date();
+                const d = String(today.getDate()).padStart(2, '0');
+                const m = String(today.getMonth() + 1).padStart(2, '0');
+                const y = today.getFullYear();
+                dateInput.value = `${d}/${m}/${y}`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeWishAdminModal() {
+            document.getElementById('wish-admin-modal').classList.add('hidden');
+        }
+
+        async function handleWishAdminSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('wish-admin-id').value.trim();
+            const sender = document.getElementById('wish-admin-sender').value.trim();
+            const flower = document.getElementById('wish-admin-flower').value;
+            const date = document.getElementById('wish-admin-date').value.trim();
+            const message = document.getElementById('wish-admin-message').value.trim();
+
+            const submitBtn = document.getElementById('btn-save-wish-admin');
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+
+            try {
+                if (id) {
+                    await StorageService.updateWish(id, { sender, flower, date, message });
+                    showToast('Đã cập nhật lời chúc tri ân thành công!', 'success');
+                } else {
+                    await StorageService.createWish({ sender, flower, date, message });
+                    showToast('Đã thêm lời chúc tri ân mới thành công!', 'success');
+                }
+                closeWishAdminModal();
+                await loadAllData();
+            } catch(err) {
+                console.error('Lỗi lưu lời chúc:', err);
+                showToast('Lỗi khi lưu lời chúc: ' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            }
+        }
+
+        function openWishViewModal(wishId) {
+            const wish = allWishes.find(w => w.id === wishId);
+            if (!wish) return;
+
+            document.getElementById('wish-view-sender').innerText = wish.sender;
+            document.getElementById('wish-view-flower').innerText = wish.flower || '💐 Tri ân';
+            document.getElementById('wish-view-message').innerText = wish.message;
+            document.getElementById('wish-view-date').innerText = formatWishDate(wish.date || wish.createdAt);
+
+            document.getElementById('wish-view-modal').classList.remove('hidden');
+        }
+
+        function closeWishViewModal() {
+            document.getElementById('wish-view-modal').classList.add('hidden');
+        }
+
+        async function deleteWishAdmin(wishId) {
+            const wish = allWishes.find(w => w.id === wishId);
+            if (!wish) return;
+
+            if (confirm(`Bạn có chắc chắn muốn xóa lời chúc của "${wish.sender}" không?`)) {
+                try {
+                    await StorageService.deleteWish(wishId);
+                    showToast('Đã xóa lời chúc thành công!', 'success');
+                    await loadAllData();
+                } catch(err) {
+                    console.error('Lỗi xóa lời chúc:', err);
+                    showToast('Lỗi khi xóa: ' + err.message, 'error');
+                }
+            }
+        }
+
         // 8. TOAST NOTIFICATION UTILITY
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
             let bg = 'bg-slate-800 text-white';
-            let icon = 'fa-info-circle';
+            let icon = 'fa-circle-info';
             if (type === 'success') {
-                bg = 'bg-emerald-600 text-white shadow-emerald-200';
+                bg = 'bg-emerald-600 text-white shadow-soft';
                 icon = 'fa-circle-check';
             } else if (type === 'error') {
-                bg = 'bg-rose-600 text-white shadow-rose-200';
+                bg = 'bg-rose-600 text-white shadow-soft';
                 icon = 'fa-circle-exclamation';
             } else if (type === 'warning') {
-                bg = 'bg-amber-500 text-white shadow-amber-200';
+                bg = 'bg-amber-600 text-white shadow-soft';
                 icon = 'fa-triangle-exclamation';
             }
 
-            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in`;
+            toast.className = `${bg} shadow-card pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2.5 max-w-sm fade-in border border-white/20`;
             toast.innerHTML = `
-                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <i class="fa-solid ${icon} text-base shrink-0"></i>
                 <span class="flex-1">${message}</span>
             `;
 
@@ -1663,6 +2094,11 @@
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
         }
+
+        // Tự động kiểm tra phiên đăng nhập khi tải trang
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
     </script>
 </body>
 </html>

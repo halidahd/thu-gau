@@ -21,6 +21,7 @@
 const SHEET_POSTS = 'Posts';
 const SHEET_CATEGORIES = 'Categories';
 const SHEET_PHYSICAL_BOOKS = 'PhysicalBooks';
+const SHEET_WISHES = 'Wishes2011';
 
 // Cấu trúc cột của Sheet Posts
 const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt'];
@@ -30,6 +31,9 @@ const CAT_COLUMNS = ['id', 'name', 'icon'];
 
 // Cấu trúc cột của Sheet PhysicalBooks (Sách truyện giấy & mượn trả)
 const PHYSICAL_COLUMNS = ['id', 'code', 'title', 'author', 'category', 'shelf', 'status', 'borrower', 'borrowDate', 'returnDate', 'note'];
+
+// Cấu trúc cột của Sheet Wishes2011 (Lời chúc tri ân Thầy Cô 20/11)
+const WISH_COLUMNS = ['id', 'sender', 'flower', 'message', 'date', 'createdAt'];
 
 /**
  * Hàm khởi tạo cơ sở dữ liệu và nạp dữ liệu mẫu ban đầu
@@ -148,6 +152,22 @@ function setupDatabase() {
   ];
   initialPhysical.forEach(p => sheetPhysical.appendRow(p));
 
+  // 6. Tạo hoặc lấy Sheet Wishes2011 (Lời chúc tri ân 20/11)
+  let sheetWishes = ss.getSheetByName(SHEET_WISHES);
+  if (!sheetWishes) {
+    sheetWishes = ss.insertSheet(SHEET_WISHES);
+  }
+  sheetWishes.clear();
+  sheetWishes.appendRow(WISH_COLUMNS);
+  sheetWishes.getRange(1, 1, 1, WISH_COLUMNS.length).setFontWeight('bold').setBackground('#fecdd3');
+
+  const initialWishes = [
+    ['wish-1', 'Nguyễn Minh Anh (Lớp 4B)', '🌹 Hoa Hồng Điểm 10', 'Nhân ngày 20/11, em kính chúc các Thầy Cô giáo luôn mạnh khỏe, tươi vui và luôn nở nụ cười thật tươi bên chúng em ạ!', '20/11/2024', new Date('2024-11-20T08:00:00Z').toISOString()],
+    ['wish-2', 'Lê Hoàng Nam (Lớp 4B)', '🌻 Hướng Dương Tri Ân', 'Em cảm ơn Thầy Cô đã dạy em bao bài học hay và những câu chuyện bổ ích. Em xin hứa sẽ chăm ngoan học giỏi!', '20/11/2024', new Date('2024-11-20T09:15:00Z').toISOString()],
+    ['wish-3', 'Trần Thảo My (Lớp 4B)', '💐 Bó Hoa Tươi Thắm', 'Kính chúc toàn thể các Thầy Cô giáo trường TH Nam Đồng luôn dồi dào sức khỏe, tràn đầy niềm vui và nhiệt huyết trên bục giảng!', '20/11/2024', new Date('2024-11-20T10:30:00Z').toISOString()]
+  ];
+  initialWishes.forEach(w => sheetWishes.appendRow(w));
+
   Logger.log('🎉 Cấu hình cơ sở dữ liệu Tủ Sách Số 4B thành công!');
 }
 
@@ -235,7 +255,33 @@ function doGet(e) {
       return jsonResponse({ success: true, data: physicalList });
     }
 
-    // 5. Lấy danh sách bài viết (getPosts)
+    // 5. Lấy danh sách lời chúc 20/11 (getWishes)
+    if (action === 'getWishes') {
+      const sheetWishes = ss.getSheetByName(SHEET_WISHES);
+      if (!sheetWishes) {
+        return jsonResponse({ success: true, data: [] });
+      }
+      const data = sheetWishes.getDataRange().getValues();
+      if (data.length <= 1) return jsonResponse({ success: true, data: [] });
+
+      const wishes = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row[0]) continue;
+        wishes.push({
+          id: String(row[0]),
+          sender: String(row[1] || ''),
+          flower: String(row[2] || '💐 Bó Hoa Tươi Thắm'),
+          message: String(row[3] || ''),
+          date: String(row[4] || ''),
+          createdAt: row[5] ? (row[5] instanceof Date ? row[5].toISOString() : String(row[5])) : new Date().toISOString()
+        });
+      }
+      wishes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return jsonResponse({ success: true, data: wishes });
+    }
+
+    // 6. Lấy danh sách bài viết (getPosts)
     const statusFilter = (e && e.parameter && e.parameter.status) ? e.parameter.status : null;
     const sheetPosts = ss.getSheetByName(SHEET_POSTS);
 
@@ -515,10 +561,78 @@ function doPost(e) {
       return jsonResponse({ success: false, message: 'Không tìm thấy sách giấy để xóa.' });
     }
 
-    // 9. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
+    // 9. Thêm lời chúc 20/11 mới (createWish)
+    if (action === 'createWish') {
+      const wish = payload.wish;
+      if (!wish || !wish.sender || !wish.message) {
+        return jsonResponse({ success: false, message: 'Dữ liệu lời chúc không hợp lệ.' });
+      }
+
+      let sheetWishes = ss.getSheetByName(SHEET_WISHES);
+      if (!sheetWishes) {
+        sheetWishes = ss.insertSheet(SHEET_WISHES);
+        sheetWishes.appendRow(WISH_COLUMNS);
+      }
+
+      const newId = wish.id || ('wish-' + Date.now());
+      const newRow = [
+        newId,
+        wish.sender,
+        wish.flower || '💐 Bó Hoa Tươi Thắm',
+        wish.message,
+        wish.date || Utilities.formatDate(new Date(), 'GMT+7', 'dd/MM/yyyy'),
+        wish.createdAt || new Date().toISOString()
+      ];
+
+      sheetWishes.appendRow(newRow);
+      return jsonResponse({ success: true, message: 'Đã gửi lời chúc tri ân 20/11 thành công!', id: newId });
+    }
+
+    // 10. Cập nhật lời chúc 20/11 (updateWish)
+    if (action === 'updateWish') {
+      const id = payload.id;
+      const updateData = payload.wish;
+      if (!id || !updateData) return jsonResponse({ success: false, message: 'Thiếu thông tin cập nhật lời chúc.' });
+
+      const sheetWishes = ss.getSheetByName(SHEET_WISHES);
+      if (!sheetWishes) return jsonResponse({ success: false, message: 'Bảng Wishes2011 chưa tồn tại.' });
+
+      const data = sheetWishes.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          if (updateData.sender !== undefined) sheetWishes.getRange(i + 1, 2).setValue(updateData.sender);
+          if (updateData.flower !== undefined) sheetWishes.getRange(i + 1, 3).setValue(updateData.flower);
+          if (updateData.message !== undefined) sheetWishes.getRange(i + 1, 4).setValue(updateData.message);
+          if (updateData.date !== undefined) sheetWishes.getRange(i + 1, 5).setValue(updateData.date);
+
+          return jsonResponse({ success: true, message: 'Cập nhật lời chúc tri ân thành công!' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy lời chúc để cập nhật.' });
+    }
+
+    // 11. Xóa lời chúc 20/11 (deleteWish)
+    if (action === 'deleteWish') {
+      const id = payload.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id lời chúc.' });
+
+      const sheetWishes = ss.getSheetByName(SHEET_WISHES);
+      if (!sheetWishes) return jsonResponse({ success: false, message: 'Bảng Wishes2011 chưa tồn tại.' });
+
+      const data = sheetWishes.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetWishes.deleteRow(i + 1);
+          return jsonResponse({ success: true, message: 'Đã xóa lời chúc thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy lời chúc để xóa.' });
+    }
+
+    // 12. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
     if (action === 'seedInitialData') {
       setupDatabase();
-      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu, thể loại và 10 sách truyện giấy lên Google Sheets!' });
+      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu, thể loại, 10 sách truyện giấy và lời chúc 20/11 lên Google Sheets!' });
     }
 
     return jsonResponse({ success: false, message: 'Hành động không hợp lệ: ' + action });

@@ -163,6 +163,34 @@ const INITIAL_PHYSICAL_BOOKS = [
     }
 ];
 
+// Danh sách lời chúc tri ân 20/11 mẫu
+const INITIAL_WISHES = [
+    {
+        id: 'wish-1',
+        sender: 'Nguyễn Minh Anh (Lớp 4B)',
+        flower: '🌹 Hoa Hồng Điểm 10',
+        message: 'Nhân ngày 20/11, em kính chúc các Thầy Cô giáo luôn mạnh khỏe, tươi vui và luôn nở nụ cười thật tươi bên chúng em ạ!',
+        date: '20/11/2024',
+        createdAt: '2024-11-20T08:00:00.000Z'
+    },
+    {
+        id: 'wish-2',
+        sender: 'Lê Hoàng Nam (Lớp 4B)',
+        flower: '🌻 Hướng Dương Tri Ân',
+        message: 'Em cảm ơn Thầy Cô đã dạy em bao bài học hay và những câu chuyện bổ ích. Em xin hứa sẽ chăm ngoan học giỏi!',
+        date: '20/11/2024',
+        createdAt: '2024-11-20T09:15:00.000Z'
+    },
+    {
+        id: 'wish-3',
+        sender: 'Trần Thảo My (Lớp 4B)',
+        flower: '💐 Bó Hoa Tươi Thắm',
+        message: 'Kính chúc toàn thể các Thầy Cô giáo trường TH Nam Đồng luôn dồi dào sức khỏe, tràn đầy niềm vui và nhiệt huyết trên bục giảng!',
+        date: '20/11/2024',
+        createdAt: '2024-11-20T10:30:00.000Z'
+    }
+];
+
 // Danh sách 4 truyện gốc hiện có của Tủ Sách Số 4B
 const INITIAL_BOOKS = [
     {
@@ -252,6 +280,9 @@ const StorageService = {
         }
         if (!localStorage.getItem('thuvien_4b_physical_books')) {
             localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(INITIAL_PHYSICAL_BOOKS));
+        }
+        if (!localStorage.getItem('thuvien_4b_2011_wishes')) {
+            localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(INITIAL_WISHES));
         }
     },
 
@@ -666,6 +697,123 @@ const StorageService = {
             borrowDate: '',
             returnDate: ''
         });
+    },
+
+    // ==========================================
+    // QUẢN LÝ LỜI CHÚC TRI ÂN THẦY CÔ 20/11
+    // ==========================================
+
+    // Lấy danh sách lời chúc 20/11
+    async getWishes() {
+        this.initLocalData();
+        const endpoint = getApiEndpoint();
+
+        if (this.hasApi()) {
+            try {
+                const url = new URL(endpoint);
+                url.searchParams.set('action', 'getWishes');
+                const response = await fetch(url.toString(), { method: 'GET', mode: 'cors' });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result && Array.isArray(result.data)) {
+                        localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(result.data));
+                        return result.data;
+                    }
+                }
+            } catch (err) {
+                console.warn('[StorageService] Không thể lấy Wishes từ API, dùng LocalStorage:', err);
+            }
+        }
+
+        try {
+            return JSON.parse(localStorage.getItem('thuvien_4b_2011_wishes') || JSON.stringify(INITIAL_WISHES));
+        } catch (e) {
+            return INITIAL_WISHES;
+        }
+    },
+
+    // Tạo lời chúc 20/11 mới
+    async createWish(wishData) {
+        this.initLocalData();
+        const newWish = {
+            id: 'wish-' + Date.now(),
+            sender: (wishData.sender || 'Học sinh Lớp 4B').trim(),
+            flower: wishData.flower || '💐 Bó Hoa Tươi Thắm',
+            message: (wishData.message || '').trim(),
+            date: wishData.date || new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            createdAt: new Date().toISOString()
+        };
+
+        let apiSuccess = false;
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'createWish',
+                    wish: newWish
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi gửi Wish lên API:', err);
+            }
+        }
+
+        const wishes = JSON.parse(localStorage.getItem('thuvien_4b_2011_wishes') || '[]');
+        wishes.unshift(newWish);
+        localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(wishes));
+
+        return { success: true, wish: newWish, remoteSynced: apiSuccess };
+    },
+
+    // Cập nhật lời chúc 20/11
+    async updateWish(id, updateData) {
+        this.initLocalData();
+        let apiSuccess = false;
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'updateWish',
+                    id: id,
+                    wish: updateData
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi cập nhật Wish lên API:', err);
+            }
+        }
+
+        const wishes = JSON.parse(localStorage.getItem('thuvien_4b_2011_wishes') || '[]');
+        const idx = wishes.findIndex(w => w.id === id);
+        if (idx !== -1) {
+            wishes[idx] = { ...wishes[idx], ...updateData };
+            localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(wishes));
+        }
+
+        return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // Xóa lời chúc 20/11
+    async deleteWish(id) {
+        this.initLocalData();
+        let apiSuccess = false;
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'deleteWish',
+                    id: id
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi xóa Wish trên API:', err);
+            }
+        }
+
+        let wishes = JSON.parse(localStorage.getItem('thuvien_4b_2011_wishes') || '[]');
+        wishes = wishes.filter(w => w.id !== id);
+        localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(wishes));
+
+        return { success: true, remoteSynced: apiSuccess };
     },
 
     // Đồng bộ đẩy dữ liệu mẫu ban đầu (4 truyện hiện có) lên Google Sheets
