@@ -142,10 +142,14 @@
                 <div class="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
                     <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
                         <i class="fa-solid fa-book-bookmark text-amber-300"></i>
-                        <span id="total-books-count">0</span> Tác phẩm đã duyệt
+                        <span id="total-books-count">0</span> Tác phẩm số
                     </div>
                     <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-eye text-emerald-300"></i>
+                        <i class="fa-solid fa-book text-emerald-300"></i>
+                        <span id="total-physical-count">10</span> Sách truyện giấy
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-sky-300"></i>
                         <span id="total-views-count">0</span> Lượt đọc
                     </div>
                     <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
@@ -162,44 +166,136 @@
             </div>
         </div>
 
-        <!-- Search & Filter Section -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-            <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                
-                <!-- Search Box -->
-                <div class="relative w-full md:w-80">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="search-input" oninput="filterBooks()" placeholder="Tìm tên truyện, tác giả..." 
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                </div>
+        <!-- Mode Switcher: Tủ Sách Số & Sách Truyện Giấy -->
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
+            <button onclick="switchMainTab('digital')" id="btn-tab-digital" class="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-blue-600 text-white shadow-sm transition-all whitespace-nowrap">
+                <i class="fa-solid fa-laptop-code"></i>
+                <span>Tủ Sách Số 4B (Đọc Online)</span>
+            </button>
+            <button onclick="switchMainTab('physical')" id="btn-tab-physical" class="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap">
+                <i class="fa-solid fa-book-bookmark text-amber-500"></i>
+                <span>Sách Truyện Giấy Lớp 4B</span>
+                <span id="tab-physical-count" class="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded-full">10 cuốn</span>
+            </button>
+        </div>
 
-                <!-- Category Pills (Được render động từ CSDL) -->
-                <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="category-pills">
-                    <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
-                        Tất cả
-                    </button>
-                    <!-- Pills render via JS -->
+        <!-- ============================================== -->
+        <!-- SECTION 1: TỦ SÁCH SỐ & AI CO-AUTHOR -->
+        <!-- ============================================== -->
+        <section id="section-digital" class="space-y-6">
+            <!-- Search & Filter Section -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                    
+                    <!-- Search Box -->
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="search-input" oninput="filterBooks()" placeholder="Tìm tên truyện, tác giả..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    </div>
+
+                    <!-- Category Pills (Được render động từ CSDL) -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="category-pills">
+                        <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                            Tất cả
+                        </button>
+                        <!-- Pills render via JS -->
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Loading Indicator -->
-        <div id="loading-state" class="py-16 text-center space-y-3">
-            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p class="text-sm font-bold text-slate-500">Đang tải tủ sách trực tuyến...</p>
-        </div>
+            <!-- Loading Indicator -->
+            <div id="loading-state" class="py-16 text-center space-y-3">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p class="text-sm font-bold text-slate-500">Đang tải tủ sách trực tuyến...</p>
+            </div>
 
-        <!-- Books Grid -->
-        <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Dynamic Cards inserted via JS -->
-        </div>
+            <!-- Books Grid -->
+            <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Dynamic Cards inserted via JS -->
+            </div>
 
-        <!-- Empty State -->
-        <div id="empty-state" class="hidden text-center py-12 space-y-3 bg-white rounded-2xl border border-dashed border-slate-300">
-            <div class="text-5xl">🔍</div>
-            <h3 class="text-lg font-bold text-slate-700">Không tìm thấy tác phẩm phù hợp</h3>
-            <p class="text-sm text-slate-500">Hãy thử tìm kiếm từ khóa khác hoặc chọn thể loại khác nhé!</p>
-        </div>
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-12 space-y-3 bg-white rounded-2xl border border-dashed border-slate-300">
+                <div class="text-5xl">🔍</div>
+                <h3 class="text-lg font-bold text-slate-700">Không tìm thấy tác phẩm phù hợp</h3>
+                <p class="text-sm text-slate-500">Hãy thử tìm kiếm từ khóa khác hoặc chọn thể loại khác nhé!</p>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION 2: SÁCH TRUYỆN GIẤY HIỆN CÓ TẠI LỚP 4B -->
+        <!-- ============================================== -->
+        <section id="section-physical" class="hidden space-y-4">
+            <!-- Header bar & Search -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl font-bold">
+                            📖
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-base">Danh Mục Sách Truyện Giấy Lớp 4B</h3>
+                            <p class="text-xs text-slate-500">Tra cứu nhanh tình trạng các đầu sách hiện có tại góc thư viện lớp để mượn đọc</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
+                        <span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-200">
+                            <i class="fa-solid fa-circle-check"></i> <span id="home-available-count">0</span> cuốn sẵn sàng
+                        </span>
+                        <span class="bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl border border-amber-200">
+                            <i class="fa-solid fa-clock"></i> <span id="home-borrowed-count">0</span> đang mượn
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Search & Status filter -->
+                <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full sm:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="home-physical-search" oninput="renderHomePhysicalBooks()" placeholder="Tìm tên sách giấy, tác giả, mã..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all">
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Lọc tình trạng:</label>
+                        <select id="home-physical-filter" onchange="renderHomePhysicalBooks()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                            <option value="all">Tất cả sách giấy</option>
+                            <option value="available">✅ Có thể mượn</option>
+                            <option value="borrowed">⏳ Đang được mượn</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table of Physical Books -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Mã số</th>
+                                <th class="py-3 px-4">Tên tác phẩm & Tác giả</th>
+                                <th class="py-3 px-4">Thể loại & Kệ</th>
+                                <th class="py-3 px-4 text-center">Tình trạng</th>
+                                <th class="py-3 px-4">Thông tin mượn đọc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="home-physical-table-body" class="divide-y divide-slate-100">
+                            <!-- Dynamic rows via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty physical state -->
+            <div id="home-physical-empty" class="hidden text-center py-10 space-y-2 bg-white rounded-2xl border border-dashed border-slate-300">
+                <div class="text-4xl">📚</div>
+                <h4 class="text-sm font-bold text-slate-700">Không tìm thấy sách truyện giấy phù hợp</h4>
+                <p class="text-xs text-slate-400">Hãy thử nhập từ khóa tìm kiếm khác nhé!</p>
+            </div>
+        </section>
 
     </main>
 
@@ -387,6 +483,7 @@
 
         let books = [];
         let categories = [];
+        let physicalBooks = [];
         let currentCategory = 'all';
         let audioContext = null;
         let isMusicPlaying = false;
@@ -396,7 +493,10 @@
         window.addEventListener('DOMContentLoaded', async () => {
             renderHeroQR();
             await loadCategories();
-            await fetchApprovedBooks();
+            await Promise.all([
+                fetchApprovedBooks(),
+                fetchPhysicalBooks()
+            ]);
             checkUrlForBookParam();
         });
 
@@ -461,6 +561,130 @@
                 renderBooks();
                 updateHeaderStats();
             }
+        }
+
+        // 2.5. XỬ LÝ CHUYỂN TAB CHÍNH & SÁCH TRUYỆN GIẤY
+        function switchMainTab(mode) {
+            const btnDigital = document.getElementById('btn-tab-digital');
+            const btnPhysical = document.getElementById('btn-tab-physical');
+            const secDigital = document.getElementById('section-digital');
+            const secPhysical = document.getElementById('section-physical');
+
+            if (mode === 'digital') {
+                btnDigital.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-blue-600 text-white shadow-sm transition-all whitespace-nowrap';
+                btnPhysical.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap';
+                secDigital.classList.remove('hidden');
+                secPhysical.classList.add('hidden');
+            } else {
+                btnPhysical.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-amber-500 text-white shadow-sm transition-all whitespace-nowrap';
+                btnDigital.className = 'px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-sm transition-all whitespace-nowrap';
+                secPhysical.classList.remove('hidden');
+                secDigital.classList.add('hidden');
+                renderHomePhysicalBooks();
+            }
+        }
+
+        async function fetchPhysicalBooks() {
+            try {
+                physicalBooks = await StorageService.getPhysicalBooks();
+            } catch (e) {
+                physicalBooks = INITIAL_PHYSICAL_BOOKS;
+            }
+            updatePhysicalStats();
+            renderHomePhysicalBooks();
+        }
+
+        function updatePhysicalStats() {
+            const total = physicalBooks.length;
+            const available = physicalBooks.filter(b => b.status === 'available').length;
+            const borrowed = physicalBooks.filter(b => b.status === 'borrowed').length;
+
+            const elTotal = document.getElementById('total-physical-count');
+            if (elTotal) elTotal.innerText = total;
+
+            const elTabBadge = document.getElementById('tab-physical-count');
+            if (elTabBadge) elTabBadge.innerText = `${total} cuốn`;
+
+            const elAvail = document.getElementById('home-available-count');
+            if (elAvail) elAvail.innerText = available;
+
+            const elBorr = document.getElementById('home-borrowed-count');
+            if (elBorr) elBorr.innerText = borrowed;
+        }
+
+        function renderHomePhysicalBooks() {
+            const tbody = document.getElementById('home-physical-table-body');
+            const emptyEl = document.getElementById('home-physical-empty');
+            if (!tbody) return;
+
+            const keyword = (document.getElementById('home-physical-search')?.value || '').toLowerCase().trim();
+            const filter = document.getElementById('home-physical-filter')?.value || 'all';
+
+            tbody.innerHTML = '';
+
+            const filtered = physicalBooks.filter(book => {
+                const matchesStatus = (filter === 'all') || (book.status === filter);
+                const matchesSearch = (book.title || '').toLowerCase().includes(keyword) ||
+                                      (book.code || '').toLowerCase().includes(keyword) ||
+                                      (book.author || '').toLowerCase().includes(keyword) ||
+                                      (book.category || '').toLowerCase().includes(keyword);
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                emptyEl.classList.remove('hidden');
+                return;
+            } else {
+                emptyEl.classList.add('hidden');
+            }
+
+            filtered.forEach(book => {
+                const isAvailable = book.status === 'available';
+                const statusBadge = isAvailable
+                    ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Có thể mượn</span>'
+                    : '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Đang mượn</span>';
+
+                let borrowInfo = '<span class="text-slate-400 text-xs italic">Sách đang ở kệ lớp, có thể mượn đọc</span>';
+                if (!isAvailable) {
+                    borrowInfo = `
+                        <div class="text-xs text-amber-900 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-graduate text-amber-600"></i>
+                            <span>${book.borrower || 'Bạn học sinh'}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">
+                            Ngày mượn: <strong>${book.borrowDate || 'Gần đây'}</strong> • Hẹn trả: <strong class="text-amber-700">${book.returnDate || 'Sắp tới'}</strong>
+                        </div>
+                    `;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-50/40 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">
+                        ${book.code || '-'}
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="font-extrabold text-slate-800 text-sm line-clamp-1">
+                            ${book.title}
+                        </div>
+                        <div class="text-xs text-slate-400 mt-0.5">
+                            Tác giả: <span class="text-slate-600 font-medium">${book.author || 'Nhiều tác giả'}</span>
+                            ${book.note ? ` • <span class="italic text-[11px]">${book.note}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
+                        <div class="font-semibold text-slate-700">${book.category || 'Văn học thiếu nhi'}</div>
+                        <div class="text-[11px] text-slate-400 font-medium"><i class="fa-solid fa-location-dot text-rose-400 mr-1"></i>${book.shelf || 'Kệ sách lớp'}</div>
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="py-3 px-4">
+                        ${borrowInfo}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         // 3. Render Hero QR Code

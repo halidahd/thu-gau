@@ -225,6 +225,12 @@
                     <span>Quản lý Thể loại</span>
                 </button>
 
+                <button onclick="switchTab('physical')" id="tab-btn-physical" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Sách Truyện Giấy & Mượn Trả</span>
+                    <span id="physical-badge-count" class="bg-blue-100 text-blue-700 text-[11px] font-black px-2 py-0.5 rounded-full">10</span>
+                </button>
+
                 <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-database"></i>
                     <span>CSDL & Cài đặt API</span>
@@ -370,6 +376,71 @@
             </section>
 
             <!-- ============================================== -->
+            <!-- TAB 3.5: QUẢN LÝ SÁCH TRUYỆN GIẤY & MƯỢN TRẢ -->
+            <!-- ============================================== -->
+            <section id="tab-physical" class="tab-pane hidden space-y-4">
+                <!-- Overview & Actions Bar -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            📖
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-base">Sổ Quản Lý Sách Truyện Giấy Lớp 4B</h3>
+                            <p class="text-xs text-slate-500">Cập nhật danh mục sách hiện có tại góc thư viện lớp, theo dõi học sinh mượn và ngày trả</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openPhysicalModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-200 flex items-center gap-2 active:scale-95 whitespace-nowrap">
+                        <i class="fa-solid fa-plus"></i> Thêm Sách Mới
+                    </button>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="physical-search-input" oninput="renderPhysicalBooksTable()" placeholder="Tìm tên sách, mã, học sinh..." 
+                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Tình trạng:</label>
+                        <select id="physical-status-filter" onchange="renderPhysicalBooksTable()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                            <option value="all">Tất cả (Đầy đủ)</option>
+                            <option value="available">✅ Có thể mượn</option>
+                            <option value="borrowed">⏳ Đang được mượn</option>
+                        </select>
+                        <button onclick="loadAllData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-sm" title="Làm mới">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4">Mã sách</th>
+                                    <th class="py-3 px-4">Tên sách truyện giấy</th>
+                                    <th class="py-3 px-4">Thể loại & Kệ</th>
+                                    <th class="py-3 px-4 text-center">Tình trạng</th>
+                                    <th class="py-3 px-4">Học sinh mượn</th>
+                                    <th class="py-3 px-4">Ngày mượn - Hạn trả</th>
+                                    <th class="py-3 px-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="physical-books-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
             <!-- TAB 4: CSDL & CÀI ĐẶT API (SETTINGS & SYNC) -->
             <!-- ============================================== -->
             <section id="tab-settings" class="tab-pane hidden space-y-6">
@@ -501,6 +572,110 @@
         </div>
     </div>
 
+    <!-- ============================================== -->
+    <!-- MODAL THÊM / CẬP NHẬT SÁCH GIẤY (PHYSICAL BOOK MODAL) -->
+    <!-- ============================================== -->
+    <div id="physical-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                    <h3 id="physical-modal-header" class="text-lg font-bold">Thêm Sách Truyện Giấy</h3>
+                </div>
+                <button onclick="closePhysicalModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="physical-form" onsubmit="handlePhysicalFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <input type="hidden" id="pform-id">
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã sách *</label>
+                        <input type="text" id="pform-code" required placeholder="SG-01" 
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-mono font-bold uppercase focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên sách / truyện giấy *</label>
+                        <input type="text" id="pform-title" required placeholder="Ví dụ: Dế Mèn Phiêu Lưu Ký" 
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác giả</label>
+                        <input type="text" id="pform-author" placeholder="Ví dụ: Tô Hoài" 
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Vị trí / Kệ sách</label>
+                        <input type="text" id="pform-shelf" placeholder="Kệ A1, Tủ giữa..." 
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể loại</label>
+                    <input type="text" id="pform-category" placeholder="Văn học thiếu nhi, Truyện tranh..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <!-- Tình trạng mượn trả -->
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <label class="block text-xs font-black text-slate-700 uppercase">Tình Trạng & Mượn Trả Tại Lớp</label>
+                    
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                            <input type="radio" name="pform-status" value="available" checked onchange="toggleBorrowerFields()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                            <span>✅ Có thể mượn</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                            <input type="radio" name="pform-status" value="borrowed" onchange="toggleBorrowerFields()" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
+                            <span>⏳ Đang được mượn</span>
+                        </label>
+                    </div>
+
+                    <div id="pform-borrower-box" class="hidden space-y-3 pt-2 border-t border-slate-200">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Học sinh mượn</label>
+                            <input type="text" id="pform-borrower" placeholder="Tên học sinh mượn (Ví dụ: Lê Minh Khôi 4B)" 
+                                class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Ngày mượn</label>
+                                <input type="date" id="pform-borrow-date" 
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Hạn trả / Ngày trả</label>
+                                <input type="date" id="pform-return-date" 
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ghi chú (Tùy chọn)</label>
+                    <input type="text" id="pform-note" placeholder="Tình trạng sách, bìa, số trang..." 
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" onclick="closePhysicalModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btn-submit-pform" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2">
+                        <span>Lưu Sách</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="config.js"></script>
     <script>
@@ -520,6 +695,7 @@
         let currentTab = 'pending';
         let allPosts = [];
         let allCategories = [];
+        let allPhysicalBooks = [];
         let previewingPostId = null;
 
         // Khởi chạy khi DOM sẵn sàng
@@ -586,19 +762,22 @@
         // 2. DATA LOADING & TABS
         async function loadAllData() {
             try {
-                // Tải song song danh sách bài viết và categories
-                const [posts, categories] = await Promise.all([
+                // Tải song song danh sách bài viết, categories và sách truyện giấy
+                const [posts, categories, physicalBooks] = await Promise.all([
                     StorageService.getPosts('all'),
-                    StorageService.getCategories()
+                    StorageService.getCategories(),
+                    StorageService.getPhysicalBooks()
                 ]);
 
                 allPosts = posts || [];
                 allCategories = categories || [];
+                allPhysicalBooks = physicalBooks || [];
 
                 updateDashboardStats();
                 renderPendingPosts();
                 renderPostsTable();
                 renderCategoriesGrid();
+                renderPhysicalBooksTable();
             } catch (error) {
                 console.error('Lỗi nạp dữ liệu:', error);
                 showToast('Không thể tải dữ liệu mới nhất: ' + error.message, 'error');
@@ -633,13 +812,19 @@
             document.getElementById('stat-total-count').innerText = allPosts.length;
             document.getElementById('stat-views-count').innerText = totalViews;
 
-            // Badge trên tab
+            // Badge trên tab kiểm duyệt
             const badge = document.getElementById('pending-badge-count');
             if (pending.length > 0) {
                 badge.innerText = pending.length;
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
+            }
+
+            // Badge trên tab sách truyện giấy
+            const pBadge = document.getElementById('physical-badge-count');
+            if (pBadge) {
+                pBadge.innerText = allPhysicalBooks.length;
             }
         }
 
@@ -901,6 +1086,224 @@
                 await loadAllData();
             } catch (err) {
                 showToast('Lỗi khi xóa thể loại: ' + err.message, 'error');
+            }
+        }
+
+        // ==========================================
+        // 5.5. TAB: QUẢN LÝ SÁCH TRUYỆN GIẤY & MƯỢN TRẢ
+        // ==========================================
+        function renderPhysicalBooksTable() {
+            const tbody = document.getElementById('physical-books-table-body');
+            if (!tbody) return;
+
+            const searchKeyword = (document.getElementById('physical-search-input')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('physical-status-filter')?.value || 'all';
+
+            tbody.innerHTML = '';
+
+            const filtered = allPhysicalBooks.filter(book => {
+                const matchesStatus = (statusFilter === 'all') || (book.status === statusFilter);
+                const matchesSearch = (book.title || '').toLowerCase().includes(searchKeyword) ||
+                                      (book.code || '').toLowerCase().includes(searchKeyword) ||
+                                      (book.borrower || '').toLowerCase().includes(searchKeyword) ||
+                                      (book.category || '').toLowerCase().includes(searchKeyword);
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-xs text-slate-400">
+                            Không tìm thấy sách truyện giấy nào phù hợp.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(book => {
+                const isAvailable = book.status === 'available';
+                const statusBadge = isAvailable
+                    ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Có thể mượn</span>'
+                    : '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Đang mượn</span>';
+
+                let borrowDatesInfo = '-';
+                if (!isAvailable && (book.borrowDate || book.returnDate)) {
+                    borrowDatesInfo = `<div class="text-xs font-semibold text-slate-700">Mượn: ${book.borrowDate || 'Chưa ghi'}</div>
+                                       <div class="text-[11px] text-amber-600 font-bold">Hẹn trả: ${book.returnDate || 'Chưa ghi'}</div>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">
+                        ${book.code || '-'}
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="font-extrabold text-slate-800 text-xs sm:text-sm line-clamp-1">
+                            ${book.title}
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${book.author ? 'Tác giả: ' + book.author : ''}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
+                        <div>${book.category || 'Chưa phân loại'}</div>
+                        <div class="text-[11px] text-slate-400 font-medium">${book.shelf || 'Kệ sách lớp'}</div>
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="py-3 px-4 text-xs font-bold whitespace-nowrap ${isAvailable ? 'text-slate-400' : 'text-amber-800'}">
+                        ${isAvailable ? '—' : `<i class="fa-solid fa-user-graduate text-amber-600 mr-1"></i>${book.borrower || 'Chưa ghi tên'}`}
+                    </td>
+                    <td class="py-3 px-4 text-xs whitespace-nowrap">
+                        ${borrowDatesInfo}
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1.5">
+                            ${!isAvailable ? `
+                                <button onclick="handleQuickReturn('${book.id}', '${book.title.replace(/'/g, "\\'")}')" 
+                                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1" 
+                                    title="Ghi nhận học sinh đã trả sách">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> Trả sách
+                                </button>
+                            ` : ''}
+                            <button onclick="openPhysicalModal('${book.id}')" 
+                                class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" 
+                                title="Sửa thông tin / Ghi nhận mượn">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="handleDeletePhysicalBook('${book.id}', '${book.title.replace(/'/g, "\\'")}')" 
+                                class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" 
+                                title="Xóa sách">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleBorrowerFields() {
+            const isBorrowed = document.querySelector('input[name="pform-status"]:checked')?.value === 'borrowed';
+            const box = document.getElementById('pform-borrower-box');
+            if (isBorrowed) {
+                box.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
+        function openPhysicalModal(id = null) {
+            const modal = document.getElementById('physical-modal');
+            const header = document.getElementById('physical-modal-header');
+            const form = document.getElementById('physical-form');
+            form.reset();
+
+            if (id) {
+                const book = allPhysicalBooks.find(b => b.id === id);
+                if (!book) return;
+                header.innerText = 'Cập Nhật Sách Truyện Giấy';
+                document.getElementById('pform-id').value = book.id;
+                document.getElementById('pform-code').value = book.code || '';
+                document.getElementById('pform-title').value = book.title || '';
+                document.getElementById('pform-author').value = book.author || '';
+                document.getElementById('pform-category').value = book.category || '';
+                document.getElementById('pform-shelf').value = book.shelf || '';
+                document.getElementById('pform-borrower').value = book.borrower || '';
+                document.getElementById('pform-borrow-date').value = book.borrowDate || '';
+                document.getElementById('pform-return-date').value = book.returnDate || '';
+                document.getElementById('pform-note').value = book.note || '';
+
+                const statusRadio = document.querySelector(`input[name="pform-status"][value="${book.status || 'available'}"]`);
+                if (statusRadio) statusRadio.checked = true;
+            } else {
+                header.innerText = 'Thêm Sách Truyện Giấy Mới';
+                document.getElementById('pform-id').value = '';
+                document.getElementById('pform-code').value = 'SG-' + String(allPhysicalBooks.length + 1).padStart(2, '0');
+                document.getElementById('pform-shelf').value = 'Kệ sách lớp 4B';
+                const availableRadio = document.querySelector('input[name="pform-status"][value="available"]');
+                if (availableRadio) availableRadio.checked = true;
+            }
+
+            toggleBorrowerFields();
+            modal.classList.remove('hidden');
+        }
+
+        function closePhysicalModal() {
+            document.getElementById('physical-modal').classList.add('hidden');
+        }
+
+        async function handlePhysicalFormSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('pform-id').value;
+            const code = document.getElementById('pform-code').value.trim();
+            const title = document.getElementById('pform-title').value.trim();
+            const author = document.getElementById('pform-author').value.trim();
+            const category = document.getElementById('pform-category').value.trim();
+            const shelf = document.getElementById('pform-shelf').value.trim();
+            const status = document.querySelector('input[name="pform-status"]:checked')?.value || 'available';
+            const borrower = document.getElementById('pform-borrower').value.trim();
+            const borrowDate = document.getElementById('pform-borrow-date').value;
+            const returnDate = document.getElementById('pform-return-date').value;
+            const note = document.getElementById('pform-note').value.trim();
+
+            if (!title) return;
+
+            const bookData = {
+                code,
+                title,
+                author,
+                category,
+                shelf,
+                status,
+                borrower: status === 'borrowed' ? borrower : '',
+                borrowDate: status === 'borrowed' ? borrowDate : '',
+                returnDate: status === 'borrowed' ? returnDate : '',
+                note
+            };
+
+            const submitBtn = document.getElementById('btn-submit-pform');
+            submitBtn.disabled = true;
+
+            try {
+                if (id) {
+                    await StorageService.updatePhysicalBook(id, bookData);
+                    showToast('Đã cập nhật sách truyện giấy thành công!', 'success');
+                } else {
+                    await StorageService.addPhysicalBook(bookData);
+                    showToast('Đã thêm sách mới vào sổ theo dõi!', 'success');
+                }
+                closePhysicalModal();
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi: ' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handleQuickReturn(id, title) {
+            if (!confirm(`Xác nhận học sinh đã trả sách "${title}" về kệ lớp?`)) return;
+
+            try {
+                await StorageService.quickReturnPhysicalBook(id);
+                showToast(`Đã ghi nhận trả sách "${title}" thành công!`, 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi trả sách: ' + err.message, 'error');
+            }
+        }
+
+        async function handleDeletePhysicalBook(id, title) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa cuốn sách:\n"${title}" khỏi sổ theo dõi?`)) return;
+
+            try {
+                await StorageService.deletePhysicalBook(id);
+                showToast(`Đã xóa cuốn sách "${title}".`, 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi xóa sách: ' + err.message, 'error');
             }
         }
 

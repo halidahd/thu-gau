@@ -29,6 +29,140 @@ const INITIAL_CATEGORIES = [
     { id: 'cat-4', name: 'STEM & Khoa Học', icon: '🚀' }
 ];
 
+// Danh sách 10 sách truyện giấy mẫu (Sổ theo dõi mượn trả tại lớp 4B)
+const INITIAL_PHYSICAL_BOOKS = [
+    {
+        id: 'pb-1',
+        code: 'SG-01',
+        title: 'Dế Mèn Phiêu Lưu Ký',
+        author: 'Tô Hoài',
+        category: 'Văn học thiếu nhi',
+        shelf: 'Kệ A1',
+        status: 'borrowed', // 'available' | 'borrowed'
+        borrower: 'Trần Bảo Nam (4B)',
+        borrowDate: '2024-11-18',
+        returnDate: '2024-11-25',
+        note: 'Bìa cứng, giữ gìn tốt'
+    },
+    {
+        id: 'pb-2',
+        code: 'SG-02',
+        title: 'Đất Rừng Phương Nam',
+        author: 'Đoàn Giỏi',
+        category: 'Văn học thiếu nhi',
+        shelf: 'Kệ A1',
+        status: 'available',
+        borrower: '',
+        borrowDate: '',
+        returnDate: '',
+        note: 'Sách mới'
+    },
+    {
+        id: 'pb-3',
+        code: 'SG-03',
+        title: 'Kính Vạn Hoa (Tập 1 - Nhà Ảo Thuật)',
+        author: 'Nguyễn Nhật Ánh',
+        category: 'Truyện dài thiếu nhi',
+        shelf: 'Kệ A2',
+        status: 'borrowed',
+        borrower: 'Nguyễn Hoàng Long (4B)',
+        borrowDate: '2024-11-20',
+        returnDate: '2024-11-27',
+        note: 'Sách bìa mềm'
+    },
+    {
+        id: 'pb-4',
+        code: 'SG-04',
+        title: 'Totto-chan Bên Cửa Sổ',
+        author: 'Kuroyanagi Tetsuko',
+        category: 'Văn học kinh điển',
+        shelf: 'Kệ B1',
+        status: 'available',
+        borrower: '',
+        borrowDate: '',
+        returnDate: '',
+        note: 'Có tranh minh họa'
+    },
+    {
+        id: 'pb-5',
+        code: 'SG-05',
+        title: 'Hoàng Tử Bé',
+        author: 'Antoine de Saint-Exupéry',
+        category: 'Truyện ngụ ngôn',
+        shelf: 'Kệ B1',
+        status: 'borrowed',
+        borrower: 'Phạm Thảo Vy (4B)',
+        borrowDate: '2024-11-19',
+        returnDate: '2024-11-26',
+        note: 'Bản dịch mới có màu'
+    },
+    {
+        id: 'pb-6',
+        code: 'SG-06',
+        title: 'Thần Đồng Đất Việt (Tập 15 - Trí Tuệ Trạng Tí)',
+        author: 'Phan Thị',
+        category: 'Truyện tranh lịch sử',
+        shelf: 'Kệ C1',
+        status: 'borrowed',
+        borrower: 'Chu Nam Phong (4B)',
+        borrowDate: '2024-11-21',
+        returnDate: '2024-11-28',
+        note: 'Rất được các bạn yêu thích'
+    },
+    {
+        id: 'pb-7',
+        code: 'SG-07',
+        title: 'Doraemon Tuyển Tập Truyện Dài (Tập 3 - Thám Hiểm Lòng Đất)',
+        author: 'Fujiko F. Fujio',
+        category: 'Truyện tranh khoa học',
+        shelf: 'Kệ C1',
+        status: 'available',
+        borrower: '',
+        borrowDate: '',
+        returnDate: '',
+        note: 'Có bọc nilon bảo quản'
+    },
+    {
+        id: 'pb-8',
+        code: 'SG-08',
+        title: 'Bách Khoa Tri Thức - Kỳ Quan Thiên Nhiên Thế Giới',
+        author: 'Nhiều tác giả',
+        category: 'Khoa học & Khám phá',
+        shelf: 'Kệ D2',
+        status: 'available',
+        borrower: '',
+        borrowDate: '',
+        returnDate: '',
+        note: 'Sách khổ lớn, đọc tại lớp hoặc mượn về'
+    },
+    {
+        id: 'pb-9',
+        code: 'SG-09',
+        title: 'Những Tấm Lòng Cao Cả',
+        author: 'Edmondo De Amicis',
+        category: 'Giáo dục đạo đức',
+        shelf: 'Kệ A3',
+        status: 'borrowed',
+        borrower: 'Vũ Quỳnh Mai (4B)',
+        borrowDate: '2024-11-17',
+        returnDate: '2024-11-24',
+        note: 'Bài học cảm động'
+    },
+    {
+        id: 'pb-10',
+        code: 'SG-10',
+        title: '10 Vạn Câu Hỏi Vì Sao - Bí Ẩn Quanh Em',
+        author: 'Nhiều tác giả',
+        category: 'Khoa học vui',
+        shelf: 'Kệ D1',
+        status: 'available',
+        borrower: '',
+        borrowDate: '',
+        returnDate: '',
+        note: 'Sách kiến thức đời sống'
+    }
+];
+
 // Danh sách 4 truyện gốc hiện có của Tủ Sách Số 4B
 const INITIAL_BOOKS = [
     {
@@ -115,6 +249,9 @@ const StorageService = {
         }
         if (!localStorage.getItem('thuvien_4b_categories')) {
             localStorage.setItem('thuvien_4b_categories', JSON.stringify(INITIAL_CATEGORIES));
+        }
+        if (!localStorage.getItem('thuvien_4b_physical_books')) {
+            localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(INITIAL_PHYSICAL_BOOKS));
         }
     },
 
@@ -389,6 +526,138 @@ const StorageService = {
         localStorage.setItem('thuvien_4b_categories', JSON.stringify(cats));
 
         return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // ==========================================
+    // QUẢN LÝ SÁCH TRUYỆN GIẤY & MƯỢN TRẢ TẠI LỚP
+    // ==========================================
+
+    // Lấy danh sách sách truyện giấy
+    async getPhysicalBooks() {
+        this.initLocalData();
+        const endpoint = getApiEndpoint();
+
+        if (this.hasApi()) {
+            try {
+                const url = new URL(endpoint);
+                url.searchParams.set('action', 'getPhysicalBooks');
+                const response = await fetch(url.toString(), { method: 'GET', mode: 'cors' });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result && Array.isArray(result.data)) {
+                        localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(result.data));
+                        return result.data;
+                    }
+                }
+            } catch (err) {
+                console.warn('[StorageService] Không thể lấy Physical Books từ API, dùng LocalStorage:', err);
+            }
+        }
+
+        try {
+            return JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || JSON.stringify(INITIAL_PHYSICAL_BOOKS));
+        } catch (e) {
+            return INITIAL_PHYSICAL_BOOKS;
+        }
+    },
+
+    // Thêm sách truyện giấy mới
+    async addPhysicalBook(bookData) {
+        this.initLocalData();
+        const newBook = {
+            id: 'pb-' + Date.now(),
+            code: bookData.code ? bookData.code.trim().toUpperCase() : ('SG-' + String(Math.floor(Math.random() * 90) + 10)),
+            title: bookData.title.trim(),
+            author: bookData.author ? bookData.author.trim() : 'Nhiều tác giả',
+            category: bookData.category || 'Văn học thiếu nhi',
+            shelf: bookData.shelf || 'Kệ sách lớp 4B',
+            status: bookData.status || 'available', // 'available' | 'borrowed'
+            borrower: bookData.borrower ? bookData.borrower.trim() : '',
+            borrowDate: bookData.borrowDate || '',
+            returnDate: bookData.returnDate || '',
+            note: bookData.note || ''
+        };
+
+        let apiSuccess = false;
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'addPhysicalBook',
+                    book: newBook
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi thêm Physical Book lên API:', err);
+            }
+        }
+
+        const books = JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || '[]');
+        books.unshift(newBook);
+        localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(books));
+
+        return { success: true, book: newBook, remoteSynced: apiSuccess };
+    },
+
+    // Cập nhật thông tin sách truyện giấy hoặc tình trạng mượn trả
+    async updatePhysicalBook(id, updateData) {
+        this.initLocalData();
+        let apiSuccess = false;
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'updatePhysicalBook',
+                    id: id,
+                    book: updateData
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi cập nhật Physical Book lên API:', err);
+            }
+        }
+
+        const books = JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || '[]');
+        const idx = books.findIndex(b => b.id === id);
+        if (idx !== -1) {
+            books[idx] = { ...books[idx], ...updateData };
+            localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(books));
+        }
+
+        return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // Xóa sách truyện giấy
+    async deletePhysicalBook(id) {
+        this.initLocalData();
+        let apiSuccess = false;
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'deletePhysicalBook',
+                    id: id
+                });
+                if (res && res.success) apiSuccess = true;
+            } catch (err) {
+                console.warn('[StorageService] Lỗi xóa Physical Book trên API:', err);
+            }
+        }
+
+        let books = JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || '[]');
+        books = books.filter(b => b.id !== id);
+        localStorage.setItem('thuvien_4b_physical_books', JSON.stringify(books));
+
+        return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // Hành động nhanh: Đánh dấu Đã trả sách
+    async quickReturnPhysicalBook(id) {
+        return this.updatePhysicalBook(id, {
+            status: 'available',
+            borrower: '',
+            borrowDate: '',
+            returnDate: ''
+        });
     },
 
     // Đồng bộ đẩy dữ liệu mẫu ban đầu (4 truyện hiện có) lên Google Sheets

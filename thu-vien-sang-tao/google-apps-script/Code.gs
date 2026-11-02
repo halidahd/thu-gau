@@ -20,12 +20,16 @@
 // Tên các bảng tính
 const SHEET_POSTS = 'Posts';
 const SHEET_CATEGORIES = 'Categories';
+const SHEET_PHYSICAL_BOOKS = 'PhysicalBooks';
 
 // Cấu trúc cột của Sheet Posts
 const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt'];
 
 // Cấu trúc cột của Sheet Categories
 const CAT_COLUMNS = ['id', 'name', 'icon'];
+
+// Cấu trúc cột của Sheet PhysicalBooks (Sách truyện giấy & mượn trả)
+const PHYSICAL_COLUMNS = ['id', 'code', 'title', 'author', 'category', 'shelf', 'status', 'borrower', 'borrowDate', 'returnDate', 'note'];
 
 /**
  * Hàm khởi tạo cơ sở dữ liệu và nạp dữ liệu mẫu ban đầu
@@ -121,6 +125,29 @@ function setupDatabase() {
 
   initialPosts.forEach(post => sheetPosts.appendRow(post));
 
+  // 5. Tạo hoặc lấy Sheet PhysicalBooks (10 sách truyện giấy mẫu)
+  let sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
+  if (!sheetPhysical) {
+    sheetPhysical = ss.insertSheet(SHEET_PHYSICAL_BOOKS);
+  }
+  sheetPhysical.clear();
+  sheetPhysical.appendRow(PHYSICAL_COLUMNS);
+  sheetPhysical.getRange(1, 1, 1, PHYSICAL_COLUMNS.length).setFontWeight('bold').setBackground('#fed7aa');
+
+  const initialPhysical = [
+    ['pb-1', 'SG-01', 'Dế Mèn Phiêu Lưu Ký', 'Tô Hoài', 'Văn học thiếu nhi', 'Kệ A1', 'borrowed', 'Trần Bảo Nam (4B)', '2024-11-18', '2024-11-25', 'Bìa cứng, giữ gìn tốt'],
+    ['pb-2', 'SG-02', 'Đất Rừng Phương Nam', 'Đoàn Giỏi', 'Văn học thiếu nhi', 'Kệ A1', 'available', '', '', '', 'Sách mới'],
+    ['pb-3', 'SG-03', 'Kính Vạn Hoa (Tập 1 - Nhà Ảo Thuật)', 'Nguyễn Nhật Ánh', 'Truyện dài thiếu nhi', 'Kệ A2', 'borrowed', 'Nguyễn Hoàng Long (4B)', '2024-11-20', '2024-11-27', 'Sách bìa mềm'],
+    ['pb-4', 'SG-04', 'Totto-chan Bên Cửa Sổ', 'Kuroyanagi Tetsuko', 'Văn học kinh điển', 'Kệ B1', 'available', '', '', '', 'Có tranh minh họa'],
+    ['pb-5', 'SG-05', 'Hoàng Tử Bé', 'Antoine de Saint-Exupéry', 'Truyện ngụ ngôn', 'Kệ B1', 'borrowed', 'Phạm Thảo Vy (4B)', '2024-11-19', '2024-11-26', 'Bản dịch mới có màu'],
+    ['pb-6', 'SG-06', 'Thần Đồng Đất Việt (Tập 15 - Trí Tuệ Trạng Tí)', 'Phan Thị', 'Truyện tranh lịch sử', 'Kệ C1', 'borrowed', 'Chu Nam Phong (4B)', '2024-11-21', '2024-11-28', 'Rất được các bạn yêu thích'],
+    ['pb-7', 'SG-07', 'Doraemon Tuyển Tập Truyện Dài (Tập 3)', 'Fujiko F. Fujio', 'Truyện tranh khoa học', 'Kệ C1', 'available', '', '', '', 'Có bọc nilon bảo quản'],
+    ['pb-8', 'SG-08', 'Bách Khoa Tri Thức - Kỳ Quan Thiên Nhiên Thế Giới', 'Nhiều tác giả', 'Khoa học & Khám phá', 'Kệ D2', 'available', '', '', '', 'Sách khổ lớn, đọc tại lớp'],
+    ['pb-9', 'SG-09', 'Những Tấm Lòng Cao Cả', 'Edmondo De Amicis', 'Giáo dục đạo đức', 'Kệ A3', 'borrowed', 'Vũ Quỳnh Mai (4B)', '2024-11-17', '2024-11-24', 'Bài học cảm động'],
+    ['pb-10', 'SG-10', '10 Vạn Câu Hỏi Vì Sao - Bí Ẩn Quanh Em', 'Nhiều tác giả', 'Khoa học vui', 'Kệ D1', 'available', '', '', '', 'Sách kiến thức đời sống']
+  ];
+  initialPhysical.forEach(p => sheetPhysical.appendRow(p));
+
   Logger.log('🎉 Cấu hình cơ sở dữ liệu Tủ Sách Số 4B thành công!');
 }
 
@@ -179,7 +206,36 @@ function doGet(e) {
       return jsonResponse({ success: false, message: 'Không tìm thấy bài viết' });
     }
 
-    // 4. Lấy danh sách bài viết (getPosts)
+    // 4. Lấy danh sách sách truyện giấy (getPhysicalBooks)
+    if (action === 'getPhysicalBooks') {
+      const sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
+      if (!sheetPhysical) return jsonResponse({ success: true, data: [] });
+
+      const data = sheetPhysical.getDataRange().getValues();
+      if (data.length <= 1) return jsonResponse({ success: true, data: [] });
+
+      const physicalList = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row[0]) continue;
+        physicalList.push({
+          id: String(row[0]),
+          code: String(row[1] || ''),
+          title: String(row[2] || ''),
+          author: String(row[3] || ''),
+          category: String(row[4] || ''),
+          shelf: String(row[5] || ''),
+          status: String(row[6] || 'available'),
+          borrower: String(row[7] || ''),
+          borrowDate: row[8] ? (row[8] instanceof Date ? row[8].toISOString().split('T')[0] : String(row[8])) : '',
+          returnDate: row[9] ? (row[9] instanceof Date ? row[9].toISOString().split('T')[0] : String(row[9])) : '',
+          note: String(row[10] || '')
+        });
+      }
+      return jsonResponse({ success: true, data: physicalList });
+    }
+
+    // 5. Lấy danh sách bài viết (getPosts)
     const statusFilter = (e && e.parameter && e.parameter.status) ? e.parameter.status : null;
     const sheetPosts = ss.getSheetByName(SHEET_POSTS);
 
@@ -357,10 +413,87 @@ function doPost(e) {
       return jsonResponse({ success: false, message: 'Không tìm thấy thể loại để xóa.' });
     }
 
-    // 6. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
+    // 6. Thêm sách truyện giấy mới (addPhysicalBook)
+    if (action === 'addPhysicalBook') {
+      const book = payload.book;
+      if (!book || !book.title) {
+        return jsonResponse({ success: false, message: 'Thiếu tên sách truyện giấy.' });
+      }
+
+      let sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
+      if (!sheetPhysical) {
+        sheetPhysical = ss.insertSheet(SHEET_PHYSICAL_BOOKS);
+        sheetPhysical.appendRow(PHYSICAL_COLUMNS);
+      }
+
+      const newId = book.id || ('pb-' + Date.now());
+      sheetPhysical.appendRow([
+        newId,
+        book.code || '',
+        book.title,
+        book.author || '',
+        book.category || '',
+        book.shelf || '',
+        book.status || 'available',
+        book.borrower || '',
+        book.borrowDate || '',
+        book.returnDate || '',
+        book.note || ''
+      ]);
+
+      return jsonResponse({ success: true, id: newId, message: 'Đã thêm sách truyện giấy thành công.' });
+    }
+
+    // 7. Cập nhật sách truyện giấy / mượn trả (updatePhysicalBook)
+    if (action === 'updatePhysicalBook') {
+      const id = payload.id;
+      const updateData = payload.book || {};
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id sách giấy.' });
+
+      const sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
+      if (!sheetPhysical) return jsonResponse({ success: false, message: 'Bảng PhysicalBooks chưa tồn tại.' });
+
+      const data = sheetPhysical.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          if (updateData.code !== undefined) sheetPhysical.getRange(i + 1, 2).setValue(updateData.code);
+          if (updateData.title !== undefined) sheetPhysical.getRange(i + 1, 3).setValue(updateData.title);
+          if (updateData.author !== undefined) sheetPhysical.getRange(i + 1, 4).setValue(updateData.author);
+          if (updateData.category !== undefined) sheetPhysical.getRange(i + 1, 5).setValue(updateData.category);
+          if (updateData.shelf !== undefined) sheetPhysical.getRange(i + 1, 6).setValue(updateData.shelf);
+          if (updateData.status !== undefined) sheetPhysical.getRange(i + 1, 7).setValue(updateData.status);
+          if (updateData.borrower !== undefined) sheetPhysical.getRange(i + 1, 8).setValue(updateData.borrower);
+          if (updateData.borrowDate !== undefined) sheetPhysical.getRange(i + 1, 9).setValue(updateData.borrowDate);
+          if (updateData.returnDate !== undefined) sheetPhysical.getRange(i + 1, 10).setValue(updateData.returnDate);
+          if (updateData.note !== undefined) sheetPhysical.getRange(i + 1, 11).setValue(updateData.note);
+          return jsonResponse({ success: true, message: 'Đã cập nhật sách truyện giấy thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy sách giấy để cập nhật.' });
+    }
+
+    // 8. Xóa sách truyện giấy (deletePhysicalBook)
+    if (action === 'deletePhysicalBook') {
+      const id = payload.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id sách giấy.' });
+
+      const sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
+      if (!sheetPhysical) return jsonResponse({ success: false, message: 'Bảng PhysicalBooks chưa tồn tại.' });
+
+      const data = sheetPhysical.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetPhysical.deleteRow(i + 1);
+          return jsonResponse({ success: true, message: 'Đã xóa sách truyện giấy thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy sách giấy để xóa.' });
+    }
+
+    // 9. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
     if (action === 'seedInitialData') {
       setupDatabase();
-      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu và thể loại lên Google Sheets!' });
+      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu, thể loại và 10 sách truyện giấy lên Google Sheets!' });
     }
 
     return jsonResponse({ success: false, message: 'Hành động không hợp lệ: ' + action });
