@@ -80,7 +80,7 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="login-username" required placeholder="admin" 
+                        <input type="text" id="login-username" required placeholder="Nhập tên tài khoản" 
                             class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
@@ -95,13 +95,6 @@
                             <i id="eye-icon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                </div>
-
-                <div class="bg-blue-50 text-blue-800 p-3 rounded-xl text-xs flex items-center justify-between border border-blue-100">
-                    <span>Mặc định: <strong>admin</strong> | <strong>admin123@@</strong></span>
-                    <button type="button" onclick="fillDefaultCredentials()" class="text-blue-600 font-bold underline hover:text-blue-800">
-                        Điền nhanh
-                    </button>
                 </div>
 
                 <div id="login-error" class="hidden text-rose-600 text-xs font-bold text-center bg-rose-50 p-2 rounded-lg border border-rose-200">
@@ -513,8 +506,16 @@
     <script>
         // TRẠNG THÁI TOÀN CỤC CỦA ADMIN
         const AUTH_KEY = 'thuvien_admin_authenticated';
-        const DEFAULT_USER = 'admin';
-        const DEFAULT_PASS = 'admin123@@';
+        // Mã băm SHA-256 bảo mật xác thực tài khoản quản trị
+        const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+        const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d';
+
+        // Hàm tính băm SHA-256 chuẩn Web Crypto API
+        async function hashText(str) {
+            const buf = new TextEncoder().encode(str);
+            const digest = await crypto.subtle.digest('SHA-256', buf);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         let currentTab = 'pending';
         let allPosts = [];
@@ -544,13 +545,15 @@
             }
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('login-username').value.trim();
             const p = document.getElementById('login-password').value.trim();
             const errBox = document.getElementById('login-error');
 
-            if (u === DEFAULT_USER && p === DEFAULT_PASS) {
+            const [uHash, pHash] = await Promise.all([hashText(u), hashText(p)]);
+
+            if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
                 sessionStorage.setItem(AUTH_KEY, 'true');
                 errBox.classList.add('hidden');
                 showToast('Đăng nhập thành công! Chào mừng Ban Quản Trị.', 'success');
@@ -566,11 +569,6 @@
                 checkAuth();
                 showToast('Đã đăng xuất an toàn.', 'info');
             }
-        }
-
-        function fillDefaultCredentials() {
-            document.getElementById('login-username').value = DEFAULT_USER;
-            document.getElementById('login-password').value = DEFAULT_PASS;
         }
 
         function togglePasswordVisibility() {
