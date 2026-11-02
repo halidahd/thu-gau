@@ -10,7 +10,7 @@ const DEFAULT_API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwDKIc7iBp
 
 // Lấy API Endpoint từ LocalStorage (nếu admin đã cấu hình trong Dashboard) hoặc dùng mặc định
 function getApiEndpoint() {
-    return localStorage.getItem('thuvien_api_endpoint') || '';
+    return localStorage.getItem('thuvien_api_endpoint') || DEFAULT_API_ENDPOINT || '';
 }
 
 function setApiEndpoint(url) {
