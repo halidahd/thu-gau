@@ -477,7 +477,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="config.js"></script>
+    <script src="config.js?v=2.2"></script>
     <script>
         const APP_URL = window.location.href.split('#')[0].split('?')[0];
 
@@ -586,9 +586,13 @@
 
         async function fetchPhysicalBooks() {
             try {
-                physicalBooks = await StorageService.getPhysicalBooks();
+                if (typeof StorageService.getPhysicalBooks === 'function') {
+                    physicalBooks = await StorageService.getPhysicalBooks();
+                } else {
+                    physicalBooks = JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || JSON.stringify(window.INITIAL_PHYSICAL_BOOKS || []));
+                }
             } catch (e) {
-                physicalBooks = INITIAL_PHYSICAL_BOOKS;
+                physicalBooks = window.INITIAL_PHYSICAL_BOOKS || [];
             }
             updatePhysicalStats();
             renderHomePhysicalBooks();

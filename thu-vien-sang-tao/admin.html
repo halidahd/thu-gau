@@ -676,8 +676,81 @@
         </div>
     </div>
 
+    <!-- ============================================== -->
+    <!-- MODAL CHỈNH SỬA BÀI VIẾT (EDIT POST MODAL) -->
+    <!-- ============================================== -->
+    <div id="edit-post-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-xl"></i>
+                    <div>
+                        <h3 class="text-lg font-bold">Chỉnh Sửa Bài Viết / Tác Phẩm</h3>
+                        <p class="text-xs text-amber-100">Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết</p>
+                    </div>
+                </div>
+                <button onclick="closeEditPostModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="edit-post-form" onsubmit="handleEditPostSubmit(event)" class="p-6 space-y-4 overflow-y-auto flex-1">
+                <input type="hidden" id="edit-post-id">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Tác Phẩm *</label>
+                    <input type="text" id="edit-post-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác Giả (Học Sinh) *</label>
+                        <input type="text" id="edit-post-author" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể Loại *</label>
+                        <select id="edit-post-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                        </select>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trạng Thái *</label>
+                        <select id="edit-post-status" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                            <option value="approved">✅ Đã duyệt (Xuất bản)</option>
+                            <option value="pending">⏳ Chờ kiểm duyệt</option>
+                            <option value="rejected">❌ Bị từ chối</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tóm Tắt Ngắn *</label>
+                    <textarea id="edit-post-summary" required rows="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nội Dung Toàn Văn *</label>
+                    <textarea id="edit-post-content" required rows="7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-serif leading-relaxed focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ảnh Bìa (URL)</label>
+                    <input type="url" id="edit-post-cover" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" onclick="closeEditPostModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs font-bold hover:bg-slate-100">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btn-save-edit-post" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="config.js"></script>
+    <script src="config.js?v=2.2"></script>
     <script>
         // TRẠNG THÁI TOÀN CỤC CỦA ADMIN
         const AUTH_KEY = 'thuvien_admin_authenticated';
@@ -762,11 +835,16 @@
         // 2. DATA LOADING & TABS
         async function loadAllData() {
             try {
+                // Kiểm tra an toàn hàm getPhysicalBooks (phòng trường hợp trình duyệt lưu cache file JS cũ)
+                const fetchPhysical = (typeof StorageService.getPhysicalBooks === 'function')
+                    ? StorageService.getPhysicalBooks()
+                    : Promise.resolve(JSON.parse(localStorage.getItem('thuvien_4b_physical_books') || JSON.stringify(window.INITIAL_PHYSICAL_BOOKS || [])));
+
                 // Tải song song danh sách bài viết, categories và sách truyện giấy
                 const [posts, categories, physicalBooks] = await Promise.all([
                     StorageService.getPosts('all'),
                     StorageService.getCategories(),
-                    StorageService.getPhysicalBooks()
+                    fetchPhysical
                 ]);
 
                 allPosts = posts || [];
@@ -871,15 +949,20 @@
                         <!-- Actions -->
                         <div class="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
                             <button onclick="openPreviewModal('${post.id}')" 
-                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-eye"></i> Đọc bài
                             </button>
+                            <button onclick="openEditPostModal('${post.id}')" 
+                                class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                                title="Sửa nội dung bài viết trước khi duyệt">
+                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                            </button>
                             <button onclick="rejectPost('${post.id}')" 
-                                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-ban"></i> Từ chối
                             </button>
                             <button onclick="approvePost('${post.id}')" 
-                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-200 active:scale-95">
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-200 active:scale-95">
                                 <i class="fa-solid fa-check"></i> Duyệt bài
                             </button>
                         </div>
@@ -984,6 +1067,9 @@
                             <button onclick="openPreviewModal('${post.id}')" class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" title="Xem chi tiết">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
+                            <button onclick="openEditPostModal('${post.id}')" class="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50" title="Chỉnh sửa bài viết">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
                             ${post.status !== 'approved' ? `
                                 <button onclick="approvePost('${post.id}')" class="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50" title="Duyệt bài">
                                     <i class="fa-solid fa-check"></i>
@@ -1015,6 +1101,97 @@
                 await loadAllData();
             } catch (err) {
                 showToast('Lỗi khi xóa bài: ' + err.message, 'error');
+            }
+        }
+
+        // ==========================================
+        // 4.5. QUẢN LÝ CHỈNH SỬA BÀI VIẾT (EDIT POST)
+        // ==========================================
+        function populateEditCategoriesSelect(selectedCategory) {
+            const select = document.getElementById('edit-post-category');
+            if (!select) return;
+            select.innerHTML = '';
+            allCategories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.name;
+                opt.innerText = `${cat.icon || '📖'} ${cat.name}`;
+                if (cat.name === selectedCategory) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            // Nếu bài viết có thể loại tự do không trùng danh mục hiện có
+            if (selectedCategory && !allCategories.some(c => c.name === selectedCategory)) {
+                const opt = document.createElement('option');
+                opt.value = selectedCategory;
+                opt.innerText = selectedCategory;
+                opt.selected = true;
+                select.appendChild(opt);
+            }
+        }
+
+        function openEditPostModal(id) {
+            const post = allPosts.find(p => p.id === id);
+            if (!post) {
+                showToast('Không tìm thấy bài viết để chỉnh sửa!', 'error');
+                return;
+            }
+
+            document.getElementById('edit-post-id').value = post.id;
+            document.getElementById('edit-post-title').value = post.title || '';
+            document.getElementById('edit-post-author').value = post.author || '';
+            document.getElementById('edit-post-summary').value = post.summary || '';
+            document.getElementById('edit-post-content').value = post.content || '';
+            document.getElementById('edit-post-cover').value = post.cover || '';
+            document.getElementById('edit-post-status').value = post.status || 'approved';
+
+            populateEditCategoriesSelect(post.category);
+
+            document.getElementById('edit-post-modal').classList.remove('hidden');
+        }
+
+        function closeEditPostModal() {
+            document.getElementById('edit-post-modal').classList.add('hidden');
+        }
+
+        async function handleEditPostSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-post-id').value;
+            const title = document.getElementById('edit-post-title').value.trim();
+            const author = document.getElementById('edit-post-author').value.trim();
+            const category = document.getElementById('edit-post-category').value;
+            const status = document.getElementById('edit-post-status').value;
+            const summary = document.getElementById('edit-post-summary').value.trim();
+            const content = document.getElementById('edit-post-content').value.trim();
+            const cover = document.getElementById('edit-post-cover').value.trim();
+
+            if (!id || !title) return;
+
+            const btn = document.getElementById('btn-save-edit-post');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu thay đổi...';
+
+            showToast('Đang cập nhật bài viết...', 'info');
+
+            try {
+                await StorageService.updatePost(id, {
+                    title,
+                    author,
+                    category,
+                    status,
+                    summary,
+                    content,
+                    cover
+                });
+
+                showToast('🎉 Đã cập nhật bài viết thành công!', 'success');
+                closeEditPostModal();
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi cập nhật bài viết: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
             }
         }
 
@@ -1428,6 +1605,9 @@
             actionsBox.innerHTML = `
                 <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
                     Đóng
+                </button>
+                <button onclick="closePreviewModal(); openEditPostModal('${post.id}');" class="bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa bài viết
                 </button>
             `;
 

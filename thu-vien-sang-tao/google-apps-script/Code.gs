@@ -354,6 +354,31 @@ function doPost(e) {
       return jsonResponse({ success: false, message: 'Không tìm thấy bài viết.' });
     }
 
+    // 2.5. Chỉnh sửa toàn diện nội dung bài viết (Update Post)
+    if (action === 'updatePost') {
+      const id = payload.id;
+      const postData = payload.post || {};
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết.' });
+
+      const sheetPosts = ss.getSheetByName(SHEET_POSTS);
+      if (!sheetPosts) return jsonResponse({ success: false, message: 'Bảng Posts chưa tồn tại.' });
+
+      const data = sheetPosts.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          if (postData.title !== undefined) sheetPosts.getRange(i + 1, 2).setValue(postData.title);
+          if (postData.author !== undefined) sheetPosts.getRange(i + 1, 3).setValue(postData.author);
+          if (postData.category !== undefined) sheetPosts.getRange(i + 1, 4).setValue(postData.category);
+          if (postData.summary !== undefined) sheetPosts.getRange(i + 1, 5).setValue(postData.summary);
+          if (postData.content !== undefined) sheetPosts.getRange(i + 1, 6).setValue(postData.content);
+          if (postData.cover !== undefined) sheetPosts.getRange(i + 1, 7).setValue(postData.cover);
+          if (postData.status !== undefined) sheetPosts.getRange(i + 1, 9).setValue(postData.status);
+          return jsonResponse({ success: true, message: 'Đã cập nhật nội dung bài viết thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết để cập nhật.' });
+    }
+
     // 3. Xóa bài viết
     if (action === 'deletePost') {
       const id = payload.id;

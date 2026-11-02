@@ -392,29 +392,37 @@ const StorageService = {
 
     // Cập nhật trạng thái bài viết (Duyệt: 'approved' | Từ chối: 'rejected')
     async updatePostStatus(postId, newStatus) {
+        return this.updatePost(postId, { status: newStatus });
+    },
+
+    // Chỉnh sửa toàn diện nội dung bài viết (Dành cho Admin)
+    async updatePost(postId, updatedData) {
         this.initLocalData();
         let apiSuccess = false;
 
         if (this.hasApi()) {
             try {
                 const res = await this.postToApi({
-                    action: 'updateStatus',
+                    action: 'updatePost',
                     id: postId,
-                    status: newStatus
+                    post: updatedData
                 });
                 if (res && res.success) {
                     apiSuccess = true;
                 }
             } catch (err) {
-                console.warn('[StorageService] Lỗi cập nhật status lên API:', err);
+                console.warn('[StorageService] Lỗi cập nhật bài viết lên API:', err);
             }
         }
 
         // Cập nhật LocalStorage
         const localBooks = JSON.parse(localStorage.getItem('thuvien_4b_books') || '[]');
-        const target = localBooks.find(b => b.id === postId);
-        if (target) {
-            target.status = newStatus;
+        const targetIndex = localBooks.findIndex(b => b.id === postId);
+        if (targetIndex !== -1) {
+            localBooks[targetIndex] = {
+                ...localBooks[targetIndex],
+                ...updatedData
+            };
             localStorage.setItem('thuvien_4b_books', JSON.stringify(localBooks));
         }
 
