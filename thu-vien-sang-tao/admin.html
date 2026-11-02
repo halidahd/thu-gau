@@ -131,13 +131,6 @@
                     </div>
                 </div>
 
-                <div class="bg-sky-50 text-sky-800 p-3 rounded-2xl text-xs flex items-center justify-between border border-sky-100 font-medium">
-                    <span>Mặc định: <strong>admin</strong> | <strong>admin123@@</strong></span>
-                    <button type="button" onclick="fillDefaultCredentials()" class="text-sky-700 font-extrabold underline hover:text-sky-900 cursor-pointer">
-                        Điền nhanh
-                    </button>
-                </div>
-
                 <div id="login-error" class="hidden text-rose-700 text-xs font-bold text-center bg-rose-50 p-2.5 rounded-xl border border-rose-200">
                     Tài khoản hoặc mật khẩu không chính xác!
                 </div>
@@ -987,21 +980,15 @@
         // TRẠNG THÁI TOÀN CỤC CỦA ADMIN
         const AUTH_KEY = 'admin_auth';
         // Mã băm SHA-256 của tài khoản & mật khẩu
-        const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // 'admin'
-        const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d'; // 'admin123@@'
+        const ADMIN_USER_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+        const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d';
 
         let allPosts = [];
         let allCategories = [];
         let allPhysicalBooks = [];
         let allWishes = [];
         let previewingPostId = null;
-        let currentTab = 'pending';
-
-        // Điền nhanh thông tin tài khoản mẫu
-        function fillDefaultCredentials() {
-            document.getElementById('login-username').value = 'admin';
-            document.getElementById('login-password').value = 'admin123@@';
-        }
+        let currentTab = 'pending'; 
 
         // 1. QUẢN LÝ ĐĂNG NHẬP (AUTH)
         async function hashText(str) {
@@ -1034,8 +1021,6 @@
             const errEl = document.getElementById('login-error');
 
             const [uHash, pHash] = await Promise.all([hashText(u), hashText(p)]);
-
-            // YÊU CẦU DUY NHẤT: Tài khoản "admin" và Mật khẩu "admin123@@"
             if (uHash === ADMIN_USER_HASH && pHash === ADMIN_PASS_HASH) {
                 sessionStorage.setItem('admin_auth', 'true');
                 sessionStorage.setItem('thuvien_admin_authenticated', 'true');
