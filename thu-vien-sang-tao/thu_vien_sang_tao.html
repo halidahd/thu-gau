@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tủ Sách Số 4B - Nâng Bước Tuổi Thơ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                        serif: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            font-family: Cambria, "Times New Roman", Times, serif;
+        }
+        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a, label {
+            font-family: Cambria, "Times New Roman", Times, serif;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: Cambria, "Times New Roman", Times, serif;
+        }
+        /* Giữ nguyên font icons Font Awesome */
+        .fa, .fa-solid, .fa-regular, .fa-brands, [class*=" fa-"], [class^="fa-"] {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+        }
+        body {
+            background-color: #f4f9ff;
+        }
+        /* Festive Banner Animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        .book-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .book-card:hover {
+            transform: translateY(-6px);
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Banner Chào mừng 20/11 -->
+    <div class="bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 text-white shadow-md relative overflow-hidden py-2 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-center sm:text-left relative z-10">
+            <div class="flex items-center space-x-2 my-1">
+                <span class="text-2xl animate-float">🎉</span>
+                <span class="font-bold text-sm sm:text-base tracking-wide">CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11</span>
+                <span class="text-2xl animate-float">🌺</span>
+            </div>
+            <div class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border border-white/30">
+                ⭐ Chủ đề: "Tủ sách chia sẻ – Góc học tập vì bạn"
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-200 animate-float">
+                    📚
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-blue-600 leading-tight">TỦ SÁCH SỐ 4B</h1>
+                    <p class="text-xs text-amber-600 font-bold tracking-wider uppercase">Nâng Bước Tuổi Thơ • Trường TH Nam Đồng</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <a href="admin.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center space-x-1.5" title="Khu vực Ban Quản Trị">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                    <span class="hidden md:inline">Quản Trị</span>
+                </a>
+
+                <button onclick="openUploadModal()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-200 transition-all flex items-center space-x-2 active:scale-95">
+                    <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+                    <span class="hidden sm:inline">Đăng Truyện Mới</span>
+                    <span class="sm:hidden">Đăng Bài</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Hero & Info Banner -->
+        <div class="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="space-y-3 max-w-2xl text-center md:text-left z-10">
+                <span class="bg-amber-400 text-amber-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+                    🤖 Góc Năng Lực Số & AI
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight">Thư Viện Sáng Tạo Số Lớp 4B</h2>
+                <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
+                    Nơi lưu trữ những tác phẩm truyện tranh, truyện song ngữ do các bạn học sinh Lớp 4B tự tay viết, vẽ và <strong class="text-amber-200">sáng tác cùng Trí tuệ nhân tạo (AI)</strong>. Cùng nhau chia sẻ tri thức và lan tỏa niềm đam mê đọc sách!
+                </p>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
+                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-bookmark text-amber-300"></i>
+                        <span id="total-books-count">0</span> Tác phẩm đã duyệt
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-emerald-300"></i>
+                        <span id="total-views-count">0</span> Lượt đọc
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pink-300"></i>
+                        <span>AI Co-Author</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorative Graphic / Quick QR code to mobile -->
+            <div class="mt-6 md:mt-0 z-10 flex flex-col items-center bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center">
+                <div id="hero-qr" class="bg-white p-2 rounded-xl shadow-inner"></div>
+                <p class="text-xs mt-2 font-bold text-amber-200">Quét mã đọc trên Điện thoại</p>
+            </div>
+        </div>
+
+        <!-- Search & Filter Section -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+            <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                
+                <!-- Search Box -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" oninput="filterBooks()" placeholder="Tìm tên truyện, tác giả..." 
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+
+                <!-- Category Pills (Được render động từ CSDL) -->
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="category-pills">
+                    <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                        Tất cả
+                    </button>
+                    <!-- Pills render via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading-state" class="py-16 text-center space-y-3">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="text-sm font-bold text-slate-500">Đang tải tủ sách trực tuyến...</p>
+        </div>
+
+        <!-- Books Grid -->
+        <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic Cards inserted via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-12 space-y-3 bg-white rounded-2xl border border-dashed border-slate-300">
+            <div class="text-5xl">🔍</div>
+            <h3 class="text-lg font-bold text-slate-700">Không tìm thấy tác phẩm phù hợp</h3>
+            <p class="text-sm text-slate-500">Hãy thử tìm kiếm từ khóa khác hoặc chọn thể loại khác nhé!</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="text-sm font-bold text-slate-700">Tủ Sách Số Lớp 4B • Trường TH Nam Đồng</p>
+            <p class="text-xs text-slate-500">Chào mừng Hội thi Trang trí thư viện góc lớp - Ngày Nhà giáo Việt Nam 20/11</p>
+            <div class="pt-2">
+                <a href="admin.html" class="text-xs text-blue-500 hover:text-blue-700 font-bold inline-flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved"></i> Cổng Quản Trị Viên (Dành Cho Giáo Viên & Ban Quản Trị)
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: ĐỌC SÁCH TRỰC TUYẾN (READER MODAL) -->
+    <div id="reader-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white w-full max-w-4xl h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden relative fade-in">
+            
+            <!-- Reader Header -->
+            <div class="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                    <span id="modal-cat-badge" class="bg-blue-600 text-white text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
+                        Thể Loại
+                    </span>
+                    <h3 id="modal-book-title" class="text-base sm:text-lg font-extrabold truncate">Tên Tác Phẩm</h3>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <!-- Music Toggle -->
+                    <button id="music-btn" onclick="toggleBackgroundMusic()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-music"></i>
+                        <span id="music-text" class="hidden sm:inline">Nhạc đọc sách</span>
+                    </button>
+                    <!-- Close -->
+                    <button onclick="closeReaderModal()" class="text-slate-400 hover:text-white p-2 rounded-xl transition-all">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reader Body (Split View) -->
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                <!-- Book Info Sidebar -->
+                <div class="w-full md:w-72 bg-slate-50 p-4 border-r border-slate-200 overflow-y-auto space-y-4 flex-shrink-0">
+                    <img id="modal-book-cover" class="w-full h-48 object-cover rounded-xl shadow-md border border-slate-200" src="" alt="Bìa sách">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Tác giả (Học sinh)</p>
+                        <p id="modal-book-author" class="text-sm font-extrabold text-blue-600">Nguyễn Văn A</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Tóm tắt tác phẩm</p>
+                        <p id="modal-book-summary" class="text-xs text-slate-600 mt-1 leading-relaxed">Nội dung tóm tắt...</p>
+                    </div>
+                    
+                    <!-- QR Code for this book -->
+                    <div class="pt-3 border-t border-slate-200 flex flex-col items-center text-center">
+                        <p class="text-[11px] font-bold text-slate-500 mb-2">Quét mã QR để chia sẻ bài viết này</p>
+                        <div id="modal-qr" class="bg-white p-2 rounded-xl shadow-sm border border-slate-200"></div>
+                    </div>
+                </div>
+
+                <!-- Book Reading Viewer -->
+                <div class="flex-1 bg-amber-50/40 p-4 sm:p-8 overflow-y-auto text-slate-800 relative">
+                    <div class="max-w-2xl mx-auto bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-amber-100 min-h-full space-y-6">
+                        <div class="text-center border-b border-slate-100 pb-4">
+                            <h2 id="modal-reader-title" class="text-2xl font-black text-slate-800">Tên Tác Phẩm</h2>
+                            <p class="text-xs text-slate-400 mt-1">Sáng tác bởi <span id="modal-reader-author" class="font-bold text-slate-600">...</span></p>
+                        </div>
+                        
+                        <!-- Content Area -->
+                        <div id="modal-reader-content" class="text-base leading-relaxed text-slate-700 whitespace-pre-line font-serif space-y-4">
+                            <!-- Story Text -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reader Footer Bar -->
+            <div class="bg-white border-t border-slate-200 p-3 px-6 flex items-center justify-between text-xs text-slate-500">
+                <span>📖 Đang ở chế độ đọc tập trung</span>
+                <span id="modal-view-counter" class="font-bold text-emerald-600"><i class="fa-solid fa-eye"></i> 0 lượt đọc</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL 2: FORM ĐĂNG TRUYỆN MỚI (UPLOAD MODAL) -->
+    <div id="upload-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative fade-in">
+            
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-xl"></i>
+                    <div>
+                        <h3 class="text-lg font-bold">Đăng Tác Phẩm Mới</h3>
+                        <p class="text-xs text-blue-100">Bài viết sẽ được Ban Quản Trị duyệt trước khi hiển thị</p>
+                    </div>
+                </div>
+                <button onclick="closeUploadModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="upload-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Tác Phẩm *</label>
+                    <input type="text" id="form-title" required placeholder="Ví dụ: Chuyến phiêu lưu của Chú Thỏ Thông Minh" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác Giả (Học Sinh) *</label>
+                        <input type="text" id="form-author" required placeholder="Ví dụ: Nguyễn Minh Anh (Lớp 4B)" 
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể Loại *</label>
+                        <select id="form-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                            <!-- Options populate from JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tóm Tắt Ngắn *</label>
+                    <textarea id="form-summary" required rows="2" placeholder="Ghi 1-2 câu tóm tắt nội dung câu chuyện..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nội Dung Bài Viết / Truyện *</label>
+                    <textarea id="form-content" required rows="5" placeholder="Nhập toàn bộ nội dung câu chuyện hoặc thơ do học sinh sáng tác tại đây..." 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ảnh Bìa (Tùy chọn - URL)</label>
+                    <input type="url" id="form-cover" placeholder="Dán link ảnh hoặc để trống hệ thống tự chọn ảnh đẹp" 
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-600 text-base flex-shrink-0"></i>
+                    <span>Tác phẩm sau khi gửi sẽ ở trạng thái <strong>Chờ kiểm duyệt</strong> để đảm bảo nội dung phù hợp lứa tuổi học sinh.</span>
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-sm font-bold hover:bg-slate-100">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btn-submit-post" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-200 flex items-center gap-2">
+                        <span>Gửi Duyệt Bài Viết</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: THÔNG BÁO GỬI BÀI THÀNH CÔNG (SUCCESS CONFIRMATION) -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 text-center space-y-4 fade-in">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md shadow-emerald-200">
+                🎉
+            </div>
+            <h3 class="text-xl font-black text-slate-800">Gửi Bài Viết Thành Công!</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+                Bài viết đã gửi thành công và đang chờ Ban Quản Trị duyệt trước khi hiển thị trên Tủ Sách Số 4B!
+            </p>
+            <div class="bg-slate-50 p-3 rounded-xl text-xs text-slate-500">
+                Thầy cô và Ban Quản Trị sẽ đọc thẩm định tác phẩm của bạn sớm nhất nhé.
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-200 text-sm transition-all">
+                Đồng Ý
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script>
+        const APP_URL = window.location.href.split('#')[0].split('?')[0];
+
+        let books = [];
+        let categories = [];
+        let currentCategory = 'all';
+        let audioContext = null;
+        let isMusicPlaying = false;
+        let activeBook = null;
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', async () => {
+            renderHeroQR();
+            await loadCategories();
+            await fetchApprovedBooks();
+            checkUrlForBookParam();
+        });
+
+        // 1. Tải danh mục thể loại
+        async function loadCategories() {
+            try {
+                categories = await StorageService.getCategories();
+            } catch (e) {
+                categories = INITIAL_CATEGORIES;
+            }
+            renderCategoryPills();
+            populateFormCategories();
+        }
+
+        function renderCategoryPills() {
+            const container = document.getElementById('category-pills');
+            // Giữ nút "Tất cả"
+            container.innerHTML = `
+                <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                    Tất cả
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all';
+                btn.innerHTML = `${cat.icon || '📖'} ${cat.name}`;
+                btn.onclick = () => setCategory(cat.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function populateFormCategories() {
+            const select = document.getElementById('form-category');
+            select.innerHTML = '';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.name;
+                opt.innerText = `${cat.icon || '📖'} ${cat.name}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // 2. Tải danh sách truyện đã được duyệt (status === 'approved')
+        async function fetchApprovedBooks() {
+            const loadingState = document.getElementById('loading-state');
+            const booksGrid = document.getElementById('books-grid');
+
+            loadingState.classList.remove('hidden');
+            booksGrid.classList.add('hidden');
+
+            try {
+                // Chỉ lấy các bài viết có status === 'approved'
+                const data = await StorageService.getPosts('approved');
+                books = data || [];
+            } catch (err) {
+                console.error('Lỗi tải truyện:', err);
+                books = INITIAL_BOOKS.filter(b => b.status === 'approved');
+            } finally {
+                loadingState.classList.add('hidden');
+                booksGrid.classList.remove('hidden');
+                renderBooks();
+                updateHeaderStats();
+            }
+        }
+
+        // 3. Render Hero QR Code
+        function renderHeroQR() {
+            const heroQrEl = document.getElementById('hero-qr');
+            heroQrEl.innerHTML = '';
+            new QRCode(heroQrEl, {
+                text: APP_URL,
+                width: 72,
+                height: 72,
+                colorDark: "#1e293b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // 4. Update Header Stats
+        function updateHeaderStats() {
+            document.getElementById('total-books-count').innerText = books.length;
+            const totalViews = books.reduce((sum, b) => sum + (Number(b.views) || 0), 0);
+            document.getElementById('total-views-count').innerText = totalViews;
+        }
+
+        // 5. Category Filtering
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if ((cat === 'all' && btn.innerText.includes('Tất cả')) || btn.innerText.includes(cat)) {
+                    btn.classList.add('bg-blue-600', 'text-white');
+                    btn.classList.remove('bg-slate-100', 'text-slate-700');
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-slate-100', 'text-slate-700');
+                }
+            });
+            filterBooks();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            setCategory('all');
+        }
+
+        // 6. Filter & Render Cards
+        function filterBooks() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+            const filtered = books.filter(book => {
+                const matchesCat = (currentCategory === 'all') || (book.category === currentCategory);
+                const matchesSearch = (book.title || '').toLowerCase().includes(searchTerm) || 
+                                      (book.author || '').toLowerCase().includes(searchTerm) ||
+                                      (book.summary || '').toLowerCase().includes(searchTerm);
+                return matchesCat && matchesSearch;
+            });
+
+            renderBooks(filtered);
+        }
+
+        function renderBooks(listToRender = books) {
+            const grid = document.getElementById('books-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            if (listToRender.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            listToRender.forEach(book => {
+                const isAI = (book.category || '').includes('AI');
+                const defaultImage = isAI 
+                    ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop'
+                    : 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
+
+                const cardHtml = `
+                    <div class="book-card bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm flex flex-col justify-between">
+                        <div>
+                            <!-- Cover & Badge -->
+                            <div class="relative h-44 overflow-hidden bg-slate-100">
+                                <img src="${book.cover || defaultImage}" alt="${book.title}" 
+                                    class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                    onerror="this.src='${defaultImage}'">
+                                <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                                    <span class="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                        ${book.category}
+                                    </span>
+                                </div>
+                                ${isAI ? `
+                                    <div class="absolute top-3 right-3 bg-amber-400 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Co-Author
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Info -->
+                            <div class="p-4 space-y-2">
+                                <h3 class="font-extrabold text-base text-slate-800 line-clamp-2 leading-snug hover:text-blue-600 transition-colors cursor-pointer" onclick="openReaderModal('${book.id}')">
+                                    ${book.title}
+                                </h3>
+                                <div class="flex items-center space-x-1 text-xs text-blue-600 font-bold">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                    <span>${book.author}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                    ${book.summary}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="p-4 pt-0 border-t border-slate-50 mt-3 flex items-center justify-between">
+                            <span class="text-[11px] font-semibold text-slate-400">
+                                <i class="fa-solid fa-eye text-slate-400"></i> ${book.views || 0} lượt đọc
+                            </span>
+                            <button onclick="openReaderModal('${book.id}')" 
+                                class="bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 text-xs font-bold px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open"></i> Đọc Sách
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+        }
+
+        // 7. READER MODAL
+        function openReaderModal(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+
+            activeBook = book;
+            // Tăng lượt xem lên cơ sở dữ liệu
+            StorageService.incrementViews(book.id);
+            book.views = (Number(book.views) || 0) + 1;
+            updateHeaderStats();
+            renderBooks();
+
+            // Điền thông tin vào Modal
+            document.getElementById('modal-book-title').innerText = book.title;
+            document.getElementById('modal-cat-badge').innerText = book.category;
+            document.getElementById('modal-book-author').innerText = book.author;
+            document.getElementById('modal-book-summary').innerText = book.summary;
+            document.getElementById('modal-reader-title').innerText = book.title;
+            document.getElementById('modal-reader-author').innerText = book.author;
+            document.getElementById('modal-reader-content').innerText = book.content || 'Nội dung đang được cập nhật...';
+            document.getElementById('modal-view-counter').innerHTML = `<i class="fa-solid fa-eye"></i> ${book.views} lượt đọc`;
+            
+            const coverEl = document.getElementById('modal-book-cover');
+            coverEl.src = book.cover || 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
+
+            // Tạo QR Code cho riêng bài đọc này
+            const qrEl = document.getElementById('modal-qr');
+            qrEl.innerHTML = '';
+            new QRCode(qrEl, {
+                text: `${APP_URL}?book=${book.id}`,
+                width: 80,
+                height: 80
+            });
+
+            document.getElementById('reader-modal').classList.remove('hidden');
+        }
+
+        function closeReaderModal() {
+            document.getElementById('reader-modal').classList.add('hidden');
+            if (isMusicPlaying) {
+                toggleBackgroundMusic();
+            }
+        }
+
+        function checkUrlForBookParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('book');
+            if (bookId) {
+                openReaderModal(bookId);
+            }
+        }
+
+        // 8. BACKGROUND MUSIC SYNTHESIZER
+        function toggleBackgroundMusic() {
+            const musicBtn = document.getElementById('music-btn');
+            const musicText = document.getElementById('music-text');
+
+            if (!isMusicPlaying) {
+                startCalmMusic();
+                isMusicPlaying = true;
+                musicBtn.classList.add('bg-amber-500', 'text-slate-950');
+                musicText.innerText = 'Tắt nhạc';
+            } else {
+                stopCalmMusic();
+                isMusicPlaying = false;
+                musicBtn.classList.remove('bg-amber-500', 'text-slate-950');
+                musicText.innerText = 'Nhạc đọc sách';
+            }
+        }
+
+        let musicInterval = null;
+        function startCalmMusic() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00]; // Pentatonic notes
+            let noteIdx = 0;
+
+            musicInterval = setInterval(() => {
+                if (!isMusicPlaying) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(notes[noteIdx % notes.length], audioContext.currentTime);
+                
+                gain.gain.setValueAtTime(0.01, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.08, audioContext.currentTime + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 2.5);
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                osc.start();
+                osc.stop(audioContext.currentTime + 2.6);
+
+                noteIdx = Math.floor(Math.random() * notes.length);
+            }, 2000);
+        }
+
+        function stopCalmMusic() {
+            if (musicInterval) clearInterval(musicInterval);
+        }
+
+        // 9. UPLOAD MODAL LOGIC & FORM SUBMIT
+        function openUploadModal() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.add('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('btn-submit-post');
+            const originalBtnHtml = submitBtn.innerHTML;
+
+            const title = document.getElementById('form-title').value.trim();
+            const author = document.getElementById('form-author').value.trim();
+            const category = document.getElementById('form-category').value;
+            const summary = document.getElementById('form-summary').value.trim();
+            const content = document.getElementById('form-content').value.trim();
+            const cover = document.getElementById('form-cover').value.trim();
+
+            // Disable nút và hiện hiệu ứng tải
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi bài...';
+
+            try {
+                // Gửi bài qua StorageService (Lưu status: "pending")
+                await StorageService.createPost({
+                    title,
+                    author,
+                    category,
+                    summary,
+                    content,
+                    cover
+                });
+
+                closeUploadModal();
+                document.getElementById('upload-form').reset();
+
+                // Hiển thị Modal thông báo thân thiện
+                document.getElementById('success-modal').classList.remove('hidden');
+
+            } catch (err) {
+                console.error('Lỗi khi gửi bài viết:', err);
+                showToast('Có lỗi xảy ra: ' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
+        }
+
+        // 10. TOAST NOTIFICATION UTILITY
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-slate-800 text-white';
+            let icon = 'fa-info-circle';
+            if (type === 'success') {
+                bg = 'bg-emerald-600 text-white shadow-emerald-200';
+                icon = 'fa-circle-check';
+            } else if (type === 'error') {
+                bg = 'bg-rose-600 text-white shadow-rose-200';
+                icon = 'fa-circle-exclamation';
+            }
+
+            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease-out';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

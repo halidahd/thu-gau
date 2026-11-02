@@ -1,0 +1,380 @@
+/**
+ * =========================================================================
+ * BACKEND GOOGLE APPS SCRIPT CHO HỆ THỐNG TỦ SÁCH SỐ 4B
+ * Trường TH Nam Đồng - Hội thi Tủ sách chia sẻ
+ * =========================================================================
+ * 
+ * Hướng dẫn triển khai nhanh:
+ * 1. Mở một Google Sheet mới trên Google Drive (đặt tên: "CSDL Tu Sach So 4B").
+ * 2. Vào menu "Tiện ích mở rộng" (Extensions) > "Apps Script".
+ * 3. Xóa hết mã cũ, dán toàn bộ nội dung file này vào file Code.gs.
+ * 4. Trên thanh công cụ, chọn hàm "setupDatabase" và bấm nút "Chạy" (Run) để tự động tạo bảng & nạp 4 truyện mẫu.
+ * 5. Bấm nút "Triển khai" (Deploy) > "Triển khai mới" (New deployment).
+ *    - Loại triển khai: "Ứng dụng web" (Web app).
+ *    - Thực thi dưới dạng (Execute as): "Tôi" (Me).
+ *    - Ai có quyền truy cập (Who has access): "Bất kỳ ai" (Anyone).
+ * 6. Bấm "Triển khai" và sao chép Web App URL (dạng https://script.google.com/macros/s/.../exec)
+ *    để dán vào trang Quản trị (admin.html) hoặc file config.js!
+ */
+
+// Tên các bảng tính
+const SHEET_POSTS = 'Posts';
+const SHEET_CATEGORIES = 'Categories';
+
+// Cấu trúc cột của Sheet Posts
+const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt'];
+
+// Cấu trúc cột của Sheet Categories
+const CAT_COLUMNS = ['id', 'name', 'icon'];
+
+/**
+ * Hàm khởi tạo cơ sở dữ liệu và nạp dữ liệu mẫu ban đầu
+ * Chạy hàm này lần đầu tiên khi cài đặt!
+ */
+function setupDatabase() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 1. Tạo hoặc lấy Sheet Posts
+  let sheetPosts = ss.getSheetByName(SHEET_POSTS);
+  if (!sheetPosts) {
+    sheetPosts = ss.insertSheet(SHEET_POSTS);
+  }
+  sheetPosts.clear();
+  sheetPosts.appendRow(POST_COLUMNS);
+  sheetPosts.getRange(1, 1, 1, POST_COLUMNS.length).setFontWeight('bold').setBackground('#dbeafe');
+
+  // 2. Tạo hoặc lấy Sheet Categories
+  let sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
+  if (!sheetCats) {
+    sheetCats = ss.insertSheet(SHEET_CATEGORIES);
+  }
+  sheetCats.clear();
+  sheetCats.appendRow(CAT_COLUMNS);
+  sheetCats.getRange(1, 1, 1, CAT_COLUMNS.length).setFontWeight('bold').setBackground('#fef3c7');
+
+  // Xóa sheet mặc định "Sheet1" nếu có và đang có nhiều hơn 1 sheet
+  const defaultSheet = ss.getSheetByName('Sheet1') || ss.getSheetByName('Trang tính1');
+  if (defaultSheet && ss.getSheets().length > 2) {
+    try { ss.deleteSheet(defaultSheet); } catch (e) {}
+  }
+
+  // 3. Nạp danh mục thể loại mẫu
+  const initialCats = [
+    ['cat-1', 'Truyện AI Sáng Tác', '✨'],
+    ['cat-2', 'Truyện Song Ngữ', '🌐'],
+    ['cat-3', 'Thơ Ca', '🌾'],
+    ['cat-4', 'STEM & Khoa Học', '🚀']
+  ];
+  initialCats.forEach(cat => sheetCats.appendRow(cat));
+
+  // 4. Nạp 4 bài viết truyện mẫu ban đầu của Tủ Sách Số 4B
+  const initialPosts = [
+    [
+      'book-1',
+      'Hành Trình Khám Phá Vũ Trụ Cùng AI',
+      'Chu Nam Phong (Lớp 4B)',
+      'Truyện AI Sáng Tác',
+      'Một câu chuyện phiêu lưu kỳ thú qua các hành tinh do em Nam Phong viết kịch bản và AI minh họa.',
+      'Ngày xửa ngày xưa, ở một ngôi trường tiểu học xinh đẹp, có một cậu bé tên là Nam Phong rất thích quan sát bầu trời đêm. \n\nMột ngày nọ, Nam Phong chế tạo ra một chú robot nhỏ tên là Aki bằng công nghệ Trí tuệ Nhân tạo. Aki có thể nói chuyện và giải đáp mọi thắc mắc của Nam Phong về các vì sao.\n\nCùng nhau, Nam Phong và Aki đã thực hiện một chuyến du hành tưởng tượng xuyên qua Hệ Mặt Trời, ghé thăm Sao Hỏa đỏ rực và những vành đai rực rỡ của Sao Thổ. Qua chuyến đi, Nam Phong hiểu rằng khoa học và trí tuệ nhân tạo là người bạn đồng hành tuyệt vời giúp con người vươn tới những ước mơ cao xa.',
+      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop',
+      124,
+      'approved',
+      new Date('2024-11-15T08:00:00Z').toISOString()
+    ],
+    [
+      'book-2',
+      'The Little Bear & The Forest / Chú Gấu Nhỏ Và Rừng Xanh',
+      'Nguyễn Kiều Anh (Lớp 4B)',
+      'Truyện Song Ngữ',
+      'Truyện tranh song ngữ Anh - Việt dạy bài học về việc bảo vệ môi trường và yêu thương cây xanh.',
+      'Once upon a time, in a green forest, lived a little bear named Barnaby. Barnaby loved planting trees.\n(Ngày xửa ngày xưa, trong một khu rừng xanh tươi, có một chú gấu nhỏ tên là Barnaby. Barnaby rất thích trồng cây.)\n\nOne sunny morning, he found a withered flower near the stream. He carefully watered it every day.\n(Một sáng nắng đẹp, chú tìm thấy một bông hoa héo bên dòng suối. Chú cẩn thận tưới nước cho nó mỗi ngày.)\n\nLessons learned: Nature is our best friend. Protect the green planet!\n(Bài học rút ra: Thiên nhiên là người bạn tốt nhất của chúng ta. Hãy bảo vệ hành tinh xanh!)',
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop',
+      98,
+      'approved',
+      new Date('2024-11-16T09:30:00Z').toISOString()
+    ],
+    [
+      'book-3',
+      'Nắng Khai Trường & Thầy Cô Kính Yêu',
+      'Nguyễn Hải An (Lớp 4B)',
+      'Thơ Ca',
+      'Tập thơ ngắn xúc động chào mừng Ngày Nhà giáo Việt Nam 20/11 do học sinh sáng tác.',
+      'Nắng thu vàng rực khoảng sân trường\nTiếng giảng bài cô đọng yêu thương\nHàng cây xanh mát nghiêng đầu đón\nNhiệt huyết thầy gieo muôn vạn phương.\n\nChúng em ghi nhớ lời cô dạy\nChăm ngoan học tốt xứng cháu Bác Hồ\nMái trường Nam Đồng thân thương quá\nNâng bước tuổi thơ dệt ước mơ!',
+      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop',
+      215,
+      'approved',
+      new Date('2024-11-18T10:15:00Z').toISOString()
+    ],
+    [
+      'book-4',
+      'Bí Mật Của Nước & Sự Tuần Hoàn Kỳ Diệu',
+      'Chu Thị Minh Hằng (Lớp 4B)',
+      'STEM & Khoa Học',
+      'Sách khám phá khoa học vui kết hợp bài tập thực nghiệm đơn giản tại lớp học.',
+      'Bạn có biết giọt nước mưa rơi trên lá cây từ đâu đến không?\n\nNước sông hồ khi gặp ánh nắng mặt trời chiếu vào sẽ bốc hơi bay lên không trung. Khi lên cao gặp lạnh, hơi nước ngưng tụ lại thành những đám mây bồng bềnh.\n\nKhi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ rơi xuống tạo thành mưa. Đó chính là vòng tuần hoàn kỳ diệu của nước trong thiên nhiên mà chúng mình được học trong môn Khoa học!',
+      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop',
+      85,
+      'approved',
+      new Date('2024-11-19T14:20:00Z').toISOString()
+    ]
+  ];
+
+  initialPosts.forEach(post => sheetPosts.appendRow(post));
+
+  Logger.log('🎉 Cấu hình cơ sở dữ liệu Tủ Sách Số 4B thành công!');
+}
+
+/**
+ * Xử lý yêu cầu HTTP GET
+ */
+function doGet(e) {
+  try {
+    const action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'getPosts';
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Kiểm tra kết nối (Ping)
+    if (action === 'ping') {
+      return jsonResponse({ success: true, message: 'Google Sheets API Tủ Sách Số 4B đang hoạt động tốt!' });
+    }
+
+    // 2. Lấy danh sách thể loại (Categories)
+    if (action === 'getCategories') {
+      const sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
+      if (!sheetCats) {
+        return jsonResponse({ success: true, data: [] });
+      }
+      const data = sheetCats.getDataRange().getValues();
+      if (data.length <= 1) return jsonResponse({ success: true, data: [] });
+
+      const headers = data[0];
+      const categories = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row[0]) continue;
+        categories.push({
+          id: String(row[0]),
+          name: String(row[1] || ''),
+          icon: String(row[2] || '📖')
+        });
+      }
+      return jsonResponse({ success: true, data: categories });
+    }
+
+    // 3. Tăng lượt xem (Views)
+    if (action === 'incrementViews') {
+      const id = e.parameter.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết' });
+
+      const sheetPosts = ss.getSheetByName(SHEET_POSTS);
+      if (sheetPosts) {
+        const data = sheetPosts.getDataRange().getValues();
+        for (let i = 1; i < data.length; i++) {
+          if (String(data[i][0]) === String(id)) {
+            const currentViews = Number(data[i][7]) || 0;
+            sheetPosts.getRange(i + 1, 8).setValue(currentViews + 1);
+            return jsonResponse({ success: true, views: currentViews + 1 });
+          }
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết' });
+    }
+
+    // 4. Lấy danh sách bài viết (getPosts)
+    const statusFilter = (e && e.parameter && e.parameter.status) ? e.parameter.status : null;
+    const sheetPosts = ss.getSheetByName(SHEET_POSTS);
+
+    if (!sheetPosts) {
+      return jsonResponse({ success: true, data: [] });
+    }
+
+    const data = sheetPosts.getDataRange().getValues();
+    if (data.length <= 1) {
+      return jsonResponse({ success: true, data: [] });
+    }
+
+    const posts = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (!row[0]) continue; // Bỏ qua dòng trống
+
+      const post = {
+        id: String(row[0]),
+        title: String(row[1] || ''),
+        author: String(row[2] || ''),
+        category: String(row[3] || ''),
+        summary: String(row[4] || ''),
+        content: String(row[5] || ''),
+        cover: String(row[6] || ''),
+        views: Number(row[7]) || 0,
+        status: String(row[8] || 'pending'),
+        createdAt: row[9] ? (row[9] instanceof Date ? row[9].toISOString() : String(row[9])) : new Date().toISOString()
+      };
+
+      if (!statusFilter || statusFilter === 'all' || post.status === statusFilter) {
+        posts.push(post);
+      }
+    }
+
+    // Sắp xếp bài mới nhất lên đầu
+    posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    return jsonResponse({ success: true, data: posts });
+
+  } catch (error) {
+    return jsonResponse({ success: false, error: error.toString() });
+  }
+}
+
+/**
+ * Xử lý yêu cầu HTTP POST
+ */
+function doPost(e) {
+  try {
+    let payload = {};
+    if (e && e.postData && e.postData.contents) {
+      payload = JSON.parse(e.postData.contents);
+    } else if (e && e.parameter) {
+      payload = e.parameter;
+    }
+
+    const action = payload.action;
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Thêm bài viết mới (User gửi bài -> status: pending)
+    if (action === 'createPost') {
+      const post = payload.post;
+      if (!post || !post.title || !post.author) {
+        return jsonResponse({ success: false, message: 'Dữ liệu bài viết không hợp lệ.' });
+      }
+
+      let sheetPosts = ss.getSheetByName(SHEET_POSTS);
+      if (!sheetPosts) {
+        sheetPosts = ss.insertSheet(SHEET_POSTS);
+        sheetPosts.appendRow(POST_COLUMNS);
+      }
+
+      const newId = post.id || ('book-' + Date.now());
+      const newStatus = 'pending'; // Luôn là pending khi công khai gửi bài
+      const createdAt = post.createdAt || new Date().toISOString();
+
+      sheetPosts.appendRow([
+        newId,
+        post.title,
+        post.author,
+        post.category || 'Truyện AI Sáng Tác',
+        post.summary || '',
+        post.content || '',
+        post.cover || '',
+        Number(post.views) || 0,
+        newStatus,
+        createdAt
+      ]);
+
+      return jsonResponse({
+        success: true,
+        message: 'Đăng bài thành công, đang chờ ban quản trị duyệt!',
+        id: newId
+      });
+    }
+
+    // 2. Cập nhật trạng thái bài viết (Duyệt hoặc Từ chối)
+    if (action === 'updateStatus') {
+      const id = payload.id;
+      const newStatus = payload.status; // 'approved' | 'rejected' | 'pending'
+      if (!id || !newStatus) {
+        return jsonResponse({ success: false, message: 'Thiếu id hoặc trạng thái mới.' });
+      }
+
+      const sheetPosts = ss.getSheetByName(SHEET_POSTS);
+      if (!sheetPosts) return jsonResponse({ success: false, message: 'Bảng Posts chưa tồn tại.' });
+
+      const data = sheetPosts.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetPosts.getRange(i + 1, 9).setValue(newStatus); // Cột 9 là status
+          return jsonResponse({ success: true, message: `Đã cập nhật trạng thái bài viết thành ${newStatus}.` });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết.' });
+    }
+
+    // 3. Xóa bài viết
+    if (action === 'deletePost') {
+      const id = payload.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết.' });
+
+      const sheetPosts = ss.getSheetByName(SHEET_POSTS);
+      if (!sheetPosts) return jsonResponse({ success: false, message: 'Bảng Posts chưa tồn tại.' });
+
+      const data = sheetPosts.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetPosts.deleteRow(i + 1);
+          return jsonResponse({ success: true, message: 'Đã xóa bài viết thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết để xóa.' });
+    }
+
+    // 4. Thêm thể loại mới
+    if (action === 'addCategory') {
+      const category = payload.category;
+      if (!category || !category.name) {
+        return jsonResponse({ success: false, message: 'Thiếu tên thể loại.' });
+      }
+
+      let sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
+      if (!sheetCats) {
+        sheetCats = ss.insertSheet(SHEET_CATEGORIES);
+        sheetCats.appendRow(CAT_COLUMNS);
+      }
+
+      const newId = category.id || ('cat-' + Date.now());
+      sheetCats.appendRow([
+        newId,
+        category.name,
+        category.icon || '📖'
+      ]);
+
+      return jsonResponse({ success: true, id: newId, message: 'Thêm thể loại thành công.' });
+    }
+
+    // 5. Xóa thể loại
+    if (action === 'deleteCategory') {
+      const id = payload.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id thể loại.' });
+
+      const sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
+      if (!sheetCats) return jsonResponse({ success: false, message: 'Bảng Categories chưa tồn tại.' });
+
+      const data = sheetCats.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetCats.deleteRow(i + 1);
+          return jsonResponse({ success: true, message: 'Đã xóa thể loại.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy thể loại để xóa.' });
+    }
+
+    // 6. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
+    if (action === 'seedInitialData') {
+      setupDatabase();
+      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu và thể loại lên Google Sheets!' });
+    }
+
+    return jsonResponse({ success: false, message: 'Hành động không hợp lệ: ' + action });
+
+  } catch (error) {
+    return jsonResponse({ success: false, error: error.toString() });
+  }
+}
+
+/**
+ * Trả về phản hồi dạng JSON với MIME Type chuẩn
+ */
+function jsonResponse(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}

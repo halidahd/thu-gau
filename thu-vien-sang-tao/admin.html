@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Quản Trị - Tủ Sách Số 4B</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                        serif: ['Cambria', '"Times New Roman"', 'Times', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: Cambria, "Times New Roman", Times, serif;
+        }
+        body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div, a, label {
+            font-family: Cambria, "Times New Roman", Times, serif;
+        }
+        .fa, .fa-solid, .fa-regular, .fa-brands, [class*=" fa-"], [class^="fa-"] {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+        }
+        body {
+            background-color: #f8fafc;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ========================================== -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP (AUTH MODAL / SCREEN) -->
+    <!-- ========================================== -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 border border-slate-100 relative fade-in">
+            <div class="text-center space-y-2 mb-6">
+                <div class="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl mx-auto shadow-lg shadow-blue-200">
+                    🔐
+                </div>
+                <h2 class="text-2xl font-extrabold text-slate-800">Quản Trị Tủ Sách Số 4B</h2>
+                <p class="text-xs text-slate-500">Vui lòng đăng nhập để kiểm duyệt và quản lý tác phẩm</p>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="login-username" required placeholder="admin" 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="password" id="login-password" required placeholder="••••••••" 
+                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 text-blue-800 p-3 rounded-xl text-xs flex items-center justify-between border border-blue-100">
+                    <span>Mặc định: <strong>admin</strong> | <strong>admin123@@</strong></span>
+                    <button type="button" onclick="fillDefaultCredentials()" class="text-blue-600 font-bold underline hover:text-blue-800">
+                        Điền nhanh
+                    </button>
+                </div>
+
+                <div id="login-error" class="hidden text-rose-600 text-xs font-bold text-center bg-rose-50 p-2 rounded-lg border border-rose-200">
+                    Tài khoản hoặc mật khẩu không chính xác!
+                </div>
+
+                <button type="submit" id="btn-login-submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-98">
+                    Đăng Nhập Quản Trị
+                </button>
+            </form>
+
+            <div class="mt-6 text-center border-t border-slate-100 pt-4">
+                <a href="index.html" class="text-xs text-slate-500 hover:text-blue-600 font-bold inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại Thư Viện Lớp 4B
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BẢNG ĐIỀU KHIỂN CHÍNH (ADMIN DASHBOARD) -->
+    <!-- ========================================== -->
+    <div id="admin-dashboard" class="hidden flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex items-center space-x-2.5 group">
+                        <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform shadow-md shadow-blue-200">
+                            📚
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-lg sm:text-xl font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                    Tủ Sách Số 4B
+                                </h1>
+                                <span class="bg-blue-100 text-blue-700 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-blue-200">
+                                    Admin
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500">Ban Quản Trị • Trường Tiểu Học Nam Đồng</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Right actions -->
+                <div class="flex items-center space-x-3">
+                    <!-- Status indicator -->
+                    <div id="api-status-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                        <span class="w-2 h-2 rounded-full bg-slate-400" id="api-status-dot"></span>
+                        <span id="api-status-text">Đang kiểm tra CSDL...</span>
+                    </div>
+
+                    <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-earth-americas"></i>
+                        <span class="hidden sm:inline">Xem Trang Chủ</span>
+                    </a>
+
+                    <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all border border-rose-200">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">Đăng Xuất</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Chờ Kiểm Duyệt</p>
+                        <h3 id="stat-pending-count" class="text-2xl sm:text-3xl font-black text-amber-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-xl border border-amber-100">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Đã Xuất Bản</p>
+                        <h3 id="stat-approved-count" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-xl border border-emerald-100">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Tổng Tác Phẩm</p>
+                        <h3 id="stat-total-count" class="text-2xl sm:text-3xl font-black text-blue-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-xl border border-blue-100">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Tổng Lượt Đọc</p>
+                        <h3 id="stat-views-count" class="text-2xl sm:text-3xl font-black text-indigo-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-xl border border-indigo-100">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-1">
+                <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn active px-4 py-3 font-extrabold text-sm border-b-2 border-blue-600 text-blue-600 flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-inbox"></i>
+                    <span>Hàng đợi kiểm duyệt</span>
+                    <span id="pending-badge-count" class="hidden bg-amber-500 text-white text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                </button>
+
+                <button onclick="switchTab('posts')" id="tab-btn-posts" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Quản lý bài viết</span>
+                </button>
+
+                <button onclick="switchTab('categories')" id="tab-btn-categories" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Quản lý Thể loại</span>
+                </button>
+
+                <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-3 font-extrabold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-database"></i>
+                    <span>CSDL & Cài đặt API</span>
+                </button>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- TAB 1: HÀNG ĐỢI KIỂM DUYỆT (PENDING REVIEW) -->
+            <!-- ============================================== -->
+            <section id="tab-pending" class="tab-pane space-y-4">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">⏳</span>
+                        <div>
+                            <h4 class="font-bold text-amber-900 text-sm">Hàng đợi bài viết học sinh gửi về</h4>
+                            <p class="text-xs text-amber-700">Chỉ các bài viết được <strong>Duyệt bài</strong> mới chính thức xuất hiện trên Trang chủ Tủ Sách Số 4B.</p>
+                        </div>
+                    </div>
+                    <button onclick="loadAllData()" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-rotate"></i> Làm mới danh sách
+                    </button>
+                </div>
+
+                <!-- Pending Posts List -->
+                <div id="pending-list" class="space-y-4">
+                    <!-- Dynamic rendering -->
+                </div>
+
+                <!-- Empty Pending State -->
+                <div id="pending-empty" class="hidden bg-white p-12 text-center rounded-2xl border border-dashed border-slate-300 space-y-3">
+                    <div class="text-5xl">🎉</div>
+                    <h3 class="text-base font-bold text-slate-700">Tuyệt vời! Không còn bài viết nào đang chờ duyệt</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">Khi học sinh gửi tác phẩm mới từ trang chủ, bài viết sẽ tự động xuất hiện tại đây để Ban Quản Trị thẩm định.</p>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 2: QUẢN LÝ BÀI VIẾT (POST MANAGEMENT) -->
+            <!-- ============================================== -->
+            <section id="tab-posts" class="tab-pane hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+                    <!-- Search input -->
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="admin-search-input" oninput="renderPostsTable()" placeholder="Tìm tên bài, tác giả, thể loại..." 
+                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <!-- Filter by status -->
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <label class="text-xs font-bold text-slate-500 whitespace-nowrap">Trạng thái:</label>
+                        <select id="admin-status-filter" onchange="renderPostsTable()" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                            <option value="all">Tất cả bài viết</option>
+                            <option value="approved" selected>Đã duyệt (Hiển thị web)</option>
+                            <option value="pending">Đang chờ duyệt</option>
+                            <option value="rejected">Đã từ chối</option>
+                        </select>
+                        <button onclick="loadAllData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl text-sm" title="Làm mới">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-black border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4">Tác phẩm</th>
+                                    <th class="py-3 px-4">Tác giả</th>
+                                    <th class="py-3 px-4">Thể loại</th>
+                                    <th class="py-3 px-4 text-center">Lượt đọc</th>
+                                    <th class="py-3 px-4 text-center">Trạng thái</th>
+                                    <th class="py-3 px-4 text-center">Ngày tạo</th>
+                                    <th class="py-3 px-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="posts-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 3: QUẢN LÝ THỂ LOẠI (CATEGORY MANAGEMENT) -->
+            <!-- ============================================== -->
+            <section id="tab-categories" class="tab-pane hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Form thêm thể loại -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                            <i class="fa-solid fa-folder-plus text-blue-600 text-lg"></i>
+                            <h3 class="font-extrabold text-slate-800 text-base">Thêm Thể Loại Mới</h3>
+                        </div>
+
+                        <form id="add-category-form" onsubmit="handleAddCategory(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tên Thể Loại *</label>
+                                <input type="text" id="cat-name-input" required placeholder="Ví dụ: Truyện Cổ Tích, STEM & Khoa Học..." 
+                                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Biểu tượng / Emoji</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="cat-icon-input" maxlength="4" value="📖" placeholder="📖" 
+                                        class="w-16 text-center text-xl py-2 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-blue-500">
+                                    <div class="flex gap-1.5 flex-wrap text-lg">
+                                        <button type="button" onclick="selectEmoji('✨')" class="hover:scale-125 transition-transform">✨</button>
+                                        <button type="button" onclick="selectEmoji('🌐')" class="hover:scale-125 transition-transform">🌐</button>
+                                        <button type="button" onclick="selectEmoji('🌾')" class="hover:scale-125 transition-transform">🌾</button>
+                                        <button type="button" onclick="selectEmoji('🚀')" class="hover:scale-125 transition-transform">🚀</button>
+                                        <button type="button" onclick="selectEmoji('🎨')" class="hover:scale-125 transition-transform">🎨</button>
+                                        <button type="button" onclick="selectEmoji('⭐')" class="hover:scale-125 transition-transform">⭐</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="btn-add-cat" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-200 text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Thêm Thể Loại
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Danh sách thể loại hiện tại -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-tags text-indigo-600 text-lg"></i>
+                                <h3 class="font-extrabold text-slate-800 text-base">Danh Sách Thể Loại Đang Hoạt Động</h3>
+                            </div>
+                            <span id="cat-count-badge" class="bg-indigo-50 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full border border-indigo-100">0 thể loại</span>
+                        </div>
+
+                        <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Dynamic category cards -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 4: CSDL & CÀI ĐẶT API (SETTINGS & SYNC) -->
+            <!-- ============================================== -->
+            <section id="tab-settings" class="tab-pane hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Card Thiết lập API -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                            <i class="fa-solid fa-cloud-arrow-up text-emerald-600 text-xl"></i>
+                            <div>
+                                <h3 class="font-extrabold text-slate-800 text-base">Cấu Hình Google Sheets API Endpoint</h3>
+                                <p class="text-xs text-slate-500">Kết nối cơ sở dữ liệu đám mây Google Apps Script để mọi thiết bị đọc/ghi tập trung</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">
+                                Google Apps Script Web App URL:
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="url" id="api-endpoint-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec" 
+                                    class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <button onclick="saveApiUrl()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-emerald-200 flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                    <i class="fa-solid fa-floppy-disk"></i> Lưu URL
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-slate-400">
+                                * Lưu ý: URL phải có đuôi <strong>/exec</strong> và được cấp quyền "Ai có quyền truy cập: Bất kỳ ai" (Anyone).
+                            </p>
+                        </div>
+
+                        <!-- Actions bar -->
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <button onclick="testApiConnection()" id="btn-test-conn" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-tower-broadcast"></i> Kiểm tra kết nối (Ping)
+                            </button>
+
+                            <button onclick="handleMigrateInitialData()" id="btn-seed-data" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-purple-200 flex items-center gap-2">
+                                <i class="fa-solid fa-upload"></i> Đẩy 4 Truyện Mẫu Hiện Có Lên Google Sheets
+                            </button>
+                        </div>
+
+                        <!-- Ping result box -->
+                        <div id="ping-result-box" class="hidden p-3.5 rounded-xl text-xs"></div>
+                    </div>
+
+                    <!-- Card Hướng dẫn 3 bước -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3">
+                            <span class="text-xl">🚀</span>
+                            <h3 class="font-extrabold text-slate-800 text-sm">3 Bước Kích Hoạt CSDL</h3>
+                        </div>
+
+                        <ol class="space-y-3 text-xs text-slate-600 list-decimal pl-4 leading-relaxed font-sans">
+                            <li>
+                                <strong>Tạo Google Sheet:</strong> Tạo trang tính mới tại Google Drive, đặt tên <em>"CSDL Tu Sach So 4B"</em>.
+                            </li>
+                            <li>
+                                <strong>Dán mã Apps Script:</strong> Vào <em>Tiện ích mở rộng > Apps Script</em>. Mở file <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">google-apps-script/Code.gs</code> trong thư mục dự án, dán toàn bộ vào và nhấn <strong>setupDatabase</strong> rồi bấm <strong>Run</strong>.
+                            </li>
+                            <li>
+                                <strong>Triển khai Web App:</strong> Bấm <em>Deploy > New deployment</em>. Chọn kiểu <strong>Web app</strong>, mục <em>Who has access</em> chọn <strong>Anyone</strong>. Sao chép URL dán vào ô bên cạnh!
+                            </li>
+                        </ol>
+
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800 font-sans">
+                            💡 Xem tài liệu đầy đủ tại file <strong class="underline">HUONG_DAN_CAI_DAT_API.md</strong> nằm ngay trong thư mục mã nguồn.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL XEM CHI TIẾT BÀI VIẾT (PREVIEW MODAL) -->
+    <!-- ============================================== -->
+    <div id="preview-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in">
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white p-4 px-6 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span id="preview-modal-badge" class="bg-blue-600 text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
+                        Thể loại
+                    </span>
+                    <h3 id="preview-modal-title" class="font-black text-base truncate max-w-md">Tiêu đề tác phẩm</h3>
+                </div>
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 overflow-y-auto space-y-4 flex-1">
+                <div class="flex items-center justify-between text-xs text-slate-500 border-b border-slate-100 pb-3">
+                    <div>
+                        Tác giả: <strong id="preview-modal-author" class="text-blue-600 text-sm">...</strong>
+                    </div>
+                    <div>
+                        Ngày gửi: <span id="preview-modal-date">...</span>
+                    </div>
+                </div>
+
+                <div id="preview-modal-cover-wrapper" class="hidden">
+                    <img id="preview-modal-cover" src="" alt="Bìa sách" class="w-full max-h-56 object-cover rounded-xl border border-slate-200">
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-bold text-slate-400 uppercase mb-1">Tóm tắt ngắn:</h5>
+                    <p id="preview-modal-summary" class="text-sm text-slate-600 italic bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        ...
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-bold text-slate-400 uppercase mb-1">Nội dung đầy đủ:</h5>
+                    <div id="preview-modal-content" class="text-sm leading-relaxed text-slate-700 bg-amber-50/30 p-4 rounded-xl border border-amber-100 whitespace-pre-line font-serif">
+                        ...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div id="preview-modal-actions" class="bg-slate-50 border-t border-slate-100 p-4 px-6 flex items-center justify-end gap-3">
+                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script>
+        // TRẠNG THÁI TOÀN CỤC CỦA ADMIN
+        const AUTH_KEY = 'thuvien_admin_authenticated';
+        const DEFAULT_USER = 'admin';
+        const DEFAULT_PASS = 'admin123@@';
+
+        let currentTab = 'pending';
+        let allPosts = [];
+        let allCategories = [];
+        let previewingPostId = null;
+
+        // Khởi chạy khi DOM sẵn sàng
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            initSettingsTab();
+        });
+
+        // 1. AUTHENTICATION LOGIC
+        function checkAuth() {
+            const isAuth = sessionStorage.getItem(AUTH_KEY) === 'true';
+            const loginScreen = document.getElementById('login-screen');
+            const dashboard = document.getElementById('admin-dashboard');
+
+            if (isAuth) {
+                loginScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                loadAllData();
+                checkApiHealth();
+            } else {
+                loginScreen.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value.trim();
+            const errBox = document.getElementById('login-error');
+
+            if (u === DEFAULT_USER && p === DEFAULT_PASS) {
+                sessionStorage.setItem(AUTH_KEY, 'true');
+                errBox.classList.add('hidden');
+                showToast('Đăng nhập thành công! Chào mừng Ban Quản Trị.', 'success');
+                checkAuth();
+            } else {
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi Bảng Quản Trị?')) {
+                sessionStorage.removeItem(AUTH_KEY);
+                checkAuth();
+                showToast('Đã đăng xuất an toàn.', 'info');
+            }
+        }
+
+        function fillDefaultCredentials() {
+            document.getElementById('login-username').value = DEFAULT_USER;
+            document.getElementById('login-password').value = DEFAULT_PASS;
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('login-password');
+            const icon = document.getElementById('eye-icon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // 2. DATA LOADING & TABS
+        async function loadAllData() {
+            try {
+                // Tải song song danh sách bài viết và categories
+                const [posts, categories] = await Promise.all([
+                    StorageService.getPosts('all'),
+                    StorageService.getCategories()
+                ]);
+
+                allPosts = posts || [];
+                allCategories = categories || [];
+
+                updateDashboardStats();
+                renderPendingPosts();
+                renderPostsTable();
+                renderCategoriesGrid();
+            } catch (error) {
+                console.error('Lỗi nạp dữ liệu:', error);
+                showToast('Không thể tải dữ liệu mới nhất: ' + error.message, 'error');
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+
+            const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+            const targetPane = document.getElementById(`tab-${tabName}`);
+
+            if (targetBtn && targetPane) {
+                targetBtn.classList.add('active', 'border-blue-600', 'text-blue-600');
+                targetBtn.classList.remove('border-transparent', 'text-slate-500');
+                targetPane.classList.remove('hidden');
+            }
+        }
+
+        function updateDashboardStats() {
+            const pending = allPosts.filter(p => p.status === 'pending');
+            const approved = allPosts.filter(p => p.status === 'approved');
+            const totalViews = allPosts.reduce((sum, p) => sum + (Number(p.views) || 0), 0);
+
+            document.getElementById('stat-pending-count').innerText = pending.length;
+            document.getElementById('stat-approved-count').innerText = approved.length;
+            document.getElementById('stat-total-count').innerText = allPosts.length;
+            document.getElementById('stat-views-count').innerText = totalViews;
+
+            // Badge trên tab
+            const badge = document.getElementById('pending-badge-count');
+            if (pending.length > 0) {
+                badge.innerText = pending.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // 3. TAB 1: PENDING REVIEW
+        function renderPendingPosts() {
+            const container = document.getElementById('pending-list');
+            const emptyEl = document.getElementById('pending-empty');
+            container.innerHTML = '';
+
+            const pending = allPosts.filter(p => p.status === 'pending');
+
+            if (pending.length === 0) {
+                emptyEl.classList.remove('hidden');
+                return;
+            } else {
+                emptyEl.classList.add('hidden');
+            }
+
+            pending.forEach(post => {
+                const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN', {
+                    hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+                }) : 'Vừa xong';
+
+                const cardHtml = `
+                    <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-amber-400">
+                        <div class="space-y-1.5 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-amber-200">
+                                    ${post.category || 'Chưa phân loại'}
+                                </span>
+                                <span class="text-xs text-slate-400">Gửi lúc: ${dateStr}</span>
+                            </div>
+                            <h3 class="text-base font-extrabold text-slate-800 hover:text-blue-600 cursor-pointer" onclick="openPreviewModal('${post.id}')">
+                                ${post.title}
+                            </h3>
+                            <div class="text-xs text-blue-600 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-pen"></i> Tác giả: ${post.author}
+                            </div>
+                            <p class="text-xs text-slate-500 line-clamp-2">
+                                ${post.summary}
+                            </p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                            <button onclick="openPreviewModal('${post.id}')" 
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-eye"></i> Đọc bài
+                            </button>
+                            <button onclick="rejectPost('${post.id}')" 
+                                class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-ban"></i> Từ chối
+                            </button>
+                            <button onclick="approvePost('${post.id}')" 
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-200 active:scale-95">
+                                <i class="fa-solid fa-check"></i> Duyệt bài
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        async function approvePost(id) {
+            const btn = event.currentTarget;
+            if (btn) btn.disabled = true;
+
+            showToast('Đang duyệt bài viết...', 'info');
+            try {
+                await StorageService.updatePostStatus(id, 'approved');
+                showToast('🎉 Đã duyệt bài viết thành công! Bài viết đã hiển thị trên Trang chủ.', 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi duyệt bài: ' + err.message, 'error');
+            }
+        }
+
+        async function rejectPost(id) {
+            if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này không?')) return;
+
+            showToast('Đang cập nhật trạng thái...', 'info');
+            try {
+                await StorageService.updatePostStatus(id, 'rejected');
+                showToast('Đã chuyển bài viết sang trạng thái Từ chối.', 'warning');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi: ' + err.message, 'error');
+            }
+        }
+
+        // 4. TAB 2: POST MANAGEMENT TABLE
+        function renderPostsTable() {
+            const tbody = document.getElementById('posts-table-body');
+            const searchKeyword = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('admin-status-filter')?.value || 'all';
+
+            tbody.innerHTML = '';
+
+            const filtered = allPosts.filter(p => {
+                const matchesStatus = (statusFilter === 'all') || (p.status === statusFilter);
+                const matchesSearch = p.title.toLowerCase().includes(searchKeyword) || 
+                                      p.author.toLowerCase().includes(searchKeyword) ||
+                                      p.category.toLowerCase().includes(searchKeyword);
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-xs text-slate-400">
+                            Không tìm thấy bài viết nào phù hợp với bộ lọc.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(post => {
+                let statusBadge = '';
+                if (post.status === 'approved') {
+                    statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200">Đã duyệt</span>';
+                } else if (post.status === 'pending') {
+                    statusBadge = '<span class="bg-amber-100 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200">Chờ duyệt</span>';
+                } else {
+                    statusBadge = '<span class="bg-rose-100 text-rose-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-rose-200">Từ chối</span>';
+                }
+
+                const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString('vi-VN') : '-';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <div class="font-extrabold text-slate-800 text-xs sm:text-sm hover:text-blue-600 cursor-pointer line-clamp-1" onclick="openPreviewModal('${post.id}')">
+                            ${post.title}
+                        </div>
+                        <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">${post.summary || ''}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs font-bold text-blue-600 whitespace-nowrap">
+                        ${post.author}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
+                        ${post.category}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-center text-slate-500 font-semibold whitespace-nowrap">
+                        ${post.views || 0}
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-center text-slate-400 whitespace-nowrap">
+                        ${dateStr}
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="openPreviewModal('${post.id}')" class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" title="Xem chi tiết">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            ${post.status !== 'approved' ? `
+                                <button onclick="approvePost('${post.id}')" class="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50" title="Duyệt bài">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            ` : `
+                                <button onclick="rejectPost('${post.id}')" class="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50" title="Gỡ bài (chuyển Từ chối)">
+                                    <i class="fa-solid fa-ban"></i>
+                                </button>
+                            `}
+                            <button onclick="handleDeletePost('${post.id}', '${post.title.replace(/'/g, "\\'")}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Xóa bài vĩnh viễn">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function handleDeletePost(id, title) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn tác phẩm:\n"${title}"?\n\nHành động này không thể hoàn tác.`)) {
+                return;
+            }
+
+            showToast('Đang xóa bài viết...', 'info');
+            try {
+                await StorageService.deletePost(id);
+                showToast('Đã xóa bài viết thành công!', 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi xóa bài: ' + err.message, 'error');
+            }
+        }
+
+        // 5. TAB 3: CATEGORY MANAGEMENT
+        function renderCategoriesGrid() {
+            const grid = document.getElementById('categories-grid');
+            const countBadge = document.getElementById('cat-count-badge');
+            grid.innerHTML = '';
+
+            countBadge.innerText = `${allCategories.length} thể loại`;
+
+            allCategories.forEach(cat => {
+                const bookCount = allPosts.filter(p => p.category === cat.name).length;
+
+                const card = document.createElement('div');
+                card.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between';
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl">${cat.icon || '📖'}</span>
+                        <div>
+                            <h4 class="font-extrabold text-slate-800 text-sm">${cat.name}</h4>
+                            <p class="text-[11px] text-slate-500">${bookCount} tác phẩm</p>
+                        </div>
+                    </div>
+                    <button onclick="handleDeleteCategory('${cat.id}', '${cat.name}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa thể loại">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectEmoji(emoji) {
+            document.getElementById('cat-icon-input').value = emoji;
+        }
+
+        async function handleAddCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('cat-name-input').value.trim();
+            const icon = document.getElementById('cat-icon-input').value.trim() || '📖';
+
+            if (!name) return;
+
+            // Kiểm tra trùng lặp
+            if (allCategories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+                showToast('Thể loại này đã tồn tại trong hệ thống!', 'warning');
+                return;
+            }
+
+            showToast('Đang thêm thể loại mới...', 'info');
+            try {
+                await StorageService.addCategory(name, icon);
+                showToast(`Đã thêm thể loại "${name}" thành công!`, 'success');
+                document.getElementById('add-category-form').reset();
+                document.getElementById('cat-icon-input').value = '📖';
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi thêm thể loại: ' + err.message, 'error');
+            }
+        }
+
+        async function handleDeleteCategory(id, name) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa thể loại "${name}"?`)) return;
+
+            showToast('Đang xóa thể loại...', 'info');
+            try {
+                await StorageService.deleteCategory(id);
+                showToast(`Đã xóa thể loại "${name}".`, 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi khi xóa thể loại: ' + err.message, 'error');
+            }
+        }
+
+        // 6. TAB 4: SETTINGS & SYNC
+        function initSettingsTab() {
+            const input = document.getElementById('api-endpoint-input');
+            const savedUrl = getApiEndpoint();
+            if (savedUrl) input.value = savedUrl;
+        }
+
+        function saveApiUrl() {
+            const url = document.getElementById('api-endpoint-input').value.trim();
+            if (url && !url.startsWith('https://script.google.com/macros/s/')) {
+                showToast('URL Google Apps Script không đúng định dạng (phải bắt đầu bằng https://script.google.com/macros/s/)', 'warning');
+                return;
+            }
+            setApiEndpoint(url);
+            showToast('Đã lưu URL API Endpoint thành công!', 'success');
+            checkApiHealth();
+        }
+
+        async function testApiConnection() {
+            const btn = document.getElementById('btn-test-conn');
+            const resultBox = document.getElementById('ping-result-box');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang kiểm tra...';
+
+            resultBox.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-rose-50', 'text-rose-800', 'border-rose-200');
+
+            const res = await StorageService.testConnection();
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-tower-broadcast"></i> Kiểm tra kết nối (Ping)';
+
+            if (res.ok) {
+                resultBox.className = 'p-3.5 rounded-xl text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold';
+                resultBox.innerHTML = `✅ ${res.message}`;
+                showToast('Kết nối Google Sheets API hoàn toàn thông suốt!', 'success');
+            } else {
+                resultBox.className = 'p-3.5 rounded-xl text-xs bg-rose-50 text-rose-800 border border-rose-200';
+                resultBox.innerHTML = `❌ ${res.message}<br><span class="text-[11px] font-normal">Hãy đảm bảo bạn đã cấp quyền "Anyone" khi Deploy Apps Script.</span>`;
+                showToast('Kết nối thất bại. Vui lòng kiểm tra lại URL.', 'error');
+            }
+            checkApiHealth();
+        }
+
+        async function handleMigrateInitialData() {
+            if (!StorageService.hasApi()) {
+                showToast('Vui lòng nhập và Lưu URL Google Apps Script Web App trước khi đồng bộ!', 'warning');
+                return;
+            }
+
+            if (!confirm('Hành động này sẽ đẩy toàn bộ 4 truyện mẫu ban đầu và các thể loại lên Google Sheets của bạn. Bạn muốn tiếp tục?')) {
+                return;
+            }
+
+            const btn = document.getElementById('btn-seed-data');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đồng bộ lên Google Sheets...';
+
+            try {
+                const res = await StorageService.seedInitialDataToRemote();
+                showToast(res.message || '🎉 Đã đưa các truyện mẫu lên Google Sheets thành công!', 'success');
+                await loadAllData();
+            } catch (err) {
+                showToast('Lỗi đồng bộ: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-upload"></i> Đẩy 4 Truyện Mẫu Hiện Có Lên Google Sheets';
+            }
+        }
+
+        async function checkApiHealth() {
+            const badge = document.getElementById('api-status-badge');
+            const dot = document.getElementById('api-status-dot');
+            const text = document.getElementById('api-status-text');
+
+            if (!StorageService.hasApi()) {
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+                text.innerText = 'Chưa cấu hình API (Dùng Local)';
+                return;
+            }
+
+            const res = await StorageService.testConnection();
+            if (res.ok) {
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                text.innerText = 'Google Sheets Connected';
+            } else {
+                badge.className = 'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200';
+                dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+                text.innerText = 'Lỗi kết nối API';
+            }
+        }
+
+        // 7. PREVIEW MODAL LOGIC
+        function openPreviewModal(id) {
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+
+            previewingPostId = id;
+            document.getElementById('preview-modal-title').innerText = post.title;
+            document.getElementById('preview-modal-badge').innerText = post.category || 'Tác phẩm';
+            document.getElementById('preview-modal-author').innerText = post.author;
+            document.getElementById('preview-modal-summary').innerText = post.summary || 'Không có tóm tắt';
+            document.getElementById('preview-modal-content').innerText = post.content || 'Chưa có nội dung';
+            
+            const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleString('vi-VN') : '-';
+            document.getElementById('preview-modal-date').innerText = dateStr;
+
+            const coverWrapper = document.getElementById('preview-modal-cover-wrapper');
+            const coverImg = document.getElementById('preview-modal-cover');
+            if (post.cover) {
+                coverImg.src = post.cover;
+                coverWrapper.classList.remove('hidden');
+            } else {
+                coverWrapper.classList.add('hidden');
+            }
+
+            // Action buttons in modal
+            const actionsBox = document.getElementById('preview-modal-actions');
+            actionsBox.innerHTML = `
+                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
+                    Đóng
+                </button>
+            `;
+
+            if (post.status === 'pending') {
+                actionsBox.innerHTML += `
+                    <button onclick="rejectPost('${post.id}'); closePreviewModal();" class="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 px-4 py-2 rounded-xl text-xs font-bold">
+                        Từ chối
+                    </button>
+                    <button onclick="approvePost('${post.id}'); closePreviewModal();" class="bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 rounded-xl text-xs font-bold shadow-md shadow-emerald-200">
+                        Duyệt bài ngay
+                    </button>
+                `;
+            }
+
+            document.getElementById('preview-modal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.add('hidden');
+            previewingPostId = null;
+        }
+
+        // 8. TOAST NOTIFICATION UTILITY
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-slate-800 text-white';
+            let icon = 'fa-info-circle';
+            if (type === 'success') {
+                bg = 'bg-emerald-600 text-white shadow-emerald-200';
+                icon = 'fa-circle-check';
+            } else if (type === 'error') {
+                bg = 'bg-rose-600 text-white shadow-rose-200';
+                icon = 'fa-circle-exclamation';
+            } else if (type === 'warning') {
+                bg = 'bg-amber-500 text-white shadow-amber-200';
+                icon = 'fa-triangle-exclamation';
+            }
+
+            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease-out';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

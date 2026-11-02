@@ -33,7 +33,7 @@
         h1, h2, h3, .font-heading {
             font-family: Cambria, "Times New Roman", Times, serif;
         }
-        /* Giữ nguyên font icons Font Awesome không bị ghi đè */
+        /* Giữ nguyên font icons Font Awesome */
         .fa, .fa-solid, .fa-regular, .fa-brands, [class*=" fa-"], [class^="fa-"] {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
         }
@@ -67,9 +67,19 @@
         .book-card:hover {
             transform: translateY(-6px);
         }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Top Banner Chào mừng 20/11 -->
     <div class="bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 text-white shadow-md relative overflow-hidden py-2 px-4">
@@ -99,7 +109,12 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <a href="admin.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center space-x-1.5" title="Khu vực Ban Quản Trị">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                    <span class="hidden md:inline">Quản Trị</span>
+                </a>
+
                 <button onclick="openUploadModal()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-200 transition-all flex items-center space-x-2 active:scale-95">
                     <i class="fa-solid fa-cloud-arrow-up text-base"></i>
                     <span class="hidden sm:inline">Đăng Truyện Mới</span>
@@ -127,7 +142,7 @@
                 <div class="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
                     <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
                         <i class="fa-solid fa-book-bookmark text-amber-300"></i>
-                        <span id="total-books-count">0</span> Tác phẩm
+                        <span id="total-books-count">0</span> Tác phẩm đã duyệt
                     </div>
                     <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
                         <i class="fa-solid fa-eye text-emerald-300"></i>
@@ -158,29 +173,24 @@
                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 </div>
 
-                <!-- Category Pills -->
+                <!-- Category Pills (Được render động từ CSDL) -->
                 <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0" id="category-pills">
                     <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
                         Tất cả
                     </button>
-                    <button onclick="setCategory('Truyện AI Sáng Tác')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all">
-                        ✨ Truyện AI Sáng Tác
-                    </button>
-                    <button onclick="setCategory('Truyện Song Ngữ')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all">
-                        🌐 Truyện Song Ngữ
-                    </button>
-                    <button onclick="setCategory('Thơ Ca')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all">
-                        🌾 Thơ Ca
-                    </button>
-                    <button onclick="setCategory('STEM & Khoa Học')" class="cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all">
-                        🚀 STEM & Khoa Học
-                    </button>
+                    <!-- Pills render via JS -->
                 </div>
             </div>
         </div>
 
+        <!-- Loading Indicator -->
+        <div id="loading-state" class="py-16 text-center space-y-3">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="text-sm font-bold text-slate-500">Đang tải tủ sách trực tuyến...</p>
+        </div>
+
         <!-- Books Grid -->
-        <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Dynamic Cards inserted via JS -->
         </div>
 
@@ -198,12 +208,17 @@
         <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
             <p class="text-sm font-bold text-slate-700">Tủ Sách Số Lớp 4B • Trường TH Nam Đồng</p>
             <p class="text-xs text-slate-500">Chào mừng Hội thi Trang trí thư viện góc lớp - Ngày Nhà giáo Việt Nam 20/11</p>
+            <div class="pt-2">
+                <a href="admin.html" class="text-xs text-blue-500 hover:text-blue-700 font-bold inline-flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved"></i> Cổng Quản Trị Viên (Dành Cho Giáo Viên & Ban Quản Trị)
+                </a>
+            </div>
         </div>
     </footer>
 
     <!-- MODAL 1: ĐỌC SÁCH TRỰC TUYẾN (READER MODAL) -->
     <div id="reader-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white w-full max-w-4xl h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden relative animate-scaleUp">
+        <div class="bg-white w-full max-w-4xl h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden relative fade-in">
             
             <!-- Reader Header -->
             <div class="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
@@ -275,12 +290,15 @@
 
     <!-- MODAL 2: FORM ĐĂNG TRUYỆN MỚI (UPLOAD MODAL) -->
     <div id="upload-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative animate-scaleUp">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative fade-in">
             
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-pen-to-square text-xl"></i>
-                    <h3 class="text-lg font-bold">Đăng Tác Phẩm Mới</h3>
+                    <div>
+                        <h3 class="text-lg font-bold">Đăng Tác Phẩm Mới</h3>
+                        <p class="text-xs text-blue-100">Bài viết sẽ được Ban Quản Trị duyệt trước khi hiển thị</p>
+                    </div>
                 </div>
                 <button onclick="closeUploadModal()" class="text-white/80 hover:text-white text-xl">
                     <i class="fa-solid fa-xmark"></i>
@@ -297,16 +315,13 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tác Giả (Học Sinh) *</label>
-                        <input type="text" id="form-author" required placeholder="Ví dụ: Nguyễn Minh Anh" 
+                        <input type="text" id="form-author" required placeholder="Ví dụ: Nguyễn Minh Anh (Lớp 4B)" 
                             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Thể Loại *</label>
                         <select id="form-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <option value="Truyện AI Sáng Tác">✨ Truyện AI Sáng Tác</option>
-                            <option value="Truyện Song Ngữ">🌐 Truyện Song Ngữ</option>
-                            <option value="Thơ Ca">🌾 Thơ Ca</option>
-                            <option value="STEM & Khoa Học">🚀 STEM & Khoa Học</option>
+                            <!-- Options populate from JS -->
                         </select>
                     </div>
                 </div>
@@ -329,156 +344,126 @@
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-600 text-base flex-shrink-0"></i>
+                    <span>Tác phẩm sau khi gửi sẽ ở trạng thái <strong>Chờ kiểm duyệt</strong> để đảm bảo nội dung phù hợp lứa tuổi học sinh.</span>
+                </div>
+
                 <div class="pt-2 flex justify-end space-x-3">
                     <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-sm font-bold hover:bg-slate-100">
                         Hủy
                     </button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-200">
-                        Đăng Tác Phẩm
+                    <button type="submit" id="btn-submit-post" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-200 flex items-center gap-2">
+                        <span>Gửi Duyệt Bài Viết</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- MODAL 3: THÔNG BÁO GỬI BÀI THÀNH CÔNG (SUCCESS CONFIRMATION) -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 text-center space-y-4 fade-in">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md shadow-emerald-200">
+                🎉
+            </div>
+            <h3 class="text-xl font-black text-slate-800">Gửi Bài Viết Thành Công!</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+                Bài viết đã gửi thành công và đang chờ Ban Quản Trị duyệt trước khi hiển thị trên Tủ Sách Số 4B!
+            </p>
+            <div class="bg-slate-50 p-3 rounded-xl text-xs text-slate-500">
+                Thầy cô và Ban Quản Trị sẽ đọc thẩm định tác phẩm của bạn sớm nhất nhé.
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-blue-200 text-sm transition-all">
+                Đồng Ý
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
     <script>
-        const APP_URL = 'https://halidahd.github.io/thu-gau/thu_vien_sang_tao.html';
-
-        // Dữ liệu mẫu ban đầu (Sẽ tự động kết hợp LocalStorage để lưu bài đăng mới của học sinh)
-        const initialBooks = [
-            {
-                id: 'book-1',
-                title: 'Hành Trình Khám Phá Vũ Trụ Cùng AI',
-                author: 'Chu Nam Phong (Lớp 4B)',
-                category: 'Truyện AI Sáng Tác',
-                summary: 'Một câu chuyện phiêu lưu kỳ thú qua các hành tinh do em Nam Phong viết kịch bản và AI minh họa.',
-                cover: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop',
-                views: 124,
-                content: `Ngày xửa ngày xưa, ở một ngôi trường tiểu học xinh đẹp, có một cậu bé tên là Nam Phong rất thích quan sát bầu trời đêm. 
-
-Một ngày nọ, Nam Phong chế tạo ra một chú robot nhỏ tên là Aki bằng công nghệ Trí tuệ Nhân tạo. Aki có thể nói chuyện và giải đáp mọi thắc mắc của Nam Phong về các vì sao.
-
-Cùng nhau, Nam Phong và Aki đã thực hiện một chuyến du hành tưởng tượng xuyên qua Hệ Mặt Trời, ghé thăm Sao Hỏa đỏ rực và những vành đai rực rỡ của Sao Thổ. Qua chuyến đi, Nam Phong hiểu rằng khoa học và trí tuệ nhân tạo là người bạn đồng hành tuyệt vời giúp con người vươn tới những ước mơ cao xa.`
-            },
-            {
-                id: 'book-2',
-                title: 'The Little Bear & The Forest / Chú Gấu Nhỏ Và Rừng Xanh',
-                author: 'Nguyễn Kiều Anh (Lớp 4B)',
-                category: 'Truyện Song Ngữ',
-                summary: 'Truyện tranh song ngữ Anh - Việt dạy bài học về việc bảo vệ môi trường và yêu thương cây xanh.',
-                cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop',
-                views: 98,
-                content: `Once upon a time, in a green forest, lived a little bear named Barnaby. Barnaby loved planting trees.
-(Ngày xửa ngày xưa, trong một khu rừng xanh tươi, có một chú gấu nhỏ tên là Barnaby. Barnaby rất thích trồng cây.)
-
-One sunny morning, he found a withered flower near the stream. He carefully watered it every day.
-(Một sáng nắng đẹp, chú tìm thấy một bông hoa héo bên dòng suối. Chú cẩn thận tưới nước cho nó mỗi ngày.)
-
-Lessons learned: Nature is our best friend. Protect the green planet!
-(Bài học rút ra: Thiên nhiên là người bạn tốt nhất của chúng ta. Hãy bảo vệ hành tinh xanh!)`
-            },
-            {
-                id: 'book-3',
-                title: 'Nắng Khai Trường & Thầy Cô Kính Yêu',
-                author: 'Nguyễn Hải An (Lớp 4B)',
-                category: 'Thơ Ca',
-                summary: 'Tập thơ ngắn xúc động chào mừng Ngày Nhà giáo Việt Nam 20/11 do học sinh sáng tác.',
-                cover: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop',
-                views: 215,
-                content: `Nắng thu vàng rực khoảng sân trường
-Tiếng giảng bài cô đọng yêu thương
-Hàng cây xanh mát nghiêng đầu đón
-Nhiệt huyết thầy gieo muôn vạn phương.
-
-Chúng em ghi nhớ lời cô dạy
-Chăm ngoan học tốt xứng cháu Bác Hồ
-Mái trường Nam Đồng thân thương quá
-Nâng bước tuổi thơ dệt ước mơ!`
-            },
-            {
-                id: 'book-4',
-                title: 'Bí Mật Của Nước & Sự Tuần Hoàn Kỳ Diệu',
-                author: 'Chu Thị Minh Hằng (Lớp 4B)',
-                category: 'STEM & Khoa Học',
-                summary: 'Sách khám phá khoa học vui kết hợp bài tập thực nghiệm đơn giản tại lớp học.',
-                cover: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop',
-                views: 85,
-                content: `Bạn có biết giọt nước mưa rơi trên lá cây từ đâu đến không?
-
-Nước sông hồ khi gặp ánh nắng mặt trời chiếu vào sẽ bốc hơi bay lên không trung. Khi lên cao gặp lạnh, hơi nước ngưng tụ lại thành những đám mây bồng bềnh.
-
-Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ rơi xuống tạo thành mưa. Đó chính là vòng tuần hoàn kỳ diệu của nước trong thiên nhiên mà chúng mình được học trong môn Khoa học!`
-            }
-        ];
+        const APP_URL = window.location.href.split('#')[0].split('?')[0];
 
         let books = [];
+        let categories = [];
         let currentCategory = 'all';
         let audioContext = null;
         let isMusicPlaying = false;
         let activeBook = null;
 
         // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadBooksData();
+        window.addEventListener('DOMContentLoaded', async () => {
             renderHeroQR();
-            renderBooks();
-            updateHeaderStats();
+            await loadCategories();
+            await fetchApprovedBooks();
+            checkUrlForBookParam();
         });
 
-        // Load data from LocalStorage or default
-        function loadBooksData() {
-            const saved = localStorage.getItem('thuvien_4b_books');
-            if (saved) {
-                try {
-                    books = JSON.parse(saved);
-                    // Tự động chuẩn hóa dữ liệu & cập nhật tên tác giả nếu đã lưu trong localStorage từ trước
-                    let updated = false;
-                    books.forEach(b => {
-                        if (b.title && b.title.includes('Khái Trường')) {
-                            b.title = b.title.replace('Khái Trường', 'Khai Trường');
-                            updated = true;
-                        }
-                        if (b.id === 'book-1' || (b.author && b.author.includes('Trần Bảo Nam'))) {
-                            b.author = 'Chu Nam Phong (Lớp 4B)';
-                            b.summary = 'Một câu chuyện phiêu lưu kỳ thú qua các hành tinh do em Nam Phong viết kịch bản và AI minh họa.';
-                            if (b.content) {
-                                b.content = b.content.replace(/Bảo Nam/g, 'Nam Phong')
-                                                     .replace(/Nam và Aki/g, 'Nam Phong và Aki')
-                                                     .replace(/cậu bé tên là Nam/g, 'cậu bé tên là Nam Phong')
-                                                     .replace(/thắc mắc của Nam/g, 'thắc mắc của Nam Phong')
-                                                     .replace(/Nam hiểu rằng/g, 'Nam Phong hiểu rằng');
-                            }
-                            updated = true;
-                        }
-                        if (b.id === 'book-2' || (b.author && b.author.includes('Nguyễn Lê Ngọc Anh'))) {
-                            b.author = 'Nguyễn Kiều Anh (Lớp 4B)';
-                            updated = true;
-                        }
-                        if (b.id === 'book-3' || (b.author && b.author.includes('Lê Hoàng Khoa'))) {
-                            b.author = 'Nguyễn Hải An (Lớp 4B)';
-                            updated = true;
-                        }
-                        if (b.id === 'book-4' || (b.author && b.author.includes('Phạm Đức Trí'))) {
-                            b.author = 'Chu Thị Minh Hằng (Lớp 4B)';
-                            updated = true;
-                        }
-                    });
-                    if (updated) saveBooksData();
-                } catch (e) {
-                    books = initialBooks;
-                }
-            } else {
-                books = initialBooks;
-                saveBooksData();
+        // 1. Tải danh mục thể loại
+        async function loadCategories() {
+            try {
+                categories = await StorageService.getCategories();
+            } catch (e) {
+                categories = INITIAL_CATEGORIES;
+            }
+            renderCategoryPills();
+            populateFormCategories();
+        }
+
+        function renderCategoryPills() {
+            const container = document.getElementById('category-pills');
+            // Giữ nút "Tất cả"
+            container.innerHTML = `
+                <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all shadow-sm">
+                    Tất cả
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'cat-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all';
+                btn.innerHTML = `${cat.icon || '📖'} ${cat.name}`;
+                btn.onclick = () => setCategory(cat.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function populateFormCategories() {
+            const select = document.getElementById('form-category');
+            select.innerHTML = '';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.name;
+                opt.innerText = `${cat.icon || '📖'} ${cat.name}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // 2. Tải danh sách truyện đã được duyệt (status === 'approved')
+        async function fetchApprovedBooks() {
+            const loadingState = document.getElementById('loading-state');
+            const booksGrid = document.getElementById('books-grid');
+
+            loadingState.classList.remove('hidden');
+            booksGrid.classList.add('hidden');
+
+            try {
+                // Chỉ lấy các bài viết có status === 'approved'
+                const data = await StorageService.getPosts('approved');
+                books = data || [];
+            } catch (err) {
+                console.error('Lỗi tải truyện:', err);
+                books = INITIAL_BOOKS.filter(b => b.status === 'approved');
+            } finally {
+                loadingState.classList.add('hidden');
+                booksGrid.classList.remove('hidden');
+                renderBooks();
+                updateHeaderStats();
             }
         }
 
-        function saveBooksData() {
-            localStorage.setItem('thuvien_4b_books', JSON.stringify(books));
-        }
-
-        // Render Hero QR Code pointing to current page
+        // 3. Render Hero QR Code
         function renderHeroQR() {
             const heroQrEl = document.getElementById('hero-qr');
             heroQrEl.innerHTML = '';
@@ -486,20 +471,20 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
                 text: APP_URL,
                 width: 72,
                 height: 72,
-                colorDark : "#1e293b",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
+                colorDark: "#1e293b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
         }
 
-        // Update stats
+        // 4. Update Header Stats
         function updateHeaderStats() {
             document.getElementById('total-books-count').innerText = books.length;
-            const totalViews = books.reduce((sum, b) => sum + (b.views || 0), 0);
+            const totalViews = books.reduce((sum, b) => sum + (Number(b.views) || 0), 0);
             document.getElementById('total-views-count').innerText = totalViews;
         }
 
-        // Set category filter
+        // 5. Category Filtering
         function setCategory(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -519,14 +504,14 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             setCategory('all');
         }
 
-        // Filter and Render Books Grid
+        // 6. Filter & Render Cards
         function filterBooks() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
             const filtered = books.filter(book => {
                 const matchesCat = (currentCategory === 'all') || (book.category === currentCategory);
-                const matchesSearch = book.title.toLowerCase().includes(searchTerm) || 
-                                      book.author.toLowerCase().includes(searchTerm) ||
-                                      book.summary.toLowerCase().includes(searchTerm);
+                const matchesSearch = (book.title || '').toLowerCase().includes(searchTerm) || 
+                                      (book.author || '').toLowerCase().includes(searchTerm) ||
+                                      (book.summary || '').toLowerCase().includes(searchTerm);
                 return matchesCat && matchesSearch;
             });
 
@@ -546,7 +531,7 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             }
 
             listToRender.forEach(book => {
-                const isAI = book.category === 'Truyện AI Sáng Tác';
+                const isAI = (book.category || '').includes('AI');
                 const defaultImage = isAI 
                     ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop'
                     : 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
@@ -602,19 +587,19 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             });
         }
 
-        // READER MODAL LOGIC
+        // 7. READER MODAL
         function openReaderModal(bookId) {
             const book = books.find(b => b.id === bookId);
             if (!book) return;
 
             activeBook = book;
-            // Increment views count
-            book.views = (book.views || 0) + 1;
-            saveBooksData();
+            // Tăng lượt xem lên cơ sở dữ liệu
+            StorageService.incrementViews(book.id);
+            book.views = (Number(book.views) || 0) + 1;
             updateHeaderStats();
             renderBooks();
 
-            // Fill Modal Info
+            // Điền thông tin vào Modal
             document.getElementById('modal-book-title').innerText = book.title;
             document.getElementById('modal-cat-badge').innerText = book.category;
             document.getElementById('modal-book-author').innerText = book.author;
@@ -627,7 +612,7 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             const coverEl = document.getElementById('modal-book-cover');
             coverEl.src = book.cover || 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&auto=format&fit=crop';
 
-            // Generate Modal Specific QR Code
+            // Tạo QR Code cho riêng bài đọc này
             const qrEl = document.getElementById('modal-qr');
             qrEl.innerHTML = '';
             new QRCode(qrEl, {
@@ -646,7 +631,15 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             }
         }
 
-        // SOFT BACKGROUND MUSIC SYNTHESIZER (Tone / Web Audio API - Safe & Clean)
+        function checkUrlForBookParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('book');
+            if (bookId) {
+                openReaderModal(bookId);
+            }
+        }
+
+        // 8. BACKGROUND MUSIC SYNTHESIZER
         function toggleBackgroundMusic() {
             const musicBtn = document.getElementById('music-btn');
             const musicText = document.getElementById('music-text');
@@ -670,7 +663,7 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
 
-            const notes = [261.63, 293.66, 329.63, 392.00, 440.00]; // C4, D4, E4, G4, A4 (Pentatonic)
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00]; // Pentatonic notes
             let noteIdx = 0;
 
             musicInterval = setInterval(() => {
@@ -699,7 +692,7 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             if (musicInterval) clearInterval(musicInterval);
         }
 
-        // UPLOAD MODAL LOGIC
+        // 9. UPLOAD MODAL LOGIC & FORM SUBMIT
         function openUploadModal() {
             document.getElementById('upload-modal').classList.remove('hidden');
         }
@@ -708,9 +701,16 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             document.getElementById('upload-modal').classList.add('hidden');
         }
 
-        function handleFormSubmit(event) {
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        async function handleFormSubmit(event) {
             event.preventDefault();
             
+            const submitBtn = document.getElementById('btn-submit-post');
+            const originalBtnHtml = submitBtn.innerHTML;
+
             const title = document.getElementById('form-title').value.trim();
             const author = document.getElementById('form-author').value.trim();
             const category = document.getElementById('form-category').value;
@@ -718,26 +718,65 @@ Khi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ r�
             const content = document.getElementById('form-content').value.trim();
             const cover = document.getElementById('form-cover').value.trim();
 
-            const newBook = {
-                id: 'book-' + Date.now(),
-                title,
-                author,
-                category,
-                summary,
-                content,
-                cover: cover || '',
-                views: 1
-            };
+            // Disable nút và hiện hiệu ứng tải
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi bài...';
 
-            books.unshift(newBook);
-            saveBooksData();
-            updateHeaderStats();
-            renderBooks();
-            closeUploadModal();
+            try {
+                // Gửi bài qua StorageService (Lưu status: "pending")
+                await StorageService.createPost({
+                    title,
+                    author,
+                    category,
+                    summary,
+                    content,
+                    cover
+                });
 
-            // Reset Form
-            document.getElementById('upload-form').reset();
-            alert('🎉 Chúc mừng! Tác phẩm của bạn đã được đăng tải thành công lên Tủ Sách Số Lớp 4B!');
+                closeUploadModal();
+                document.getElementById('upload-form').reset();
+
+                // Hiển thị Modal thông báo thân thiện
+                document.getElementById('success-modal').classList.remove('hidden');
+
+            } catch (err) {
+                console.error('Lỗi khi gửi bài viết:', err);
+                showToast('Có lỗi xảy ra: ' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
+        }
+
+        // 10. TOAST NOTIFICATION UTILITY
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-slate-800 text-white';
+            let icon = 'fa-info-circle';
+            if (type === 'success') {
+                bg = 'bg-emerald-600 text-white shadow-emerald-200';
+                icon = 'fa-circle-check';
+            } else if (type === 'error') {
+                bg = 'bg-rose-600 text-white shadow-rose-200';
+                icon = 'fa-circle-exclamation';
+            }
+
+            toast.className = `${bg} shadow-lg pointer-events-auto px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 max-w-sm fade-in`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base flex-shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease-out';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
     </script>
 </body>
