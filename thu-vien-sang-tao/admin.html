@@ -1228,12 +1228,16 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                         <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể Loại</label>
-                        <select id="comic-category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-rose-500 outline-none bg-white">
-                            <option value="Truyện Tranh PDF" selected>🎨 Truyện Tranh PDF</option>
-                            <option value="Truyện AI Sáng Tác">✨ Truyện AI Sáng Tác</option>
-                            <option value="Truyện Song Ngữ">🌐 Truyện Song Ngữ</option>
-                            <option value="STEM & Khoa Học">🚀 STEM & Khoa Học</option>
-                        </select>
+                        <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-rose-200/90 bg-rose-50/70 text-xs sm:text-sm font-black text-rose-900 shadow-xs">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-file-pdf text-rose-600 text-base"></i>
+                                <span>Truyện Tranh PDF</span>
+                            </div>
+                            <span class="text-[10px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 px-2 py-0.5 rounded-md border border-rose-300/60">
+                                Cố định
+                            </span>
+                        </div>
+                        <input type="hidden" id="comic-category" value="Truyện Tranh PDF">
                     </div>
                     <div>
                         <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái Đăng</label>
@@ -2802,7 +2806,7 @@ Hành động này không thể hoàn tác.`)) {
             event.preventDefault();
             const title = document.getElementById('comic-title').value.trim();
             const author = document.getElementById('comic-author').value.trim();
-            const category = document.getElementById('comic-category').value;
+            const category = 'Truyện Tranh PDF'; // Cố định thể loại Truyện Tranh PDF
             const status = document.getElementById('comic-status').value;
             const summary = document.getElementById('comic-summary').value.trim();
             const inputPdfUrl = document.getElementById('comic-pdf-url').value.trim();
@@ -2858,7 +2862,7 @@ Hành động này không thể hoàn tác.`)) {
                 await StorageService.createPost({
                     title,
                     author,
-                    category: category || 'Truyện Tranh PDF',
+                    category: 'Truyện Tranh PDF',
                     status: status || 'approved',
                     summary,
                     content: 'Bộ truyện tranh thiếu nhi định dạng PDF chất lượng cao.',
