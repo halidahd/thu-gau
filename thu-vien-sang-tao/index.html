@@ -906,6 +906,7 @@
         const APP_URL = window.location.href.split('#')[0].split('?')[0];
 
         let books = [];
+        let comics = []; // Danh sách truyện tranh PDF riêng biệt từ Sheet Comics
         let categories = [];
         let physicalBooks = [];
         let currentCategory = 'all';
@@ -973,8 +974,12 @@
             booksGrid.classList.add('hidden');
 
             try {
-                const data = await StorageService.getPosts('approved');
-                books = data || [];
+                const [postsData, comicsData] = await Promise.all([
+                    StorageService.getPosts('approved'),
+                    StorageService.getComics('approved')
+                ]);
+                books = postsData || [];
+                comics = comicsData || [];
             } catch (err) {
                 console.error('Lỗi tải truyện:', err);
                 books = INITIAL_BOOKS.filter(b => b.status === 'approved');
@@ -982,6 +987,7 @@
                 loadingState.classList.add('hidden');
                 booksGrid.classList.remove('hidden');
                 renderBooks();
+                renderComicBooks();
                 updateHeaderStats();
             }
         }
@@ -1732,7 +1738,7 @@
         // QUẢN LÝ TRÌNH ĐỌC TRUYỆN TRANH PDF
         // ==========================================
         function handleBookClick(bookId) {
-            const book = books.find(b => b.id === bookId);
+            const book = (comics && comics.find(b => b.id === bookId)) || books.find(b => b.id === bookId);
             if (!book) return;
 
             if (book.pdfUrl || book.type === 'pdf' || book.category === 'Truyện Tranh PDF') {
@@ -1743,7 +1749,7 @@
         }
 
         function openComicReaderModal(bookId) {
-            const book = books.find(b => b.id === bookId);
+            const book = (comics && comics.find(b => b.id === bookId)) || books.find(b => b.id === bookId);
             if (!book) return;
 
             // Tăng lượt xem
@@ -1807,6 +1813,7 @@
         // RENDER RIÊNG CHO MỤC TRUYỆN TRANH DẠNG PDF
         // ==========================================
         function getComicBooksList() {
+            if (comics && comics.length > 0) return comics;
             return books.filter(b => Boolean(b.pdfUrl || b.type === 'pdf' || b.category === 'Truyện Tranh PDF'));
         }
 

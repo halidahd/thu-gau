@@ -19,12 +19,16 @@
 
 // Tên các bảng tính
 const SHEET_POSTS = 'Posts';
+const SHEET_COMICS = 'Comics'; // Bảng tính lưu trữ RIÊNG BIỆT cho Truyện Tranh PDF
 const SHEET_CATEGORIES = 'Categories';
 const SHEET_PHYSICAL_BOOKS = 'PhysicalBooks';
 const SHEET_WISHES = 'Wishes2011';
 
-// Cấu trúc cột của Sheet Posts (Đã mở rộng hỗ trợ Truyện Tranh PDF: pdfUrl, type)
+// Cấu trúc cột của Sheet Posts (Bài viết & tác phẩm sáng tạo của học sinh)
 const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt', 'pdfUrl', 'type'];
+
+// Cấu trúc cột của Sheet Comics (Truyện Tranh PDF độc lập - không cần cột thể loại vì đã ở mục PDF)
+const COMIC_COLUMNS = ['id', 'title', 'author', 'summary', 'cover', 'pdfUrl', 'views', 'status', 'createdAt'];
 
 // Cấu trúc cột của Sheet Categories
 const CAT_COLUMNS = ['id', 'name', 'icon'];
@@ -58,8 +62,11 @@ function setupDatabase() {
     return sheet;
   }
 
-  // 1. Đảm bảo có Sheet Posts (Tác phẩm)
+  // 1. Đảm bảo có Sheet Posts (Tác phẩm sáng tạo học sinh)
   ensureSheet(SHEET_POSTS, POST_COLUMNS, '#dbeafe');
+
+  // 1.5. Đảm bảo có Sheet Comics (Truyện tranh dạng PDF riêng biệt)
+  ensureSheet(SHEET_COMICS, COMIC_COLUMNS, '#fbcfe8');
 
   // 2. Đảm bảo có Sheet Categories (Thể loại)
   ensureSheet(SHEET_CATEGORIES, CAT_COLUMNS, '#fef3c7');
@@ -92,6 +99,40 @@ function doGet(e) {
       return jsonResponse({ success: true, message: 'Google Sheets API Tủ Sách Số 4B đang hoạt động tốt!' });
     }
 
+    // 1.5. Lấy danh sách Truyện Tranh PDF riêng biệt (getComics)
+    if (action === 'getComics') {
+      const statusFilter = (e && e.parameter && e.parameter.status) ? e.parameter.status : null;
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (!sheetComics) {
+        return jsonResponse({ success: true, data: [] });
+      }
+      const data = sheetComics.getDataRange().getValues();
+      if (data.length <= 1) return jsonResponse({ success: true, data: [] });
+
+      const comics = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        if (!row[0]) continue;
+        const comic = {
+          id: String(row[0]),
+          title: String(row[1] || ''),
+          author: String(row[2] || ''),
+          summary: String(row[3] || ''),
+          cover: String(row[4] || ''),
+          pdfUrl: String(row[5] || ''),
+          views: Number(row[6]) || 0,
+          status: String(row[7] || 'approved'),
+          createdAt: row[8] ? (row[8] instanceof Date ? row[8].toISOString() : String(row[8])) : new Date().toISOString(),
+          type: 'pdf'
+        };
+        if (!statusFilter || statusFilter === 'all' || comic.status === statusFilter) {
+          comics.push(comic);
+        }
+      }
+      comics.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return jsonResponse({ success: true, data: comics });
+    }
+
     // 2. Lấy danh sách thể loại (Categories)
     if (action === 'getCategories') {
       const sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
@@ -115,11 +156,12 @@ function doGet(e) {
       return jsonResponse({ success: true, data: categories });
     }
 
-    // 3. Tăng lượt xem (Views)
+    // 3. Tăng lượt xem (Views) - Hỗ trợ cả Posts và Comics
     if (action === 'incrementViews') {
       const id = e.parameter.id;
-      if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết' });
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết / truyện tranh' });
 
+      // Kiểm tra trong bảng Posts
       const sheetPosts = ss.getSheetByName(SHEET_POSTS);
       if (sheetPosts) {
         const data = sheetPosts.getDataRange().getValues();
@@ -131,7 +173,21 @@ function doGet(e) {
           }
         }
       }
-      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết' });
+
+      // Kiểm tra trong bảng Comics (cột views là cột 7)
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (sheetComics) {
+        const dataC = sheetComics.getDataRange().getValues();
+        for (let i = 1; i < dataC.length; i++) {
+          if (String(dataC[i][0]) === String(id)) {
+            const currentViews = Number(dataC[i][6]) || 0;
+            sheetComics.getRange(i + 1, 7).setValue(currentViews + 1);
+            return jsonResponse({ success: true, views: currentViews + 1 });
+          }
+        }
+      }
+
+      return jsonResponse({ success: false, message: 'Không tìm thấy tác phẩm' });
     }
 
     // 4. Lấy danh sách sách truyện giấy (getPhysicalBooks)
@@ -252,6 +308,90 @@ function doPost(e) {
     const action = payload.action;
     const ss = SpreadsheetApp.getActiveSpreadsheet();
 
+    // 0. Thêm truyện tranh PDF mới vào bảng Comics riêng biệt (createComic)
+    if (action === 'createComic') {
+      const comic = payload.comic || payload.post;
+      if (!comic || !comic.title || !comic.author) {
+        return jsonResponse({ success: false, message: 'Dữ liệu truyện tranh PDF không hợp lệ.' });
+      }
+
+      let sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (!sheetComics) {
+        sheetComics = ss.insertSheet(SHEET_COMICS);
+        sheetComics.appendRow(COMIC_COLUMNS);
+      }
+
+      const newId = comic.id || ('comic-' + Date.now());
+      const newStatus = comic.status || 'approved';
+      const createdAt = comic.createdAt || new Date().toISOString();
+
+      sheetComics.appendRow([
+        newId,
+        comic.title,
+        comic.author,
+        comic.summary || '',
+        comic.cover || '',
+        comic.pdfUrl || '',
+        Number(comic.views) || 0,
+        newStatus,
+        createdAt
+      ]);
+
+      const returnMsg = (newStatus === 'approved')
+        ? 'Xuất bản truyện tranh PDF thành công lên thư viện!'
+        : 'Đã lưu truyện tranh PDF vào danh sách!';
+
+      return jsonResponse({
+        success: true,
+        message: returnMsg,
+        id: newId,
+        status: newStatus
+      });
+    }
+
+    // 0.5. Cập nhật truyện tranh PDF (updateComic)
+    if (action === 'updateComic') {
+      const id = payload.id;
+      const comicData = payload.comic || payload.post || {};
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id truyện tranh.' });
+
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (!sheetComics) return jsonResponse({ success: false, message: 'Bảng Comics chưa tồn tại.' });
+
+      const data = sheetComics.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          if (comicData.title !== undefined) sheetComics.getRange(i + 1, 2).setValue(comicData.title);
+          if (comicData.author !== undefined) sheetComics.getRange(i + 1, 3).setValue(comicData.author);
+          if (comicData.summary !== undefined) sheetComics.getRange(i + 1, 4).setValue(comicData.summary);
+          if (comicData.cover !== undefined) sheetComics.getRange(i + 1, 5).setValue(comicData.cover);
+          if (comicData.pdfUrl !== undefined) sheetComics.getRange(i + 1, 6).setValue(comicData.pdfUrl);
+          if (comicData.views !== undefined) sheetComics.getRange(i + 1, 7).setValue(comicData.views);
+          if (comicData.status !== undefined) sheetComics.getRange(i + 1, 8).setValue(comicData.status);
+          return jsonResponse({ success: true, message: 'Đã cập nhật truyện tranh PDF thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy truyện tranh để cập nhật.' });
+    }
+
+    // 0.6. Xóa truyện tranh PDF (deleteComic)
+    if (action === 'deleteComic') {
+      const id = payload.id;
+      if (!id) return jsonResponse({ success: false, message: 'Thiếu id truyện tranh.' });
+
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (!sheetComics) return jsonResponse({ success: false, message: 'Bảng Comics chưa tồn tại.' });
+
+      const data = sheetComics.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]) === String(id)) {
+          sheetComics.deleteRow(i + 1);
+          return jsonResponse({ success: true, message: 'Đã xóa truyện tranh PDF thành công.' });
+        }
+      }
+      return jsonResponse({ success: false, message: 'Không tìm thấy truyện tranh để xóa.' });
+    }
+
     // 1. Thêm bài viết mới (User gửi bài -> status: pending)
     if (action === 'createPost') {
       const post = payload.post;
@@ -306,16 +446,29 @@ function doPost(e) {
       }
 
       const sheetPosts = ss.getSheetByName(SHEET_POSTS);
-      if (!sheetPosts) return jsonResponse({ success: false, message: 'Bảng Posts chưa tồn tại.' });
-
-      const data = sheetPosts.getDataRange().getValues();
-      for (let i = 1; i < data.length; i++) {
-        if (String(data[i][0]) === String(id)) {
-          sheetPosts.getRange(i + 1, 9).setValue(newStatus); // Cột 9 là status
-          return jsonResponse({ success: true, message: `Đã cập nhật trạng thái bài viết thành ${newStatus}.` });
+      if (sheetPosts) {
+        const data = sheetPosts.getDataRange().getValues();
+        for (let i = 1; i < data.length; i++) {
+          if (String(data[i][0]) === String(id)) {
+            sheetPosts.getRange(i + 1, 9).setValue(newStatus); // Cột 9 là status trong Posts
+            return jsonResponse({ success: true, message: `Đã cập nhật trạng thái bài viết thành ${newStatus}.` });
+          }
         }
       }
-      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết.' });
+
+      // Kiểm tra trong bảng Comics (Cột 8 là status)
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (sheetComics) {
+        const dataC = sheetComics.getDataRange().getValues();
+        for (let i = 1; i < dataC.length; i++) {
+          if (String(dataC[i][0]) === String(id)) {
+            sheetComics.getRange(i + 1, 8).setValue(newStatus);
+            return jsonResponse({ success: true, message: `Đã cập nhật trạng thái truyện tranh thành ${newStatus}.` });
+          }
+        }
+      }
+
+      return jsonResponse({ success: false, message: 'Không tìm thấy tác phẩm để cập nhật trạng thái.' });
     }
 
     // 2.5. Chỉnh sửa toàn diện nội dung bài viết (Update Post)
@@ -351,16 +504,28 @@ function doPost(e) {
       if (!id) return jsonResponse({ success: false, message: 'Thiếu id bài viết.' });
 
       const sheetPosts = ss.getSheetByName(SHEET_POSTS);
-      if (!sheetPosts) return jsonResponse({ success: false, message: 'Bảng Posts chưa tồn tại.' });
-
-      const data = sheetPosts.getDataRange().getValues();
-      for (let i = 1; i < data.length; i++) {
-        if (String(data[i][0]) === String(id)) {
-          sheetPosts.deleteRow(i + 1);
-          return jsonResponse({ success: true, message: 'Đã xóa bài viết thành công.' });
+      if (sheetPosts) {
+        const data = sheetPosts.getDataRange().getValues();
+        for (let i = 1; i < data.length; i++) {
+          if (String(data[i][0]) === String(id)) {
+            sheetPosts.deleteRow(i + 1);
+            return jsonResponse({ success: true, message: 'Đã xóa bài viết thành công.' });
+          }
         }
       }
-      return jsonResponse({ success: false, message: 'Không tìm thấy bài viết để xóa.' });
+
+      const sheetComics = ss.getSheetByName(SHEET_COMICS);
+      if (sheetComics) {
+        const dataC = sheetComics.getDataRange().getValues();
+        for (let i = 1; i < dataC.length; i++) {
+          if (String(dataC[i][0]) === String(id)) {
+            sheetComics.deleteRow(i + 1);
+            return jsonResponse({ success: true, message: 'Đã xóa truyện tranh PDF thành công.' });
+          }
+        }
+      }
+
+      return jsonResponse({ success: false, message: 'Không tìm thấy tác phẩm để xóa.' });
     }
 
     // 4. Thêm thể loại mới

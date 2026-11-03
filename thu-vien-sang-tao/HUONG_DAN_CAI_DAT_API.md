@@ -66,7 +66,7 @@ const DEFAULT_API_ENDPOINT = 'https://script.google.com/macros/s/AKfycb.../exec'
 
 ### 🛡️ CẤU TRÚC BẢNG DỮ LIỆU (SCHEMA)
 
-#### Bảng 1: `Posts` (Tác phẩm)
+#### Bảng 1: `Posts` (Tác phẩm sáng tạo của học sinh)
 | Cột | Tên trường | Kiểu dữ liệu | Ý nghĩa |
 | :--- | :--- | :--- | :--- |
 | A | `id` | string | Mã định danh duy nhất (VD: `book-1`, `book-1730559...`) |
@@ -79,6 +79,20 @@ const DEFAULT_API_ENDPOINT = 'https://script.google.com/macros/s/AKfycb.../exec'
 | H | `views` | number | Số lượt đọc |
 | I | `status` | string | Trạng thái: `pending` (chờ duyệt), `approved` (đã duyệt), `rejected` (từ chối) |
 | J | `createdAt` | ISO string | Thời gian gửi bài |
+
+#### Bảng 1.5: `Comics` (Truyện tranh dạng PDF độc lập - Lưu trữ riêng biệt)
+| Cột | Tên trường | Kiểu dữ liệu | Ý nghĩa |
+| :--- | :--- | :--- | :--- |
+| A | `id` | string | Mã truyện tranh (VD: `comic-1730559...`) |
+| B | `title` | string | Tên truyện tranh |
+| C | `author` | string | Họa sĩ / Tác giả / Nguồn sưu tầm |
+| D | `summary` | string | Tóm tắt ngắn nội dung truyện |
+| E | `cover` | string | Link ảnh bìa truyện (Drive lh3 hoặc URL) |
+| F | `pdfUrl` | string | Link xem trước file PDF toàn màn hình từ Google Drive |
+| G | `views` | number | Lượt đọc của học sinh |
+| H | `status` | string | Trạng thái: `approved` (hiển thị) hoặc `pending` (lưu nháp) |
+| I | `createdAt` | ISO string | Ngày tải truyện lên |
+*(Lưu ý: Bảng Comics không cần cột thể loại vì toàn bộ bảng đã là chuyên mục Truyện Tranh PDF)*
 
 #### Bảng 2: `Categories` (Thể loại)
 | Cột | Tên trường | Kiểu dữ liệu | Ý nghĩa |

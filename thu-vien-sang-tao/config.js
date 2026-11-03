@@ -285,6 +285,9 @@ const StorageService = {
         if (!localStorage.getItem('thuvien_4b_2011_wishes')) {
             localStorage.setItem('thuvien_4b_2011_wishes', JSON.stringify(INITIAL_WISHES));
         }
+        if (!localStorage.getItem('thuvien_4b_comics')) {
+            localStorage.setItem('thuvien_4b_comics', JSON.stringify([]));
+        }
     },
 
     // Kiểm tra xem đã kết nối Google Sheets hay chưa
@@ -495,6 +498,164 @@ const StorageService = {
         let localBooks = JSON.parse(localStorage.getItem('thuvien_4b_books') || '[]');
         localBooks = localBooks.filter(b => b.id !== postId);
         localStorage.setItem('thuvien_4b_books', JSON.stringify(localBooks));
+
+        return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // ==========================================
+    // QUẢN LÝ RIÊNG BIỆT CHO TRUYỆN TRANH DẠNG PDF
+    // (Lưu trữ độc lập tại Sheet 'Comics', không lưu chung với 'Posts')
+    // ==========================================
+
+    // Lấy danh sách Truyện Tranh PDF
+    async getComics(status = 'all') {
+        this.initLocalData();
+        const endpoint = getApiEndpoint();
+
+        if (this.hasApi()) {
+            try {
+                const url = new URL(endpoint);
+                url.searchParams.set('action', 'getComics');
+                if (status && status !== 'all') {
+                    url.searchParams.set('status', status);
+                }
+
+                const response = await fetch(url.toString(), { method: 'GET', mode: 'cors' });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result && Array.isArray(result.data)) {
+                        if (status === 'all') {
+                            localStorage.setItem('thuvien_4b_comics', JSON.stringify(result.data));
+                        }
+                        return result.data;
+                    }
+                }
+            } catch (err) {
+                console.warn('[StorageService] Không thể kết nối lấy Comics từ API, dùng LocalStorage:', err);
+            }
+        }
+
+        // Fallback: Đọc từ LocalStorage (key: thuvien_4b_comics)
+        try {
+            let localComics = JSON.parse(localStorage.getItem('thuvien_4b_comics') || '[]');
+            // Tự động gom các truyện PDF cũ từ localBooks nếu thuvien_4b_comics rỗng
+            if (localComics.length === 0) {
+                const legacyBooks = JSON.parse(localStorage.getItem('thuvien_4b_books') || '[]');
+                localComics = legacyBooks.filter(b => Boolean(b.pdfUrl || b.type === 'pdf' || b.category === 'Truyện Tranh PDF'));
+                if (localComics.length > 0) {
+                    localStorage.setItem('thuvien_4b_comics', JSON.stringify(localComics));
+                }
+            }
+            if (status === 'all') return localComics;
+            return localComics.filter(c => c.status === status);
+        } catch (e) {
+            return [];
+        }
+    },
+
+    // Thêm truyện tranh PDF mới vào bảng Comics riêng biệt (Không cần thể loại)
+    async createComic(comicData) {
+        this.initLocalData();
+        const formattedPdf = this.formatPdfUrl(comicData.pdfUrl || '');
+        const newComic = {
+            id: comicData.id || ('comic-' + Date.now()),
+            title: comicData.title,
+            author: comicData.author,
+            summary: comicData.summary || '',
+            cover: comicData.cover || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop',
+            pdfUrl: formattedPdf,
+            views: Number(comicData.views) || 0,
+            status: comicData.status || 'approved',
+            createdAt: comicData.createdAt || new Date().toISOString(),
+            type: 'pdf'
+        };
+
+        let apiSuccess = false;
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'createComic',
+                    comic: newComic
+                });
+                if (res && res.success) {
+                    apiSuccess = true;
+                }
+            } catch (err) {
+                console.warn('[StorageService] Gửi truyện tranh lên Google Sheets thất bại, lưu local:', err);
+            }
+        }
+
+        // Lưu vào LocalStorage key riêng thuvien_4b_comics
+        const localComics = JSON.parse(localStorage.getItem('thuvien_4b_comics') || '[]');
+        localComics.unshift(newComic);
+        localStorage.setItem('thuvien_4b_comics', JSON.stringify(localComics));
+
+        return { success: true, comic: newComic, remoteSynced: apiSuccess };
+    },
+
+    // Cập nhật truyện tranh PDF
+    async updateComic(comicId, updatedData) {
+        this.initLocalData();
+        let apiSuccess = false;
+        const payloadToUpdate = { ...updatedData };
+        if (payloadToUpdate.pdfUrl !== undefined) {
+            payloadToUpdate.pdfUrl = this.formatPdfUrl(payloadToUpdate.pdfUrl);
+        }
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'updateComic',
+                    id: comicId,
+                    comic: payloadToUpdate
+                });
+                if (res && res.success) {
+                    apiSuccess = true;
+                }
+            } catch (err) {
+                console.warn('[StorageService] Lỗi cập nhật truyện tranh lên API:', err);
+            }
+        }
+
+        // Cập nhật trong LocalStorage
+        const localComics = JSON.parse(localStorage.getItem('thuvien_4b_comics') || '[]');
+        const idx = localComics.findIndex(c => c.id === comicId);
+        if (idx !== -1) {
+            localComics[idx] = { ...localComics[idx], ...payloadToUpdate };
+            localStorage.setItem('thuvien_4b_comics', JSON.stringify(localComics));
+        }
+
+        return { success: true, remoteSynced: apiSuccess };
+    },
+
+    // Cập nhật trạng thái truyện tranh (Duyệt: 'approved' | Ẩn/Từ chối: 'rejected')
+    async updateComicStatus(comicId, newStatus) {
+        return this.updateComic(comicId, { status: newStatus });
+    },
+
+    // Xóa truyện tranh PDF
+    async deleteComic(comicId) {
+        this.initLocalData();
+        let apiSuccess = false;
+
+        if (this.hasApi()) {
+            try {
+                const res = await this.postToApi({
+                    action: 'deleteComic',
+                    id: comicId
+                });
+                if (res && res.success) {
+                    apiSuccess = true;
+                }
+            } catch (err) {
+                console.warn('[StorageService] Lỗi xóa truyện tranh trên API:', err);
+            }
+        }
+
+        // Xóa trong LocalStorage
+        let localComics = JSON.parse(localStorage.getItem('thuvien_4b_comics') || '[]');
+        localComics = localComics.filter(c => c.id !== comicId);
+        localStorage.setItem('thuvien_4b_comics', JSON.stringify(localComics));
 
         return { success: true, remoteSynced: apiSuccess };
     },

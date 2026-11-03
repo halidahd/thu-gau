@@ -1013,12 +1013,12 @@
     <!-- ============================================== -->
     <div id="edit-post-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl max-h-[92vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100">
-            <div class="bg-amber-600 text-white p-5 flex items-center justify-between">
+            <div id="edit-post-modal-header" class="bg-amber-600 text-white p-5 flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
-                    <i class="fa-solid fa-pen-to-square text-xl"></i>
+                    <i id="edit-modal-icon" class="fa-solid fa-pen-to-square text-xl"></i>
                     <div>
-                        <h3 class="text-lg font-black font-heading leading-tight">Chỉnh Sửa Bài Viết / Tác Phẩm</h3>
-                        <p class="text-xs text-amber-100 font-medium">Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết</p>
+                        <h3 id="edit-modal-title" class="text-lg font-black font-heading leading-tight">Chỉnh Sửa Bài Viết / Tác Phẩm</h3>
+                        <p id="edit-modal-desc" class="text-xs text-amber-100 font-medium">Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết</p>
                     </div>
                 </div>
                 <button onclick="closeEditPostModal()" class="text-white/80 hover:text-white text-xl p-1">
@@ -1030,21 +1030,21 @@
                 <input type="hidden" id="edit-post-id">
 
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên Tác Phẩm *</label>
+                    <label id="edit-label-title" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên Tác Phẩm *</label>
                     <input type="text" id="edit-post-title" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="sm:col-span-1">
-                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tác Giả (Học Sinh) *</label>
+                    <div id="edit-post-author-wrap" class="sm:col-span-1">
+                        <label id="edit-label-author" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tác Giả (Học Sinh) *</label>
                         <input type="text" id="edit-post-author" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                     </div>
-                    <div class="sm:col-span-1">
+                    <div id="edit-post-category-wrap" class="sm:col-span-1">
                         <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể Loại *</label>
                         <select id="edit-post-category" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
                         </select>
                     </div>
-                    <div class="sm:col-span-1">
+                    <div id="edit-post-status-wrap" class="sm:col-span-1">
                         <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái *</label>
                         <select id="edit-post-status" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-extrabold focus:ring-2 focus:ring-amber-500 outline-none bg-white">
                             <option value="approved">✅ Đã duyệt (Xuất bản)</option>
@@ -1059,7 +1059,8 @@
                     <textarea id="edit-post-summary" required rows="2" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none transition-all"></textarea>
                 </div>
 
-                <div>
+                <!-- Khung Nội Dung Toàn Văn (Chỉ hiển thị cho Bài viết học sinh, ẩn hoàn toàn khi sửa Truyện Tranh PDF) -->
+                <div id="edit-post-content-wrap">
                     <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Nội Dung Toàn Văn *</label>
                     <textarea id="edit-post-content" required rows="7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium leading-relaxed focus:ring-2 focus:ring-amber-500 outline-none transition-all"></textarea>
                 </div>
@@ -1225,27 +1226,13 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể Loại</label>
-                        <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-rose-200/90 bg-rose-50/70 text-xs sm:text-sm font-black text-rose-900 shadow-xs">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-file-pdf text-rose-600 text-base"></i>
-                                <span>Truyện Tranh PDF</span>
-                            </div>
-                            <span class="text-[10px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 px-2 py-0.5 rounded-md border border-rose-300/60">
-                                Cố định
-                            </span>
-                        </div>
-                        <input type="hidden" id="comic-category" value="Truyện Tranh PDF">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái Đăng</label>
-                        <select id="comic-status" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-extrabold focus:ring-2 focus:ring-rose-500 outline-none bg-white">
-                            <option value="approved" selected>✅ Đã duyệt (Hiển thị ngay trên web)</option>
-                            <option value="pending">⏳ Lưu nháp / Chờ duyệt</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái Xuất Bản *</label>
+                    <select id="comic-status" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-extrabold focus:ring-2 focus:ring-rose-500 outline-none bg-white">
+                        <option value="approved" selected>✅ Đã duyệt (Hiển thị ngay trên web Thư Viện Lớp 4B)</option>
+                        <option value="pending">⏳ Lưu nháp (Chờ xuất bản sau)</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-1 italic">💡 Truyện tranh PDF được lưu trữ riêng biệt tại bảng tính Comics trên Google Sheets.</p>
                 </div>
 
                 <div>
@@ -1407,6 +1394,7 @@
         const ADMIN_PASS_HASH = 'fe8b518a81b355dac98d077b537f974344dfffffcf5f0bc0f834edbaabeb875d';
 
         let allPosts = [];
+        let allComics = []; // Danh sách truyện tranh PDF riêng biệt (Sheet Comics)
         let allCategories = [];
         let allPhysicalBooks = [];
         let allWishes = [];
@@ -1479,14 +1467,16 @@
         async function loadAllData() {
             try {
                 showToast('Đang làm mới dữ liệu...', 'info');
-                const [posts, categories, physical, wishes] = await Promise.all([
+                const [posts, comics, categories, physical, wishes] = await Promise.all([
                     StorageService.getPosts(),
+                    StorageService.getComics(),
                     StorageService.getCategories(),
                     StorageService.getPhysicalBooks(),
                     typeof StorageService.getWishes === 'function' ? StorageService.getWishes() : []
                 ]);
 
                 allPosts = posts || [];
+                allComics = comics || [];
                 allCategories = categories || [];
                 allPhysicalBooks = physical || [];
                 allWishes = wishes || [];
@@ -1623,8 +1613,8 @@
                 wBadge.innerText = allWishes.length;
             }
 
-            // Badge trên tab Truyện Tranh PDF riêng biệt
-            const comicPosts = allPosts.filter(p => Boolean(p.pdfUrl || p.type === 'pdf' || p.category === 'Truyện Tranh PDF'));
+            // Badge trên tab Truyện Tranh PDF riêng biệt (Dùng allComics từ Sheet Comics)
+            const comicPosts = allComics;
             const cBadge = document.getElementById('comics-badge-count');
             if (cBadge) {
                 cBadge.innerText = comicPosts.length;
@@ -1703,13 +1693,18 @@
         }
 
         async function approvePost(id) {
-            const btn = event.currentTarget;
+            const btn = event ? event.currentTarget : null;
             if (btn) btn.disabled = true;
 
-            showToast('Đang duyệt bài viết...', 'info');
+            showToast('Đang cập nhật trạng thái...', 'info');
             try {
-                await StorageService.updatePostStatus(id, 'approved');
-                showToast('🎉 Đã duyệt bài viết thành công! Bài viết đã hiển thị trên Trang chủ.', 'success');
+                if (allComics.some(c => c.id === id)) {
+                    await StorageService.updateComicStatus(id, 'approved');
+                    showToast('🎉 Đã duyệt xuất bản truyện tranh PDF thành công!', 'success');
+                } else {
+                    await StorageService.updatePostStatus(id, 'approved');
+                    showToast('🎉 Đã duyệt bài viết thành công! Bài viết đã hiển thị trên Trang chủ.', 'success');
+                }
                 await loadAllData();
             } catch (err) {
                 showToast('Lỗi khi duyệt bài: ' + err.message, 'error');
@@ -1717,12 +1712,17 @@
         }
 
         async function rejectPost(id) {
-            if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này không?')) return;
+            if (!confirm('Bạn có chắc chắn muốn gỡ hoặc từ chối tác phẩm này không?')) return;
 
             showToast('Đang cập nhật trạng thái...', 'info');
             try {
-                await StorageService.updatePostStatus(id, 'rejected');
-                showToast('Đã chuyển bài viết sang trạng thái Từ chối.', 'warning');
+                if (allComics.some(c => c.id === id)) {
+                    await StorageService.updateComicStatus(id, 'rejected');
+                    showToast('Đã gỡ truyện tranh khỏi trang chủ.', 'warning');
+                } else {
+                    await StorageService.updatePostStatus(id, 'rejected');
+                    showToast('Đã chuyển bài viết sang trạng thái Từ chối.', 'warning');
+                }
                 await loadAllData();
             } catch (err) {
                 showToast('Lỗi: ' + err.message, 'error');
@@ -1835,13 +1835,19 @@ Hành động này không thể hoàn tác.`)) {
                 return;
             }
 
-            showToast('Đang xóa bài viết...', 'info');
+            showToast('Đang xóa tác phẩm...', 'info');
             try {
-                await StorageService.deletePost(id);
-                showToast('Đã xóa bài viết thành công!', 'success');
+                if (allComics.some(c => c.id === id)) {
+                    await StorageService.deleteComic(id);
+                    showToast('Đã xóa truyện tranh PDF thành công!', 'success');
+                } else {
+                    await StorageService.deletePost(id);
+                    showToast('Đã xóa bài viết thành công!', 'success');
+                }
                 await loadAllData();
             } catch (err) {
-                showToast('Lỗi khi xóa bài: ' + err.message, 'error');
+                console.error('Lỗi khi xóa:', err);
+                showToast('Lỗi khi xóa: ' + err.message, 'error');
             }
         }
 
@@ -1916,9 +1922,10 @@ Hành động này không thể hoàn tác.`)) {
         }
 
         function openEditPostModal(id) {
-            const post = allPosts.find(p => p.id === id);
+            const isComic = allComics.some(c => c.id === id);
+            const post = isComic ? allComics.find(c => c.id === id) : allPosts.find(p => p.id === id);
             if (!post) {
-                showToast('Không tìm thấy bài viết để chỉnh sửa!', 'error');
+                showToast('Không tìm thấy tác phẩm để chỉnh sửa!', 'error');
                 return;
             }
 
@@ -1928,14 +1935,71 @@ Hành động này không thể hoàn tác.`)) {
             document.getElementById('edit-post-title').value = post.title || '';
             document.getElementById('edit-post-author').value = post.author || '';
             document.getElementById('edit-post-summary').value = post.summary || '';
-            document.getElementById('edit-post-content').value = post.content || '';
             document.getElementById('edit-post-cover').value = post.cover || '';
             document.getElementById('edit-post-status').value = post.status || 'approved';
             if (document.getElementById('edit-post-pdf')) {
                 document.getElementById('edit-post-pdf').value = post.pdfUrl || '';
             }
 
-            populateEditCategoriesSelect(post.category);
+            const headerEl = document.getElementById('edit-post-modal-header');
+            const titleEl = document.getElementById('edit-modal-title');
+            const descEl = document.getElementById('edit-modal-desc');
+            const iconEl = document.getElementById('edit-modal-icon');
+            const catWrap = document.getElementById('edit-post-category-wrap');
+            const contentWrap = document.getElementById('edit-post-content-wrap');
+            const statusWrap = document.getElementById('edit-post-status-wrap');
+            const labelTitle = document.getElementById('edit-label-title');
+            const labelAuthor = document.getElementById('edit-label-author');
+            const contentInput = document.getElementById('edit-post-content');
+            const catInput = document.getElementById('edit-post-category');
+
+            if (isComic || post.type === 'pdf') {
+                // ĐANG CHỈNH SỬA TRUYỆN TRANH DẠNG PDF:
+                // 1. Ẩn và bỏ bắt buộc Nội Dung Toàn Văn (vì học sinh đọc trực tiếp bằng file PDF)
+                if (contentWrap) contentWrap.classList.add('hidden');
+                if (contentInput) {
+                    contentInput.removeAttribute('required');
+                    contentInput.value = '';
+                }
+
+                // 2. Ẩn Thể Loại (vì đã lưu riêng ở bảng Comics)
+                if (catWrap) catWrap.classList.add('hidden');
+                if (catInput) catInput.removeAttribute('required');
+                if (statusWrap) {
+                    statusWrap.className = 'sm:col-span-2';
+                }
+
+                // 3. Tiêu đề và biểu tượng phù hợp với Truyện Tranh PDF
+                if (headerEl) headerEl.className = 'bg-rose-600 text-white p-5 flex items-center justify-between';
+                if (titleEl) titleEl.innerText = 'Chỉnh Sửa Truyện Tranh PDF';
+                if (descEl) descEl.innerText = 'Cập nhật tệp PDF, tên truyện, tác giả hoặc ảnh bìa';
+                if (iconEl) iconEl.className = 'fa-solid fa-file-pdf text-xl';
+                if (labelTitle) labelTitle.innerText = 'Tên Bộ Truyện Tranh *';
+                if (labelAuthor) labelAuthor.innerText = 'Họa Sĩ / Tác Giả / Sưu Tầm *';
+
+            } else {
+                // ĐANG CHỈNH SỬA BÀI VIẾT / TÁC PHẨM CHỮ HỌC SINH:
+                if (contentWrap) contentWrap.classList.remove('hidden');
+                if (contentInput) {
+                    contentInput.setAttribute('required', 'required');
+                    contentInput.value = post.content || '';
+                }
+
+                if (catWrap) catWrap.classList.remove('hidden');
+                if (catInput) catInput.setAttribute('required', 'required');
+                if (statusWrap) {
+                    statusWrap.className = 'sm:col-span-1';
+                }
+
+                populateEditCategoriesSelect(post.category);
+
+                if (headerEl) headerEl.className = 'bg-amber-600 text-white p-5 flex items-center justify-between';
+                if (titleEl) titleEl.innerText = 'Chỉnh Sửa Bài Viết / Tác Phẩm';
+                if (descEl) descEl.innerText = 'Cập nhật nội dung, tác giả hoặc thay đổi trạng thái bài viết';
+                if (iconEl) iconEl.className = 'fa-solid fa-pen-to-square text-xl';
+                if (labelTitle) labelTitle.innerText = 'Tên Tác Phẩm *';
+                if (labelAuthor) labelAuthor.innerText = 'Tác Giả (Học Sinh) *';
+            }
 
             document.getElementById('edit-post-modal').classList.remove('hidden');
         }
@@ -1988,19 +2052,30 @@ Hành động này không thể hoàn tác.`)) {
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
                 showToast('Đang cập nhật bài viết...', 'info');
 
-                await StorageService.updatePost(id, {
-                    title,
-                    author,
-                    category,
-                    status,
-                    summary,
-                    content,
-                    cover: finalCover,
-                    pdfUrl: inputPdf,
-                    type: inputPdf ? 'pdf' : 'story'
-                });
-
-                showToast('🎉 Đã cập nhật bài viết thành công!', 'success');
+                if (allComics.some(c => c.id === id)) {
+                    await StorageService.updateComic(id, {
+                        title,
+                        author,
+                        status,
+                        summary,
+                        cover: finalCover,
+                        pdfUrl: inputPdf
+                    });
+                    showToast('🎉 Đã cập nhật truyện tranh PDF thành công!', 'success');
+                } else {
+                    await StorageService.updatePost(id, {
+                        title,
+                        author,
+                        category,
+                        status,
+                        summary,
+                        content,
+                        cover: finalCover,
+                        pdfUrl: inputPdf,
+                        type: inputPdf ? 'pdf' : 'story'
+                    });
+                    showToast('🎉 Đã cập nhật bài viết thành công!', 'success');
+                }
                 closeEditPostModal();
                 await loadAllData();
             } catch (err) {
@@ -2395,7 +2470,7 @@ Hành động này không thể hoàn tác.`)) {
 
         // 7. PREVIEW MODAL LOGIC
         function openPreviewModal(id) {
-            const post = allPosts.find(p => p.id === id);
+            const post = allPosts.find(p => p.id === id) || allComics.find(c => c.id === id);
             if (!post) return;
 
             previewingPostId = id;
@@ -2806,7 +2881,6 @@ Hành động này không thể hoàn tác.`)) {
             event.preventDefault();
             const title = document.getElementById('comic-title').value.trim();
             const author = document.getElementById('comic-author').value.trim();
-            const category = 'Truyện Tranh PDF'; // Cố định thể loại Truyện Tranh PDF
             const status = document.getElementById('comic-status').value;
             const summary = document.getElementById('comic-summary').value.trim();
             const inputPdfUrl = document.getElementById('comic-pdf-url').value.trim();
@@ -2858,17 +2932,14 @@ Hành động này không thể hoàn tác.`)) {
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu bài vào thư viện...';
                 showToast('Đang xuất bản truyện tranh...', 'info');
 
-                // 3. Tạo bài viết dạng PDF
-                await StorageService.createPost({
+                // 3. Tạo truyện tranh dạng PDF vào Sheet Comics riêng biệt (Không cần thể loại)
+                await StorageService.createComic({
                     title,
                     author,
-                    category: 'Truyện Tranh PDF',
                     status: status || 'approved',
                     summary,
-                    content: 'Bộ truyện tranh thiếu nhi định dạng PDF chất lượng cao.',
                     cover: finalCoverUrl,
-                    pdfUrl: finalPdfUrl,
-                    type: 'pdf'
+                    pdfUrl: finalPdfUrl
                 });
 
                 showToast('🎉 Đã đăng truyện tranh PDF thành công!', 'success');
@@ -2898,8 +2969,6 @@ Hành động này không thể hoàn tác.`)) {
 
             tbody.innerHTML = '';
 
-            const allComics = allPosts.filter(p => Boolean(p.pdfUrl || p.type === 'pdf' || p.category === 'Truyện Tranh PDF'));
-            
             const filtered = allComics.filter(c => {
                 const matchesStatus = (statusFilter === 'all') || (c.status === statusFilter);
                 const matchesSearch = (c.title || '').toLowerCase().includes(searchVal) ||
