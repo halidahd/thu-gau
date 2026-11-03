@@ -26,7 +26,8 @@ const INITIAL_CATEGORIES = [
     { id: 'cat-1', name: 'Truyện AI Sáng Tác', icon: '✨' },
     { id: 'cat-2', name: 'Truyện Song Ngữ', icon: '🌐' },
     { id: 'cat-3', name: 'Thơ Ca', icon: '🌾' },
-    { id: 'cat-4', name: 'STEM & Khoa Học', icon: '🚀' }
+    { id: 'cat-4', name: 'STEM & Khoa Học', icon: '🚀' },
+    { id: 'cat-pdf', name: 'Truyện Tranh PDF', icon: '🎨' }
 ];
 
 // Danh sách 10 sách truyện giấy mẫu (Sổ theo dõi mượn trả tại lớp 4B)
@@ -382,20 +383,23 @@ const StorageService = {
         }
     },
 
-    // Đăng bài viết mới (Mặc định status: "pending")
+    // Đăng bài viết mới (Mặc định status: "pending", có hỗ trợ Truyện Tranh PDF)
     async createPost(postData) {
         this.initLocalData();
+        const formattedPdf = this.formatPdfUrl(postData.pdfUrl || '');
         const newPost = {
-            id: 'book-' + Date.now(),
+            id: postData.id || ('book-' + Date.now()),
             title: postData.title,
             author: postData.author,
-            category: postData.category,
-            summary: postData.summary,
-            content: postData.content,
+            category: postData.category || (formattedPdf ? 'Truyện Tranh PDF' : 'Truyện AI Sáng Tác'),
+            summary: postData.summary || '',
+            content: postData.content || '',
             cover: postData.cover || '',
-            views: 0,
-            status: 'pending', // Luôn là pending khi học sinh/người dùng gửi bài
-            createdAt: new Date().toISOString()
+            views: Number(postData.views) || 0,
+            status: postData.status || 'pending', // Cho phép admin truyền status: 'approved'
+            createdAt: postData.createdAt || new Date().toISOString(),
+            pdfUrl: formattedPdf,
+            type: postData.type || (formattedPdf ? 'pdf' : 'story')
         };
 
         let apiSuccess = false;
@@ -431,12 +435,20 @@ const StorageService = {
         this.initLocalData();
         let apiSuccess = false;
 
+        const payloadToUpdate = { ...updatedData };
+        if (payloadToUpdate.pdfUrl !== undefined) {
+            payloadToUpdate.pdfUrl = this.formatPdfUrl(payloadToUpdate.pdfUrl);
+            if (!payloadToUpdate.type) {
+                payloadToUpdate.type = payloadToUpdate.pdfUrl ? 'pdf' : 'story';
+            }
+        }
+
         if (this.hasApi()) {
             try {
                 const res = await this.postToApi({
                     action: 'updatePost',
                     id: postId,
-                    post: updatedData
+                    post: payloadToUpdate
                 });
                 if (res && res.success) {
                     apiSuccess = true;
@@ -452,7 +464,7 @@ const StorageService = {
         if (targetIndex !== -1) {
             localBooks[targetIndex] = {
                 ...localBooks[targetIndex],
-                ...updatedData
+                ...payloadToUpdate
             };
             localStorage.setItem('thuvien_4b_books', JSON.stringify(localBooks));
         }
@@ -829,6 +841,146 @@ const StorageService = {
         });
 
         return res;
+    },
+
+    // Nén ảnh bằng HTML5 Canvas để tối ưu tốc độ upload và dung lượng Drive
+    async compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+        return new Promise((resolve, reject) => {
+            if (!file || !file.type.startsWith('image/')) {
+                return reject(new Error('Tệp tải lên không phải là định dạng hình ảnh hợp lệ.'));
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    resolve({
+                        base64: compressedBase64,
+                        width,
+                        height,
+                        originalSize: file.size,
+                        mimeType: 'image/jpeg',
+                        fileName: file.name ? file.name.replace(/\.[^/.]+$/, "") + '.jpg' : 'image.jpg'
+                    });
+                };
+                img.onerror = () => reject(new Error('Không thể đọc file hình ảnh này.'));
+            };
+            reader.onerror = () => reject(new Error('Lỗi khi tải file hình ảnh từ thiết bị.'));
+        });
+    },
+
+    // Tải ảnh lên Google Drive qua Apps Script (Miễn phí 100%)
+    async uploadImageToDrive(fileOrBase64, customFileName = '') {
+        if (!this.hasApi()) {
+            throw new Error('Chưa cấu hình API Google Apps Script. Vui lòng cấu hình URL trong trang Quản trị để tải ảnh lên Google Drive.');
+        }
+
+        let base64Data = '';
+        let fileName = customFileName;
+        let mimeType = 'image/jpeg';
+
+        if (fileOrBase64 instanceof File || fileOrBase64 instanceof Blob) {
+            const compressed = await this.compressImage(fileOrBase64);
+            base64Data = compressed.base64;
+            fileName = fileName || compressed.fileName;
+            mimeType = compressed.mimeType;
+        } else if (typeof fileOrBase64 === 'string') {
+            base64Data = fileOrBase64;
+            fileName = fileName || ('cover_' + Date.now() + '.jpg');
+        } else {
+            throw new Error('Dữ liệu ảnh không đúng định dạng.');
+        }
+
+        const res = await this.postToApi({
+            action: 'uploadImage',
+            base64Data: base64Data,
+            fileName: fileName,
+            mimeType: mimeType
+        });
+
+        if (!res || !res.success) {
+            throw new Error((res && res.message) || 'Tải ảnh lên Google Drive thất bại.');
+        }
+
+        return res; // { success: true, url: directUrl, fileId: fileId, downloadUrl: downloadUrl }
+    },
+
+    // Chuẩn hóa link PDF Google Drive thành link nhúng Preview trực tiếp cho iframe
+    formatPdfUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        const clean = url.trim();
+        // Xử lý link Google Drive: /file/d/FILE_ID/view... -> /file/d/FILE_ID/preview
+        const driveMatch = clean.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (driveMatch && driveMatch[1]) {
+            return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+        }
+        // Xử lý link: drive.google.com/open?id=FILE_ID
+        const idMatch = clean.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1] && clean.includes('drive.google.com')) {
+            return `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+        }
+        return clean;
+    },
+
+    // Tải file Truyện Tranh PDF lên Google Drive qua Apps Script (Miễn phí 100%)
+    async uploadPdfToDrive(fileOrBase64, customFileName = '') {
+        if (!this.hasApi()) {
+            throw new Error('Chưa cấu hình API Google Apps Script. Vui lòng cấu hình URL trong CSDL & Cài đặt API để tải file lên Google Drive.');
+        }
+
+        let base64Data = '';
+        let fileName = customFileName;
+
+        if (fileOrBase64 instanceof File || fileOrBase64 instanceof Blob) {
+            fileName = fileName || fileOrBase64.name || ('truyen_tranh_' + Date.now() + '.pdf');
+            // Đọc file thành chuỗi base64
+            base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('Lỗi khi đọc file PDF từ thiết bị.'));
+                reader.readAsDataURL(fileOrBase64);
+            });
+        } else if (typeof fileOrBase64 === 'string') {
+            base64Data = fileOrBase64;
+            fileName = fileName || ('truyen_tranh_' + Date.now() + '.pdf');
+        } else {
+            throw new Error('Dữ liệu tệp PDF không đúng định dạng.');
+        }
+
+        const res = await this.postToApi({
+            action: 'uploadPdf',
+            base64Data: base64Data,
+            fileName: fileName
+        });
+
+        if (!res || !res.success) {
+            throw new Error((res && res.message) || 'Tải file PDF lên Google Drive thất bại.');
+        }
+
+        return res; // { success: true, url: previewUrl, previewUrl: previewUrl, fileId: fileId, fileName: fileName }
     },
 
     // Kiểm tra kết nối API

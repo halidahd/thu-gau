@@ -91,3 +91,20 @@ const DEFAULT_API_ENDPOINT = 'https://script.google.com/macros/s/AKfycb.../exec'
 
 ### ✨ TÍNH NĂNG TỰ ĐỘNG DỰ PHÒNG (FALLBACK)
 - Nếu chưa nhập API hoặc thiết bị bị mất kết nối Internet, website vẫn **tự động chuyển sang chế độ LocalStorage** với đầy đủ các truyện đã được kiểm duyệt và lưu trữ cục bộ, không bao giờ xảy ra tình trạng trang trắng hay gián đoạn trải nghiệm của học sinh và thầy cô.
+
+---
+
+### 🎨 TÍNH NĂNG MỚI: ĐĂNG & ĐỌC TRUYỆN TRANH DẠNG PDF
+1. **Đăng truyện tranh từ máy:** Giáo viên bấm nút **"+ Đăng Truyện Tranh PDF"** tại trang Quản trị (`admin.html`). File PDF được tự động đẩy lên thư mục riêng `TuSach4B_TruyenTranhPDF` trên Google Drive.
+2. **Ưu tiên tải file & linh hoạt URL:** Hệ thống ưu tiên tải tệp PDF từ máy tính, đồng thời vẫn cho phép dán link Google Drive hoặc URL tệp PDF trực tiếp. Link Google Drive được tự động chuẩn hóa sang dạng xem trước (`/preview`).
+3. **Trình đọc Truyện Tranh PDF (Comic Reader) cho học sinh:** Trên trang chủ (`index.html`), truyện tranh PDF có huy hiệu nổi bật `[🎨 Truyện Tranh PDF]`, khi học sinh bấm vào sẽ mở Trình đọc truyện tranh toàn màn hình với thanh công cụ điều hướng cảm ứng, chế độ toàn màn hình và hiệu ứng tải trang sống động.
+Hệ thống hiện tại đã tích hợp khả năng **tải ảnh bìa trực tiếp từ máy / điện thoại lên Google Drive** (hoàn toàn miễn phí trọn đời):
+1. **Lưu trữ tự động:** File ảnh được lưu vào thư mục `TuSach4B_AnhBia` trên Google Drive của tài khoản giáo viên/lớp.
+2. **Nén ảnh thông minh:** Trình duyệt tự động nén dung lượng xuống chỉ còn 150KB - 400KB trước khi gửi, giúp tải lên siêu nhanh và 15GB Google Drive có thể chứa hàng chục nghìn bức tranh.
+3. **Quy tắc ưu tiên:** Giao diện hỗ trợ cả Tải ảnh từ thiết bị và Dán link URL ảnh. Nếu người dùng chọn tải ảnh thì hệ thống sẽ **ưu tiên tải ảnh lên Google Drive**; nếu không chọn ảnh thì sử dụng URL nhập vào.
+4. **Cách cập nhật lại Apps Script nếu bạn đã triển khai trước đó:**
+   - Mở Google Sheet > **Tiện ích mở rộng** > **Apps Script**.
+   - Copy lại toàn bộ nội dung file `Code.gs` mới nhất và dán đè vào.
+   - Bấm **Lưu (Ctrl + S)**.
+   - Bấm **Triển khai (Deploy)** > **Quản lý bản triển khai (Manage deployments)**.
+   - Bấm biểu tượng cây bút chì ✏️ (Chỉnh sửa) > tại mục **Phiên bản (Version)** chọn **Phiên bản mới (New version)** > bấm **Triển khai (Deploy)**. *(Lần đầu Google có thể hiện hộp thoại cấp quyền truy cập Drive, bạn chỉ cần bấm Cho phép (Allow))*.

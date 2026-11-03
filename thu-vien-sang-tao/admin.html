@@ -151,55 +151,220 @@
 
     <!-- ========================================== -->
     <!-- BẢNG ĐIỀU KHIỂN CHÍNH (ADMIN DASHBOARD) -->
+    <!-- Kiến trúc Sidebar dọc hiện đại chuẩn UI/UX Pro Max -->
     <!-- ========================================== -->
-    <div id="admin-dashboard" class="hidden flex-1 flex flex-col">
-        <!-- Topbar / Header -->
-        <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-xs">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
-                <div class="flex items-center space-x-3">
-                    <a href="index.html" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 bg-sky-700 text-white rounded-xl flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-transform shadow-sm">
-                            📚
+    <div id="admin-dashboard" class="hidden min-h-screen bg-slate-100/70 flex flex-col lg:flex-row w-full antialiased text-slate-800">
+
+        <!-- Mobile Topbar (< lg) -->
+        <header class="lg:hidden bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-2.5">
+                <button type="button" onclick="toggleMobileSidebar(true)" class="btn-touch w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 flex items-center justify-center text-base transition-all border border-slate-200" aria-label="Mở menu điều hướng">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-sky-700 text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-xs">
+                        📚
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-sm font-black text-slate-800 font-heading leading-tight">Tủ Sách Số 4B</span>
+                            <span class="bg-sky-100 text-sky-800 text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full">Admin</span>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h1 class="text-lg sm:text-xl font-black text-slate-800 font-heading group-hover:text-sky-700 transition-colors leading-tight">
-                                    Tủ Sách Số 4B
-                                </h1>
-                                <span class="bg-sky-100 text-sky-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-sky-200">
-                                    Admin
-                                </span>
+                        <p id="mobile-tab-indicator" class="text-[11px] text-sky-700 font-extrabold truncate max-w-[150px]">Hàng đợi kiểm duyệt</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+                <a href="index.html" class="p-2 text-slate-600 hover:text-sky-700 hover:bg-slate-100 rounded-xl transition-colors" title="Xem Thư Viện">
+                    <i class="fa-solid fa-earth-americas text-base"></i>
+                </a>
+                <button onclick="handleLogout()" class="p-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors" title="Đăng Xuất">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-base"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Backdrop Overlay -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+
+        <!-- ============================================== -->
+        <!-- VERTICAL SIDEBAR (Thanh điều hướng dọc) -->
+        <!-- ============================================== -->
+        <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/90 flex flex-col shrink-0 -translate-x-full lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none">
+            
+            <!-- Sidebar Header / Brand Profile -->
+            <div class="p-5 border-b border-slate-150 flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <div class="w-11 h-11 bg-gradient-to-tr from-sky-700 to-sky-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl group-hover:scale-105 transition-transform shadow-soft">
+                        📚
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h2 class="text-base font-black text-slate-800 font-heading group-hover:text-sky-700 transition-colors leading-tight">
+                                Tủ Sách Số 4B
+                            </h2>
+                            <span class="bg-sky-100 text-sky-800 text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full border border-sky-200">
+                                Admin
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 font-semibold truncate max-w-[140px]">TH Nam Đồng • Hải Dương</p>
+                    </div>
+                </a>
+                <!-- Close button for mobile drawer -->
+                <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors" aria-label="Đóng menu">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Sidebar Navigation Links (Grouped Vertically) -->
+            <nav class="flex-1 overflow-y-auto p-3.5 space-y-5">
+
+                <!-- Nhóm 1: Kiểm duyệt & Bài viết -->
+                <div class="space-y-1">
+                    <p class="px-3 text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                        Kiểm duyệt & Bài viết
+                    </p>
+
+                    <!-- Tab 1: Pending -->
+                    <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-extrabold bg-sky-50 text-sky-800 border border-sky-200/90 shadow-xs transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100/80 text-amber-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
                             </div>
-                            <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Ban Quản Trị • Trường Tiểu Học Nam Đồng</p>
+                            <span class="truncate">Hàng đợi kiểm duyệt</span>
                         </div>
-                    </a>
+                        <span id="pending-badge-count" class="hidden bg-amber-500 text-white text-[11px] font-black px-2 py-0.5 rounded-full shadow-xs">0</span>
+                    </button>
+
+                    <!-- Tab 2: Posts -->
+                    <button onclick="switchTab('posts')" id="tab-btn-posts" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-sky-100/70 text-sky-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <span class="truncate">Quản lý bài viết</span>
+                        </div>
+                    </button>
+
+                    <!-- Tab 3: Comics PDF -->
+                    <button onclick="switchTab('comics')" id="tab-btn-comics" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-rose-100/70 text-rose-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <span class="truncate">Truyện Tranh PDF</span>
+                        </div>
+                        <span id="comics-badge-count" class="bg-rose-100 text-rose-800 text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                    </button>
+
+                    <!-- Tab 4: Categories -->
+                    <button onclick="switchTab('categories')" id="tab-btn-categories" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-100/70 text-indigo-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-tags"></i>
+                            </div>
+                            <span class="truncate">Quản lý Thể loại</span>
+                        </div>
+                    </button>
                 </div>
 
-                <!-- Right actions -->
-                <div class="flex items-center space-x-2.5">
+                <!-- Nhóm 2: Tủ sách & Hoạt động -->
+                <div class="space-y-1">
+                    <p class="px-3 text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                        Tủ sách & Tri ân
+                    </p>
+
+                    <!-- Tab 5: Physical Books -->
+                    <button onclick="switchTab('physical')" id="tab-btn-physical" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </div>
+                            <span class="truncate">Sách Truyện Giấy 4B</span>
+                        </div>
+                        <span id="physical-badge-count" class="bg-amber-100 text-amber-900 text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                    </button>
+
+                    <!-- Tab 6: Wishes 20/11 -->
+                    <button onclick="switchTab('wishes')" id="tab-btn-wishes" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-rose-100/70 text-rose-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                            <span class="truncate">Tri Ân 20/11</span>
+                        </div>
+                        <span id="wishes-badge-count" class="bg-rose-100 text-rose-800 text-[11px] font-black px-2 py-0.5 rounded-full">0</span>
+                    </button>
+                </div>
+
+                <!-- Nhóm 3: Hệ thống & Cấu hình -->
+                <div class="space-y-1">
+                    <p class="px-3 text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                        Hệ thống
+                    </p>
+
+                    <!-- Tab 7: Settings -->
+                    <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-all border border-transparent group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100/70 text-emerald-600 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <span class="truncate">CSDL & Cài đặt API</span>
+                        </div>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Sidebar Bottom / Quick Actions & Logout -->
+            <div class="p-3.5 border-t border-slate-150 bg-slate-50/80 space-y-2 shrink-0">
+                <a href="index.html" class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200/80 shadow-xs transition-all">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-sky-600"></i>
+                    <span>Xem Thư Viện Lớp 4B</span>
+                </a>
+
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-rose-700 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 border border-rose-200/80 transition-all">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Đăng Xuất</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ============================================== -->
+        <!-- MAIN CONTENT AREA (Khu vực nội dung chính) -->
+        <!-- ============================================== -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+            <!-- Desktop Sticky Topbar (>= lg) -->
+            <header class="hidden lg:flex items-center justify-between px-8 py-3.5 bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20 shadow-xs">
+                <div>
+                    <h1 id="desktop-tab-title" class="text-lg font-black text-slate-800 font-heading">
+                        Hàng Đợi Kiểm Duyệt
+                    </h1>
+                    <p id="desktop-tab-desc" class="text-xs text-slate-500 font-medium">
+                        Xem và phê duyệt các tác phẩm của học sinh gửi về trước khi xuất bản
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-3">
                     <!-- Google Sheets status indicator -->
-                    <div id="api-status-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200/80">
+                    <div id="api-status-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200/80">
                         <span class="w-2 h-2 rounded-full bg-slate-400" id="api-status-dot"></span>
                         <span id="api-status-text">Đang kiểm tra CSDL...</span>
                     </div>
 
-                    <a href="index.html" class="bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition-all">
-                        <i class="fa-solid fa-earth-americas text-sky-600"></i>
-                        <span class="hidden sm:inline">Xem Thư Viện</span>
-                    </a>
-
-                    <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold flex items-center gap-1.5 transition-all border border-rose-200/80" title="Đăng xuất khỏi hệ thống">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span class="hidden sm:inline">Đăng Xuất</span>
+                    <!-- Reload data button -->
+                    <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all" title="Tải lại toàn bộ dữ liệu">
+                        <i class="fa-solid fa-rotate text-sky-600"></i>
+                        <span>Làm mới</span>
                     </button>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <!-- Main Body -->
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6">
+            <!-- Main Body with Stats and Tab Panes -->
+            <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-7xl w-full mx-auto">
 
-            <!-- Stats Overview Cards (4 Bento KPI Cards) -->
+                <!-- Stats Overview Cards (4 Bento KPI Cards) -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <!-- KPI 1 -->
                 <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-soft flex items-center justify-between hover:border-amber-300 hover:shadow-card transition-all">
@@ -248,42 +413,6 @@
                         <i class="fa-solid fa-eye"></i>
                     </div>
                 </div>
-            </div>
-
-            <!-- Segmented Navigation Tabs (Thanh chuyển Tab chống xô lệch layout 100%) -->
-            <div class="bg-slate-200/70 p-1 rounded-2xl flex items-center gap-1 overflow-x-auto no-scrollbar border border-slate-200/90">
-                <button onclick="switchTab('pending')" id="tab-btn-pending" class="tab-btn active px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-sky-800 shadow-sm flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-slate-200/60">
-                    <i class="fa-solid fa-inbox text-amber-500"></i>
-                    <span>Hàng đợi kiểm duyệt</span>
-                    <span id="pending-badge-count" class="hidden bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
-                </button>
-
-                <button onclick="switchTab('posts')" id="tab-btn-posts" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
-                    <i class="fa-solid fa-list-check text-sky-600"></i>
-                    <span>Quản lý bài viết</span>
-                </button>
-
-                <button onclick="switchTab('categories')" id="tab-btn-categories" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
-                    <i class="fa-solid fa-tags text-indigo-600"></i>
-                    <span>Quản lý Thể loại</span>
-                </button>
-
-                <button onclick="switchTab('physical')" id="tab-btn-physical" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
-                    <i class="fa-solid fa-book text-amber-600"></i>
-                    <span>Sách Truyện Giấy 4B</span>
-                    <span id="physical-badge-count" class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
-                </button>
-
-                <button onclick="switchTab('wishes')" id="tab-btn-wishes" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
-                    <i class="fa-solid fa-award text-rose-500"></i>
-                    <span>Tri Ân 20/11</span>
-                    <span id="wishes-badge-count" class="bg-rose-100 text-rose-800 text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
-                </button>
-
-                <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-2 rounded-xl font-bold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center gap-2 whitespace-nowrap transition-colors duration-150 border border-transparent">
-                    <i class="fa-solid fa-database text-emerald-600"></i>
-                    <span>CSDL & Cài đặt API</span>
-                </button>
             </div>
 
             <!-- ============================================== -->
@@ -342,6 +471,7 @@
                         <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all" title="Làm mới dữ liệu">
                             <i class="fa-solid fa-rotate"></i>
                         </button>
+
                     </div>
                 </div>
 
@@ -370,7 +500,77 @@
 
             <!-- ============================================== -->
             <!-- TAB 3: QUẢN LÝ THỂ LOẠI (CATEGORY MANAGEMENT) -->
+                        <!-- ============================================== -->
+            <!-- TAB: QUẢN LÝ RIÊNG BIỆT TRUYỆN TRANH DẠNG PDF -->
             <!-- ============================================== -->
+            <section id="tab-comics" class="tab-pane hidden space-y-4">
+                <!-- Banner header & Thao tác nhanh -->
+                <div class="bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-orange-500/10 border border-rose-200/90 rounded-2xl p-4 sm:p-5 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 bg-gradient-to-br from-rose-500 to-amber-500 text-white rounded-2xl flex items-center justify-center text-lg shadow-sm shrink-0">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-black text-slate-800 text-base sm:text-lg font-heading">Kho Quản Lý Truyện Tranh PDF</h3>
+                                <span id="comic-badge-approved" class="bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-emerald-200">0 Đang hiển thị</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">Tải lên từ máy tính, lưu trữ tự động trên Google Drive và quản lý xuất bản tới học sinh.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openCreatePdfModal()" class="btn-touch bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-2 active:scale-95 transition-all whitespace-nowrap self-stretch md:self-auto justify-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-amber-200"></i>
+                        <span>+ Đăng Truyện Tranh PDF Mới</span>
+                    </button>
+                </div>
+
+                <!-- Bộ lọc & Tìm kiếm truyện tranh -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-soft flex flex-col md:flex-row items-center justify-between gap-3">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="comic-admin-search" oninput="renderComicsTable()" placeholder="Tìm tên truyện tranh, tác giả, họa sĩ..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <label class="text-xs font-extrabold text-slate-500 whitespace-nowrap">Trạng thái:</label>
+                        <select id="comic-admin-status-filter" onchange="renderComicsTable()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="all">Tất cả truyện tranh</option>
+                            <option value="approved" selected>Đã duyệt (Đang hiển thị)</option>
+                            <option value="pending">Chờ kiểm duyệt</option>
+                            <option value="rejected">Đã từ chối</option>
+                        </select>
+                        <button onclick="loadAllData()" class="btn-touch bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all" title="Làm mới dữ liệu">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-soft overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-rose-50/70 text-slate-700 uppercase text-[11px] font-black border-b border-rose-200/60">
+                                <tr>
+                                    <th class="py-3.5 px-4 w-16">Bìa</th>
+                                    <th class="py-3.5 px-4">Tên Truyện Tranh</th>
+                                    <th class="py-3.5 px-4">Tác giả / Họa sĩ</th>
+                                    <th class="py-3.5 px-4">File Google Drive</th>
+                                    <th class="py-3.5 px-4 text-center">Lượt đọc</th>
+                                    <th class="py-3.5 px-4 text-center">Trạng thái</th>
+                                    <th class="py-3.5 px-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comics-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+<!-- ============================================== -->
             <section id="tab-categories" class="tab-pane hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Form thêm thể loại -->
@@ -628,7 +828,8 @@
                 </div>
             </section>
 
-        </main>
+            </main>
+        </div>
     </div>
 
     <!-- ============================================== -->
@@ -671,7 +872,22 @@
                     </p>
                 </div>
 
-                <div>
+                <!-- Khung xem trước Truyện Tranh PDF (nếu có) -->
+                <div id="preview-modal-pdf-wrapper" class="hidden space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-rose-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-pdf text-rose-600"></i> Khung Đọc Truyện Tranh PDF Trực Tiếp
+                        </span>
+                        <a id="preview-modal-pdf-link" href="#" target="_blank" class="text-xs text-sky-700 font-bold hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở tab riêng
+                        </a>
+                    </div>
+                    <div class="relative w-full h-96 sm:h-[480px] bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
+                        <iframe id="preview-modal-pdf-frame" src="" class="w-full h-full border-0" allow="autoplay; fullscreen"></iframe>
+                    </div>
+                </div>
+
+                <div id="preview-modal-content-wrapper">
                     <h5 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nội dung đầy đủ:</h5>
                     <div id="preview-modal-content" class="text-sm leading-relaxed text-slate-800 bg-amber-50/40 p-4 sm:p-5 rounded-2xl border border-amber-100 whitespace-pre-line font-medium">
                         ...
@@ -848,9 +1064,62 @@
                     <textarea id="edit-post-content" required rows="7" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium leading-relaxed focus:ring-2 focus:ring-amber-500 outline-none transition-all"></textarea>
                 </div>
 
+                <!-- Khu vực Ảnh Bìa: Tải ảnh mới lên Google Drive (Ưu tiên) hoặc Nhập URL -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide">Ảnh Bìa Minh Họa</label>
+                        <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <i class="fa-brands fa-google-drive text-emerald-600"></i> Google Drive Cloud
+                        </span>
+                    </div>
+
+                    <!-- Khung tải ảnh mới lên Drive -->
+                    <div class="border-2 border-dashed border-amber-300 hover:border-amber-400 rounded-2xl p-3 bg-amber-50/40 text-center transition-all">
+                        <input type="file" id="edit-post-cover-file" accept="image/*" class="hidden" onchange="handleAdminCoverFileSelect(event)">
+                        
+                        <div id="admin-cover-placeholder" class="cursor-pointer py-1.5" onclick="document.getElementById('edit-post-cover-file').click()">
+                            <i class="fa-solid fa-cloud-arrow-up text-amber-600 text-lg mb-1"></i>
+                            <p class="text-xs font-bold text-slate-700">Tải ảnh mới từ máy lên Google Drive</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Chọn file để tự động nén & upload thay thế ảnh bìa</p>
+                        </div>
+
+                        <div id="admin-cover-preview-wrap" class="hidden relative group mt-1">
+                            <img id="admin-cover-preview" src="" alt="Xem trước ảnh mới" class="w-full h-32 object-cover rounded-xl border border-amber-200 shadow-xs">
+                            <div class="absolute inset-0 bg-slate-900/50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                <button type="button" onclick="document.getElementById('edit-post-cover-file').click()" class="bg-white/95 text-slate-800 px-3 py-1 rounded-lg text-xs font-bold shadow-xs">
+                                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Đổi ảnh
+                                </button>
+                                <button type="button" onclick="removeAdminSelectedCoverFile()" class="bg-rose-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-xs">
+                                    <i class="fa-solid fa-trash mr-1"></i> Hủy
+                                </button>
+                            </div>
+                            <div class="mt-1 flex items-center justify-between text-[11px] text-emerald-700 font-bold px-1">
+                                <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Đã chọn ảnh mới (Sẽ ưu tiên tải lên Drive)</span>
+                                <span id="admin-cover-size" class="text-slate-400 font-normal"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ô nhập link URL (giữ nguyên để copy/paste hoặc sửa URL) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Hoặc Link URL ảnh:</label>
+                            <span class="text-[10px] text-amber-600 font-medium">Ưu tiên ảnh upload nếu có chọn</span>
+                        </div>
+                        <input type="url" id="edit-post-cover" placeholder="https://..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <!-- Trường Link Truyện Tranh PDF (nếu có) -->
                 <div>
-                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Ảnh Bìa (URL)</label>
-                    <input type="url" id="edit-post-cover" placeholder="https://..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide">Link Truyện Tranh PDF (Google Drive / URL)</label>
+                        <span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full flex items-center gap-1 border border-rose-200">
+                            <i class="fa-solid fa-file-pdf"></i> Dạng PDF
+                        </span>
+                    </div>
+                    <input type="url" id="edit-post-pdf" placeholder="https://drive.google.com/file/d/.../preview (Dán link để biến bài viết thành truyện tranh PDF)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    <p class="text-[11px] text-slate-400 mt-1">💡 Dán link Google Drive truyện tranh để chuyển đổi sang giao diện đọc PDF cho học sinh.</p>
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-3">
@@ -866,6 +1135,156 @@
     </div>
 
     <!-- ============================================== -->
+
+    <!-- ============================================== -->
+    <!-- MODAL ĐĂNG TRUYỆN TRANH DẠNG PDF (CREATE COMIC PDF MODAL) -->
+    <!-- ============================================== -->
+    <div id="create-pdf-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col fade-in border border-slate-100 max-h-[92vh]">
+            <!-- Header Modal -->
+            <div class="bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 text-white p-5 flex items-center justify-between shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shadow-inner">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-black font-heading leading-tight">Đăng Truyện Tranh Dạng PDF Mới</h3>
+                        <p class="text-xs text-rose-100 font-medium">Tự động tải lên Google Drive và hiển thị trên Thư Viện Sáng Tạo</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeCreatePdfModal()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/25 text-white transition-colors" aria-label="Đóng">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <form id="create-pdf-form" onsubmit="handleCreatePdfSubmit(event)" class="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                <!-- 1. Tải tệp PDF lên Google Drive -->
+                <div class="space-y-2 bg-rose-50/50 p-4 rounded-2xl border border-rose-200/80">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black text-rose-900 uppercase tracking-wide">
+                            <i class="fa-solid fa-cloud-arrow-up text-rose-600 mr-1"></i> Tệp Truyện Tranh (PDF) *
+                        </label>
+                        <span class="text-[10px] font-black text-rose-700 bg-rose-100/90 px-2.5 py-0.5 rounded-full border border-rose-300">
+                            Ưu tiên File Upload
+                        </span>
+                    </div>
+
+                    <!-- Dropzone -->
+                    <div class="border-2 border-dashed border-rose-300 hover:border-rose-500 rounded-2xl p-4 bg-white text-center transition-all">
+                        <input type="file" id="comic-pdf-file" accept="application/pdf" class="hidden" onchange="handleComicPdfFileSelect(event)">
+                        
+                        <!-- Placeholder -->
+                        <div id="comic-pdf-placeholder" class="cursor-pointer py-2" onclick="document.getElementById('comic-pdf-file').click()">
+                            <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-1.5 border border-rose-200 shadow-sm">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <p class="text-xs sm:text-sm font-black text-slate-800">Bấm để chọn tệp PDF truyện tranh từ máy</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Hỗ trợ các file truyện tranh scan, ebook thiếu nhi (.pdf)</p>
+                        </div>
+
+                        <!-- Preview File Selected -->
+                        <div id="comic-pdf-preview-wrap" class="hidden text-left bg-rose-50/70 p-3.5 rounded-xl border border-rose-200 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-lg shrink-0 shadow-sm">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </div>
+                                <div class="truncate">
+                                    <p id="comic-pdf-name" class="text-xs font-black text-slate-800 truncate">truyen-tranh.pdf</p>
+                                    <p id="comic-pdf-size" class="text-[11px] text-rose-700 font-bold mt-0.5">2.5 MB</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="document.getElementById('comic-pdf-file').click()" class="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-xs border border-slate-200">
+                                    Đổi tệp
+                                </button>
+                                <button type="button" onclick="removeSelectedComicPdf()" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-xs">
+                                    Hủy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input URL dự phòng -->
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">Hoặc dán Link Google Drive / URL file PDF:</label>
+                        <input type="url" id="comic-pdf-url" placeholder="https://drive.google.com/file/d/.../view (Nếu đã có link)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all placeholder:text-slate-400">
+                        <p class="text-[10px] text-slate-500 mt-1 italic">💡 Nếu có chọn file ở trên thì hệ thống sẽ ưu tiên tải file đó lên Google Drive.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Thông tin cơ bản -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tên Truyện Tranh *</label>
+                        <input type="text" id="comic-title" required placeholder="Ví dụ: Doraemon - Cuộc phiêu lưu vào xứ sở cát" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tác Giả / Họa Sĩ / Sưu Tầm *</label>
+                        <input type="text" id="comic-author" required placeholder="Ví dụ: Thầy Cô Lớp 4B / Nhiều tác giả" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-rose-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Thể Loại</label>
+                        <select id="comic-category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-rose-500 outline-none bg-white">
+                            <option value="Truyện Tranh PDF" selected>🎨 Truyện Tranh PDF</option>
+                            <option value="Truyện AI Sáng Tác">✨ Truyện AI Sáng Tác</option>
+                            <option value="Truyện Song Ngữ">🌐 Truyện Song Ngữ</option>
+                            <option value="STEM & Khoa Học">🚀 STEM & Khoa Học</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Trạng Thái Đăng</label>
+                        <select id="comic-status" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-extrabold focus:ring-2 focus:ring-rose-500 outline-none bg-white">
+                            <option value="approved" selected>✅ Đã duyệt (Hiển thị ngay trên web)</option>
+                            <option value="pending">⏳ Lưu nháp / Chờ duyệt</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide mb-1">Tóm Tắt Nội Dung (1 - 2 câu) *</label>
+                    <textarea id="comic-summary" required rows="2" placeholder="Tóm tắt ngắn nội dung bộ truyện tranh để học sinh hào hứng đón đọc..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-rose-500 outline-none transition-all"></textarea>
+                </div>
+
+                <!-- 3. Ảnh Bìa Truyện Tranh -->
+                <div class="space-y-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide">Ảnh Bìa Minh Họa (Tùy chọn)</label>
+                        <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Google Drive Cloud</span>
+                    </div>
+
+                    <!-- Khung chọn file ảnh bìa -->
+                    <div class="border border-dashed border-slate-300 hover:border-amber-400 rounded-xl p-2.5 bg-white text-center cursor-pointer" onclick="document.getElementById('comic-cover-file').click()">
+                        <input type="file" id="comic-cover-file" accept="image/*" class="hidden" onchange="handleComicCoverFileSelect(event)">
+                        <div id="comic-cover-placeholder">
+                            <p class="text-xs font-bold text-slate-700"><i class="fa-solid fa-image text-amber-500 mr-1"></i> Bấm để tải ảnh bìa từ máy</p>
+                        </div>
+                        <div id="comic-cover-preview-wrap" class="hidden flex items-center justify-between text-xs text-emerald-700 font-bold px-2 py-1">
+                            <span id="comic-cover-name"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Đã chọn ảnh bìa</span>
+                            <button type="button" onclick="event.stopPropagation(); removeSelectedComicCover();" class="text-rose-600 hover:underline">Hủy</button>
+                        </div>
+                    </div>
+
+                    <input type="url" id="comic-cover-url" placeholder="Hoặc dán Link URL ảnh bìa (để trống hệ thống sẽ tự chọn ảnh đẹp)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-500 outline-none transition-all placeholder:text-slate-400">
+                </div>
+
+                <!-- Footer Buttons -->
+                <div class="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+                    <button type="button" onclick="closeCreatePdfModal()" class="px-4 py-2.5 rounded-xl text-slate-600 text-xs sm:text-sm font-bold hover:bg-slate-100 transition-colors">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btn-submit-comic" class="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-sm flex items-center gap-2 active:scale-95 transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Đăng Truyện Tranh Lên Tủ Sách</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL THÊM / SỬA LỜI CHÚC 20/11 (WISH ADMIN MODAL) -->
     <!-- ============================================== -->
     <div id="wish-admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -1005,6 +1424,7 @@
             if (isAuth) {
                 loginScreen.classList.add('hidden');
                 adminDashboard.classList.remove('hidden');
+                updateHeaderTabTitle(currentTab || 'pending');
                 loadAllData();
                 initSettingsTab();
                 checkApiHealth();
@@ -1070,6 +1490,7 @@
                 updateDashboardStats();
                 renderPendingPosts();
                 renderPostsTable();
+                renderComicsTable();
                 renderCategoriesGrid();
                 renderPhysicalBooksTable();
                 renderWishesTable();
@@ -1080,11 +1501,77 @@
             }
         }
 
+        const TAB_TITLES = {
+            'pending': {
+                title: 'Hàng Đợi Kiểm Duyệt',
+                desc: 'Xem và phê duyệt các tác phẩm của học sinh gửi về trước khi xuất bản'
+            },
+            'posts': {
+                title: 'Quản Lý Bài Viết & Sáng Tác',
+                desc: 'Danh sách toàn bộ truyện, thơ và bài viết sáng tạo của các em học sinh'
+            },
+            'comics': {
+                title: 'Quản Lý Truyện Tranh Dạng PDF',
+                desc: 'Không gian số hóa truyện tranh, tài liệu PDF với bộ đọc lật trang toàn màn hình'
+            },
+            'categories': {
+                title: 'Quản Lý Thể Loại & Chuyên Mục',
+                desc: 'Thiết lập danh mục phân loại sách truyện để học sinh dễ dàng tìm kiếm'
+            },
+            'physical': {
+                title: 'Tủ Sách Truyện Giấy Lớp 4B',
+                desc: 'Theo dõi danh mục sách giấy thực tế trong thư viện lớp và lịch sử mượn trả'
+            },
+            'wishes': {
+                title: 'Tri Ân Ngày Nhà Giáo Việt Nam 20/11',
+                desc: 'Tập hợp những tình cảm, hoa điểm mười và lời chúc ý nghĩa của các học trò'
+            },
+            'settings': {
+                title: 'Cơ Sở Dữ Liệu & Cấu Hình API',
+                desc: 'Quản lý kết nối Google Sheets, sao lưu dữ liệu và kiểm tra trạng thái đám mây'
+            }
+        };
+
+        function updateHeaderTabTitle(tabName) {
+            const info = TAB_TITLES[tabName] || { title: 'Bảng Quản Trị', desc: 'Thư viện số Lớp 4B' };
+            const mIndicator = document.getElementById('mobile-tab-indicator');
+            if (mIndicator) mIndicator.innerText = info.title;
+
+            const dTitle = document.getElementById('desktop-tab-title');
+            if (dTitle) dTitle.innerText = info.title;
+
+            const dDesc = document.getElementById('desktop-tab-desc');
+            if (dDesc) dDesc.innerText = info.desc;
+        }
+
+        function toggleMobileSidebar(open) {
+            const sidebar = document.getElementById('admin-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar || !backdrop) return;
+
+            const isCurrentlyClosed = sidebar.classList.contains('-translate-x-full');
+            const shouldOpen = open === undefined ? isCurrentlyClosed : Boolean(open);
+
+            if (shouldOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                backdrop.classList.remove('hidden', 'pointer-events-none');
+                requestAnimationFrame(() => backdrop.classList.remove('opacity-0'));
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                backdrop.classList.add('opacity-0');
+                setTimeout(() => {
+                    backdrop.classList.add('hidden', 'pointer-events-none');
+                }, 300);
+            }
+        }
+
         function switchTab(tabName) {
             currentTab = tabName;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'bg-white', 'text-sky-800', 'shadow-sm', 'border-slate-200/60');
-                btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'border-transparent');
+                btn.classList.remove('active', 'bg-sky-50', 'text-sky-800', 'border-sky-200/90', 'shadow-xs');
+                btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100/80', 'border-transparent');
             });
             document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
 
@@ -1092,10 +1579,13 @@
             const targetPane = document.getElementById(`tab-${tabName}`);
 
             if (targetBtn && targetPane) {
-                targetBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/60', 'border-transparent');
-                targetBtn.classList.add('active', 'bg-white', 'text-sky-800', 'shadow-sm', 'border-slate-200/60');
+                targetBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100/80', 'border-transparent');
+                targetBtn.classList.add('active', 'bg-sky-50', 'text-sky-800', 'border-sky-200/90', 'shadow-xs');
                 targetPane.classList.remove('hidden');
             }
+
+            updateHeaderTabTitle(tabName);
+            toggleMobileSidebar(false);
         }
 
         function updateDashboardStats() {
@@ -1127,6 +1617,18 @@
             const wBadge = document.getElementById('wishes-badge-count');
             if (wBadge) {
                 wBadge.innerText = allWishes.length;
+            }
+
+            // Badge trên tab Truyện Tranh PDF riêng biệt
+            const comicPosts = allPosts.filter(p => Boolean(p.pdfUrl || p.type === 'pdf' || p.category === 'Truyện Tranh PDF'));
+            const cBadge = document.getElementById('comics-badge-count');
+            if (cBadge) {
+                cBadge.innerText = comicPosts.length;
+            }
+            const cAppBadge = document.getElementById('comic-badge-approved');
+            if (cAppBadge) {
+                const appCount = comicPosts.filter(p => p.status === 'approved').length;
+                cAppBadge.innerText = `${appCount} Đang hiển thị`;
             }
         }
 
@@ -1231,7 +1733,9 @@
 
             tbody.innerHTML = '';
 
-            const filtered = allPosts.filter(p => {
+            // Lọc CHỈ hiển thị truyện chữ / bài viết sáng tác học sinh (loại bỏ Truyện Tranh PDF)
+            const textPosts = allPosts.filter(p => !p.pdfUrl && p.type !== 'pdf' && p.category !== 'Truyện Tranh PDF');
+            const filtered = textPosts.filter(p => {
                 const matchesStatus = (statusFilter === 'all') || (p.status === statusFilter);
                 const matchesSearch = (p.title || '').toLowerCase().includes(searchKeyword) || 
                                       (p.author || '').toLowerCase().includes(searchKeyword) ||
@@ -1264,10 +1768,16 @@
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50/80 transition-colors';
+                const isComicPdf = Boolean(post.pdfUrl || post.type === 'pdf');
+                const pdfBadgeHtml = isComicPdf 
+                    ? `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200 shrink-0"><i class="fa-solid fa-file-pdf"></i> PDF</span>`
+                    : '';
+
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 max-w-xs sm:max-w-md">
-                        <div class="font-black text-slate-800 text-xs sm:text-sm hover:text-sky-700 cursor-pointer line-clamp-1 font-heading" onclick="openPreviewModal('${post.id}')">
-                            ${post.title}
+                        <div class="font-black text-slate-800 text-xs sm:text-sm hover:text-sky-700 cursor-pointer line-clamp-1 font-heading flex items-center gap-1.5" onclick="openPreviewModal('${post.id}')">
+                            ${pdfBadgeHtml}
+                            <span class="truncate">${post.title}</span>
                         </div>
                         <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5 font-medium">${post.summary || ''}</div>
                     </td>
@@ -1356,12 +1866,59 @@ Hành động này không thể hoàn tác.`)) {
             }
         }
 
+        // Quản lý tải ảnh bìa lên Google Drive trong trang Admin
+        let adminSelectedCoverFile = null;
+
+        function handleAdminCoverFileSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('Vui lòng chọn đúng tệp hình ảnh!', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            adminSelectedCoverFile = file;
+            const previewImg = document.getElementById('admin-cover-preview');
+            const previewWrap = document.getElementById('admin-cover-preview-wrap');
+            const placeholder = document.getElementById('admin-cover-placeholder');
+            const sizeText = document.getElementById('admin-cover-size');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (previewImg) previewImg.src = e.target.result;
+                if (previewWrap) previewWrap.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+                
+                const kb = Math.round(file.size / 1024);
+                if (sizeText) {
+                    sizeText.textContent = `${kb > 1024 ? (kb / 1024).toFixed(1) + 'MB' : kb + 'KB'} (Tự nén khi lưu)`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeAdminSelectedCoverFile() {
+            adminSelectedCoverFile = null;
+            const fileInput = document.getElementById('edit-post-cover-file');
+            if (fileInput) fileInput.value = '';
+            const previewImg = document.getElementById('admin-cover-preview');
+            if (previewImg) previewImg.src = '';
+            const previewWrap = document.getElementById('admin-cover-preview-wrap');
+            if (previewWrap) previewWrap.classList.add('hidden');
+            const placeholder = document.getElementById('admin-cover-placeholder');
+            if (placeholder) placeholder.classList.remove('hidden');
+        }
+
         function openEditPostModal(id) {
             const post = allPosts.find(p => p.id === id);
             if (!post) {
                 showToast('Không tìm thấy bài viết để chỉnh sửa!', 'error');
                 return;
             }
+
+            removeAdminSelectedCoverFile();
 
             document.getElementById('edit-post-id').value = post.id;
             document.getElementById('edit-post-title').value = post.title || '';
@@ -1370,6 +1927,9 @@ Hành động này không thể hoàn tác.`)) {
             document.getElementById('edit-post-content').value = post.content || '';
             document.getElementById('edit-post-cover').value = post.cover || '';
             document.getElementById('edit-post-status').value = post.status || 'approved';
+            if (document.getElementById('edit-post-pdf')) {
+                document.getElementById('edit-post-pdf').value = post.pdfUrl || '';
+            }
 
             populateEditCategoriesSelect(post.category);
 
@@ -1378,6 +1938,7 @@ Hành động này không thể hoàn tác.`)) {
 
         function closeEditPostModal() {
             document.getElementById('edit-post-modal').classList.add('hidden');
+            removeAdminSelectedCoverFile();
         }
 
         async function handleEditPostSubmit(e) {
@@ -1389,18 +1950,40 @@ Hành động này không thể hoàn tác.`)) {
             const status = document.getElementById('edit-post-status').value;
             const summary = document.getElementById('edit-post-summary').value.trim();
             const content = document.getElementById('edit-post-content').value.trim();
-            const cover = document.getElementById('edit-post-cover').value.trim();
+            const inputCover = document.getElementById('edit-post-cover').value.trim();
+            const inputPdf = document.getElementById('edit-post-pdf') ? document.getElementById('edit-post-pdf').value.trim() : '';
 
             if (!id || !title) return;
 
             const btn = document.getElementById('btn-save-edit-post');
             const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
-
-            showToast('Đang cập nhật bài viết...', 'info');
 
             try {
+                let finalCover = inputCover;
+
+                // Ưu tiên tải ảnh mới lên Google Drive nếu có chọn file
+                if (adminSelectedCoverFile) {
+                    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-spin"></i> Đang tải ảnh lên Drive...';
+                    showToast('Đang tải ảnh lên Google Drive...', 'info');
+                    try {
+                        const uploadRes = await StorageService.uploadImageToDrive(adminSelectedCoverFile);
+                        finalCover = uploadRes.url;
+                        showToast('Đã tải ảnh lên Google Drive thành công!', 'success');
+                    } catch (uploadErr) {
+                        console.warn('Lỗi upload Drive:', uploadErr);
+                        if (inputCover) {
+                            finalCover = inputCover;
+                            showToast('Lỗi Drive, giữ link URL cũ!', 'info');
+                        } else {
+                            throw new Error('Lỗi khi tải ảnh lên Google Drive: ' + uploadErr.message);
+                        }
+                    }
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+                showToast('Đang cập nhật bài viết...', 'info');
+
                 await StorageService.updatePost(id, {
                     title,
                     author,
@@ -1408,7 +1991,9 @@ Hành động này không thể hoàn tác.`)) {
                     status,
                     summary,
                     content,
-                    cover
+                    cover: finalCover,
+                    pdfUrl: inputPdf,
+                    type: inputPdf ? 'pdf' : 'story'
                 });
 
                 showToast('🎉 Đã cập nhật bài viết thành công!', 'success');
@@ -1828,6 +2413,25 @@ Hành động này không thể hoàn tác.`)) {
                 coverWrapper.classList.add('hidden');
             }
 
+            // Xử lý khung đọc truyện tranh PDF trong preview
+            const pdfWrapper = document.getElementById('preview-modal-pdf-wrapper');
+            const pdfFrame = document.getElementById('preview-modal-pdf-frame');
+            const pdfLink = document.getElementById('preview-modal-pdf-link');
+            const contentWrap = document.getElementById('preview-modal-content-wrapper');
+
+            if (post.pdfUrl || post.type === 'pdf') {
+                const formattedUrl = StorageService.formatPdfUrl(post.pdfUrl);
+                if (pdfFrame) pdfFrame.src = formattedUrl;
+                if (pdfLink) pdfLink.href = post.pdfUrl;
+                if (pdfWrapper) pdfWrapper.classList.remove('hidden');
+                if (contentWrap && !post.content) contentWrap.classList.add('hidden');
+                else if (contentWrap) contentWrap.classList.remove('hidden');
+            } else {
+                if (pdfFrame) pdfFrame.src = '';
+                if (pdfWrapper) pdfWrapper.classList.add('hidden');
+                if (contentWrap) contentWrap.classList.remove('hidden');
+            }
+
             // Action buttons in modal
             const actionsBox = document.getElementById('preview-modal-actions');
             actionsBox.innerHTML = `
@@ -1855,6 +2459,8 @@ Hành động này không thể hoàn tác.`)) {
 
         function closePreviewModal() {
             document.getElementById('preview-modal').classList.add('hidden');
+            const pdfFrame = document.getElementById('preview-modal-pdf-frame');
+            if (pdfFrame) pdfFrame.src = '';
             previewingPostId = null;
         }
 
@@ -2084,6 +2690,302 @@ Hành động này không thể hoàn tác.`)) {
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
         });
+    
+        // ==========================================
+        // QUẢN LÝ ĐĂNG TRUYỆN TRANH DẠNG PDF (ADMIN)
+        // ==========================================
+        let selectedComicPdfFile = null;
+        let selectedComicCoverFile = null;
+
+        function openCreatePdfModal() {
+            resetCreatePdfForm();
+            document.getElementById('create-pdf-modal').classList.remove('hidden');
+        }
+
+        function closeCreatePdfModal() {
+            document.getElementById('create-pdf-modal').classList.add('hidden');
+            resetCreatePdfForm();
+        }
+
+        function resetCreatePdfForm() {
+            selectedComicPdfFile = null;
+            selectedComicCoverFile = null;
+            const form = document.getElementById('create-pdf-form');
+            if (form) form.reset();
+
+            const pdfPlaceholder = document.getElementById('comic-pdf-placeholder');
+            const pdfPreview = document.getElementById('comic-pdf-preview-wrap');
+            if (pdfPlaceholder) pdfPlaceholder.classList.remove('hidden');
+            if (pdfPreview) pdfPreview.classList.add('hidden');
+
+            const coverPlaceholder = document.getElementById('comic-cover-placeholder');
+            const coverPreview = document.getElementById('comic-cover-preview-wrap');
+            if (coverPlaceholder) coverPlaceholder.classList.remove('hidden');
+            if (coverPreview) coverPreview.classList.add('hidden');
+        }
+
+        function handleComicPdfFileSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('Vui lòng chọn đúng tệp định dạng PDF (.pdf)!', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            selectedComicPdfFile = file;
+            const pdfPlaceholder = document.getElementById('comic-pdf-placeholder');
+            const pdfPreview = document.getElementById('comic-pdf-preview-wrap');
+            const nameEl = document.getElementById('comic-pdf-name');
+            const sizeEl = document.getElementById('comic-pdf-size');
+
+            if (pdfPlaceholder) pdfPlaceholder.classList.add('hidden');
+            if (pdfPreview) pdfPreview.classList.remove('hidden');
+            if (nameEl) nameEl.textContent = file.name;
+            if (sizeEl) {
+                const mb = (file.size / (1024 * 1024)).toFixed(2);
+                sizeEl.textContent = `${mb} MB • Sẵn sàng tải lên Google Drive`;
+            }
+
+            // Tự động gợi ý tên truyện tranh từ tên tệp nếu ô tên đang trống
+            const titleInput = document.getElementById('comic-title');
+            if (titleInput && !titleInput.value.trim()) {
+                const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+                titleInput.value = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+            }
+        }
+
+        function removeSelectedComicPdf() {
+            selectedComicPdfFile = null;
+            const fileInput = document.getElementById('comic-pdf-file');
+            if (fileInput) fileInput.value = '';
+            const pdfPlaceholder = document.getElementById('comic-pdf-placeholder');
+            const pdfPreview = document.getElementById('comic-pdf-preview-wrap');
+            if (pdfPlaceholder) pdfPlaceholder.classList.remove('hidden');
+            if (pdfPreview) pdfPreview.classList.add('hidden');
+        }
+
+        function handleComicCoverFileSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('Vui lòng chọn đúng tệp hình ảnh!', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            selectedComicCoverFile = file;
+            const coverPlaceholder = document.getElementById('comic-cover-placeholder');
+            const coverPreview = document.getElementById('comic-cover-preview-wrap');
+            const nameEl = document.getElementById('comic-cover-name');
+
+            if (coverPlaceholder) coverPlaceholder.classList.add('hidden');
+            if (coverPreview) coverPreview.classList.remove('hidden');
+            if (nameEl) {
+                nameEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> ${file.name}`;
+            }
+        }
+
+        function removeSelectedComicCover() {
+            selectedComicCoverFile = null;
+            const fileInput = document.getElementById('comic-cover-file');
+            if (fileInput) fileInput.value = '';
+            const coverPlaceholder = document.getElementById('comic-cover-placeholder');
+            const coverPreview = document.getElementById('comic-cover-preview-wrap');
+            if (coverPlaceholder) coverPlaceholder.classList.remove('hidden');
+            if (coverPreview) coverPreview.classList.add('hidden');
+        }
+
+        async function handleCreatePdfSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('comic-title').value.trim();
+            const author = document.getElementById('comic-author').value.trim();
+            const category = document.getElementById('comic-category').value;
+            const status = document.getElementById('comic-status').value;
+            const summary = document.getElementById('comic-summary').value.trim();
+            const inputPdfUrl = document.getElementById('comic-pdf-url').value.trim();
+            const inputCoverUrl = document.getElementById('comic-cover-url').value.trim();
+
+            if (!selectedComicPdfFile && !inputPdfUrl) {
+                showToast('Vui lòng chọn tệp PDF truyện tranh hoặc dán link Google Drive!', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-comic');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+
+            try {
+                let finalPdfUrl = inputPdfUrl;
+                let finalCoverUrl = inputCoverUrl || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop';
+
+                // 1. Tải file PDF lên Google Drive nếu người dùng chọn tệp từ máy (ƯU TIÊN)
+                if (selectedComicPdfFile) {
+                    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-spin"></i> Đang tải file PDF lên Google Drive...';
+                    showToast('Đang tải file PDF lên Google Drive...', 'info');
+                    try {
+                        const pdfRes = await StorageService.uploadPdfToDrive(selectedComicPdfFile);
+                        finalPdfUrl = pdfRes.url || pdfRes.previewUrl;
+                        showToast('Tải file PDF lên Drive thành công!', 'success');
+                    } catch (pdfErr) {
+                        console.error('Lỗi tải file PDF lên Drive:', pdfErr);
+                        if (inputPdfUrl) {
+                            finalPdfUrl = inputPdfUrl;
+                            showToast('Lỗi tải tệp, chuyển sang dùng URL PDF dự phòng!', 'info');
+                        } else {
+                            throw new Error('Lỗi khi tải PDF lên Google Drive: ' + pdfErr.message);
+                        }
+                    }
+                }
+
+                // 2. Tải ảnh bìa nếu có chọn
+                if (selectedComicCoverFile) {
+                    btn.innerHTML = '<i class="fa-solid fa-image fa-spin"></i> Đang tải ảnh bìa lên Drive...';
+                    try {
+                        const coverRes = await StorageService.uploadImageToDrive(selectedComicCoverFile);
+                        finalCoverUrl = coverRes.url;
+                    } catch (coverErr) {
+                        console.warn('Lỗi tải ảnh bìa:', coverErr);
+                    }
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu bài vào thư viện...';
+                showToast('Đang xuất bản truyện tranh...', 'info');
+
+                // 3. Tạo bài viết dạng PDF
+                await StorageService.createPost({
+                    title,
+                    author,
+                    category: category || 'Truyện Tranh PDF',
+                    status: status || 'approved',
+                    summary,
+                    content: 'Bộ truyện tranh thiếu nhi định dạng PDF chất lượng cao.',
+                    cover: finalCoverUrl,
+                    pdfUrl: finalPdfUrl,
+                    type: 'pdf'
+                });
+
+                showToast('🎉 Đã đăng truyện tranh PDF thành công!', 'success');
+                closeCreatePdfModal();
+                await loadAllData();
+                switchTab('comics');
+
+            } catch (err) {
+                console.error('Lỗi khi đăng truyện tranh PDF:', err);
+                showToast('Lỗi: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+    
+        // ==========================================
+        // QUẢN LÝ RIÊNG BIỆT TRUYỆN TRANH DẠNG PDF
+        // ==========================================
+        function renderComicsTable() {
+            const tbody = document.getElementById('comics-table-body');
+            if (!tbody) return;
+
+            const searchVal = (document.getElementById('comic-admin-search')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('comic-admin-status-filter')?.value || 'all';
+
+            tbody.innerHTML = '';
+
+            const allComics = allPosts.filter(p => Boolean(p.pdfUrl || p.type === 'pdf' || p.category === 'Truyện Tranh PDF'));
+            
+            const filtered = allComics.filter(c => {
+                const matchesStatus = (statusFilter === 'all') || (c.status === statusFilter);
+                const matchesSearch = (c.title || '').toLowerCase().includes(searchVal) ||
+                                      (c.author || '').toLowerCase().includes(searchVal) ||
+                                      (c.summary || '').toLowerCase().includes(searchVal);
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-12 text-xs font-bold text-slate-400">
+                            <i class="fa-solid fa-file-pdf text-rose-300 text-3xl mb-2 block"></i>
+                            Chưa có bộ truyện tranh PDF nào phù hợp với bộ lọc.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(comic => {
+                let statusBadge = '';
+                if (comic.status === 'approved') {
+                    statusBadge = '<span class="bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-emerald-200">Đã duyệt (Hiện web)</span>';
+                } else if (comic.status === 'pending') {
+                    statusBadge = '<span class="bg-amber-50 text-amber-800 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-amber-200">Chờ duyệt</span>';
+                } else {
+                    statusBadge = '<span class="bg-rose-50 text-rose-700 text-[10px] font-black uppercase px-2.5 py-1 rounded-full border border-rose-200">Từ chối</span>';
+                }
+
+                const defaultCover = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop';
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-rose-50/30 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <img src="${comic.cover || defaultCover}" alt="${comic.title}" 
+                            class="w-11 h-14 object-cover rounded-lg shadow-xs border border-slate-200 cursor-pointer hover:scale-105 transition-transform" 
+                            onclick="openPreviewModal('${comic.id}')"
+                            onerror="this.src='${defaultCover}'">
+                    </td>
+                    <td class="py-3 px-4 max-w-xs sm:max-w-md">
+                        <div class="font-black text-slate-800 text-xs sm:text-sm hover:text-rose-600 cursor-pointer line-clamp-1 font-heading flex items-center gap-1.5" onclick="openPreviewModal('${comic.id}')">
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200 shrink-0"><i class="fa-solid fa-file-pdf"></i> PDF</span>
+                            <span class="truncate">${comic.title}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5 font-medium">${comic.summary || 'Bộ truyện tranh thiếu nhi.'}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs font-bold text-rose-800 whitespace-nowrap">
+                        ${comic.author || 'Chưa rõ'}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600 whitespace-nowrap">
+                        ${comic.pdfUrl ? `
+                            <a href="${comic.pdfUrl}" target="_blank" class="inline-flex items-center gap-1 text-sky-700 font-bold hover:underline bg-sky-50 px-2 py-1 rounded-lg border border-sky-200">
+                                <i class="fa-brands fa-google-drive text-emerald-600"></i> Xem file Drive
+                            </a>
+                        ` : '<span class="text-slate-400 italic">Chưa có URL</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-center text-slate-600 font-bold whitespace-nowrap">
+                        <i class="fa-solid fa-eye text-slate-400 mr-1"></i>${comic.views || 0}
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <div class="flex items-center justify-end gap-1">
+                            <button onclick="openPreviewModal('${comic.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" title="Đọc thử truyện tranh PDF">
+                                <i class="fa-solid fa-book-open-reader text-xs"></i>
+                            </button>
+                            <button onclick="openEditPostModal('${comic.id}')" class="p-2 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors" title="Chỉnh sửa truyện">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            </button>
+                            ${comic.status !== 'approved' ? `
+                                <button onclick="approvePost('${comic.id}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors" title="Duyệt xuất bản">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </button>
+                            ` : `
+                                <button onclick="rejectPost('${comic.id}')" class="p-2 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors" title="Gỡ khỏi trang chủ">
+                                    <i class="fa-solid fa-ban text-xs"></i>
+                                </button>
+                            `}
+                            <button onclick="handleDeletePost('${comic.id}', '${comic.title.replace(/'/g, "\'")}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa vĩnh viễn">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
     </script>
 </body>
 </html>

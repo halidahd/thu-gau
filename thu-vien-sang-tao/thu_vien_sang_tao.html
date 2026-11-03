@@ -320,11 +320,16 @@
             </div>
         </section>
 
-        <!-- Bộ chuyển đổi Tab (To, rõ ràng, dễ bấm trên mobile) -->
+        <!-- Bộ chuyển đổi Tab: Tủ Sách Số, Truyện Tranh PDF (Mục riêng), Sách Giấy -->
         <div class="flex items-center gap-2.5 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
             <button onclick="switchMainTab('digital')" id="btn-tab-digital" class="touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-sky-700 text-white shadow-sm transition-all whitespace-nowrap">
                 <i class="fa-solid fa-laptop-code text-amber-300"></i>
-                <span>Tủ Sách Số 4B (Đọc Online)</span>
+                <span>Tủ Sách Số 4B</span>
+            </button>
+            <button onclick="switchMainTab('comic')" id="btn-tab-comic" class="touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap">
+                <i class="fa-solid fa-file-pdf text-rose-500"></i>
+                <span>Truyện Tranh PDF</span>
+                <span id="tab-comic-count" class="bg-rose-100 text-rose-800 text-[10px] font-black px-2 py-0.5 rounded-full ml-1">0</span>
             </button>
             <button onclick="switchMainTab('physical')" id="btn-tab-physical" class="touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap">
                 <i class="fa-solid fa-bookmark text-amber-600"></i>
@@ -381,6 +386,63 @@
                 <button onclick="resetFilters()" class="touch-action-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-all mt-2">
                     Xem tất cả truyện
                 </button>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECTION RIÊNG: GÓC TRUYỆN TRANH DẠNG PDF -->
+        <!-- ============================================== -->
+        <section id="section-comic" class="hidden space-y-5">
+            <!-- Header của Góc Truyện Tranh PDF -->
+            <div class="bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-orange-500/10 border border-rose-200/90 rounded-3xl p-5 sm:p-6 shadow-soft space-y-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-amber-500 text-white rounded-2xl flex items-center justify-center text-xl font-bold shadow-sm shrink-0">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-slate-800 text-base sm:text-xl font-heading">Góc Truyện Tranh Thiếu Nhi (Bản PDF Màu)</h3>
+                                <span class="bg-rose-100 text-rose-800 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-rose-200 hidden sm:inline-block">Đọc Online</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Những bộ truyện tranh nhiều màu sắc, tranh vẽ minh họa sống động được số hóa dạng PDF dành riêng cho học sinh.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600 shrink-0">
+                        <span class="bg-white px-3.5 py-2 rounded-2xl border border-rose-200/80 shadow-xs flex items-center gap-2 text-rose-800">
+                            <i class="fa-solid fa-book-open-reader text-rose-600"></i>
+                            <span><strong id="comic-total-badge" class="font-black text-sm text-rose-600">0</strong> bộ truyện tranh</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Ô tìm kiếm truyện tranh -->
+                <div class="pt-2 border-t border-rose-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="relative w-full sm:max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="comic-search-input" oninput="filterComicBooks()" placeholder="Tìm tên truyện tranh, tác giả, họa sĩ..." 
+                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-rose-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white transition-all placeholder:text-slate-400">
+                    </div>
+                    <p class="text-xs text-rose-700 font-bold flex items-center gap-1.5 self-end sm:self-auto">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i>
+                        <span>Bấm vào bìa truyện để mở Trình đọc tranh toàn màn hình</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Comic Books Grid -->
+            <div id="comic-books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+                <!-- Rendered dynamically via JS -->
+            </div>
+
+            <!-- Empty State for Comics -->
+            <div id="comic-empty-state" class="hidden text-center py-16 space-y-3 bg-white rounded-3xl border border-dashed border-rose-200 p-6">
+                <div class="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-rose-200">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-800">Chưa có truyện tranh PDF nào</h3>
+                <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">Thầy Cô có thể đăng tải truyện tranh PDF mới từ Trang Quản Trị để học sinh cùng đọc nhé!</p>
             </div>
         </section>
 
@@ -619,11 +681,56 @@
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400"></textarea>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Link Ảnh Bìa (Tùy chọn)</label>
-                    <input type="url" id="form-cover" placeholder="Dán link ảnh hoặc để trống hệ thống sẽ tự chọn ảnh đẹp" 
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400">
-                    <p class="text-[11px] text-slate-400 mt-1">Gợi ý: Nếu chưa có ảnh bìa, bạn cứ để trống nhé!</p>
+                <!-- Khu vực Ảnh Bìa: Hỗ trợ Tải ảnh lên Google Drive (Ưu tiên) hoặc Nhập URL -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-extrabold text-slate-700">Ảnh Bìa Minh Họa (Tùy chọn)</label>
+                        <span class="text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <i class="fa-brands fa-google-drive text-emerald-600"></i> Lưu Google Drive Free
+                        </span>
+                    </div>
+
+                    <!-- Khung chọn tệp tải lên hoặc chụp ảnh -->
+                    <div class="border-2 border-dashed border-sky-300 hover:border-sky-500 rounded-2xl p-3 bg-sky-50/40 hover:bg-sky-50/70 transition-all text-center">
+                        <input type="file" id="form-cover-file" accept="image/*" class="hidden" onchange="handleCoverFileSelect(event)">
+                        
+                        <!-- Placeholder khi chưa chọn tệp -->
+                        <div id="cover-file-placeholder" class="cursor-pointer py-1.5" onclick="document.getElementById('form-cover-file').click()">
+                            <div class="w-10 h-10 mx-auto rounded-full bg-white text-sky-600 flex items-center justify-center text-lg mb-1 shadow-sm border border-sky-200">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-700">Bấm để Tải ảnh từ máy / Chụp ảnh</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Tự động nén nhẹ & tải lên Google Drive của lớp</p>
+                        </div>
+
+                        <!-- Khung xem trước khi đã chọn ảnh -->
+                        <div id="cover-file-preview-wrap" class="hidden relative group">
+                            <img id="cover-file-preview" src="" alt="Xem trước ảnh bìa" class="w-full h-36 object-cover rounded-xl border border-sky-200 shadow-xs">
+                            <div class="absolute inset-0 bg-slate-900/50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                <button type="button" onclick="document.getElementById('form-cover-file').click()" class="bg-white/95 hover:bg-white text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold shadow-xs">
+                                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Đổi ảnh khác
+                                </button>
+                                <button type="button" onclick="removeSelectedCoverFile()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-xs">
+                                    <i class="fa-solid fa-trash mr-1"></i> Hủy
+                                </button>
+                            </div>
+                            <div class="mt-1.5 flex items-center justify-between text-[11px] text-emerald-700 font-bold px-1">
+                                <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Đã chọn ảnh (Sẽ ưu tiên tải lên Drive)</span>
+                                <span id="cover-file-size" class="text-slate-400 font-normal"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ô nhập link URL tùy chọn -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Hoặc dán Link URL ảnh:</label>
+                            <span class="text-[10px] text-amber-600 font-medium">Ưu tiên ảnh tải lên nếu có</span>
+                        </div>
+                        <input type="url" id="form-cover" placeholder="https://... (nếu không tải ảnh từ máy, bạn có thể dán link ảnh tại đây)" 
+                            class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-sky-500 outline-none transition-all placeholder:text-slate-400">
+                        <p class="text-[11px] text-slate-400 mt-0.5">💡 Nếu để trống cả 2, hệ thống sẽ tự động chọn một ảnh bìa sinh động cho bạn!</p>
+                    </div>
                 </div>
 
                 <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/70 text-xs text-amber-900 flex items-start gap-2">
@@ -645,7 +752,56 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- MODAL 3: THÔNG BÁO GỬI THÀNH CÔNG -->
+
+    <!-- ============================================== -->
+    <!-- MODAL ĐỌC TRUYỆN TRANH DẠNG PDF (COMIC PDF READER) -->
+    <!-- ============================================== -->
+    <div id="comic-reader-modal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-2 sm:p-4">
+        <div id="comic-reader-container" class="bg-white w-full max-w-5xl h-[94vh] sm:h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-700/40 transition-all duration-200">
+            <!-- Top Bar -->
+            <div class="bg-slate-900 text-white px-4 sm:px-6 py-3 flex items-center justify-between shrink-0 border-b border-slate-800">
+                <div class="flex items-center gap-2.5 truncate">
+                    <span class="bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[10px] sm:text-xs font-black uppercase px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-file-pdf"></i> Truyện Tranh
+                    </span>
+                    <div class="truncate">
+                        <h3 id="comic-reader-title" class="font-black text-xs sm:text-base truncate font-heading text-white">Tên truyện tranh</h3>
+                        <p id="comic-reader-author" class="text-[11px] text-slate-400 truncate">Tác giả</p>
+                    </div>
+                </div>
+                
+                <!-- Controls (Touch targets >= 44x44px for kids UI/UX) -->
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <a id="comic-reader-open-tab" href="#" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Mở trang riêng toàn màn hình">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                    </a>
+                    <button type="button" onclick="toggleComicFullscreen()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Chế độ toàn màn hình">
+                        <i id="comic-fullscreen-icon" class="fa-solid fa-expand text-sm"></i>
+                    </button>
+                    <button type="button" onclick="closeComicReaderModal()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-colors shadow-sm" title="Đóng đọc truyện">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PDF Viewer Container with Skeleton Loading -->
+            <div class="relative flex-1 bg-slate-950 w-full overflow-hidden flex items-center justify-center">
+                <!-- Skeleton Loading State -->
+                <div id="comic-loading-skeleton" class="absolute inset-0 flex flex-col items-center justify-center text-white bg-slate-900 z-10 transition-opacity duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-500 border border-rose-500/30 flex items-center justify-center text-2xl mb-3 animate-bounce shadow-lg">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <p class="text-sm font-bold text-slate-200">Đang nạp truyện tranh từ Google Drive...</p>
+                    <p class="text-xs text-slate-400 mt-1">Các bạn nhỏ chờ trang tải xong trong giây lát nhé! 🎨</p>
+                </div>
+
+                <!-- PDF Iframe -->
+                <iframe id="comic-pdf-iframe" src="" class="w-full h-full border-0" allow="autoplay; fullscreen" onload="hideComicLoading()"></iframe>
+            </div>
+        </div>
+    </div>
+
+        <!-- MODAL 3: THÔNG BÁO GỬI THÀNH CÔNG -->
     <!-- ============================================== -->
     <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-lift max-w-sm w-full p-6 text-center space-y-4 fade-in border border-slate-200">
@@ -830,23 +986,36 @@
             }
         }
 
-        // 2.5. Xử lý chuyển đổi Tab (Tủ Sách Số vs Sách Giấy)
+        // 2.5. Xử lý chuyển đổi 3 Tab: Tủ Sách Số vs Truyện Tranh PDF vs Sách Giấy
         function switchMainTab(mode) {
             const btnDigital = document.getElementById('btn-tab-digital');
+            const btnComic = document.getElementById('btn-tab-comic');
             const btnPhysical = document.getElementById('btn-tab-physical');
+
             const secDigital = document.getElementById('section-digital');
+            const secComic = document.getElementById('section-comic');
             const secPhysical = document.getElementById('section-physical');
 
+            // Reset tất cả tab về trạng thái inactive
+            const inactiveClass = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap';
+            if (btnDigital) btnDigital.className = inactiveClass;
+            if (btnComic) btnComic.className = inactiveClass;
+            if (btnPhysical) btnPhysical.className = inactiveClass;
+
+            if (secDigital) secDigital.classList.add('hidden');
+            if (secComic) secComic.classList.add('hidden');
+            if (secPhysical) secPhysical.classList.add('hidden');
+
             if (mode === 'digital') {
-                btnDigital.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-sky-700 text-white shadow-sm transition-all whitespace-nowrap';
-                btnPhysical.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap';
-                secDigital.classList.remove('hidden');
-                secPhysical.classList.add('hidden');
-            } else {
-                btnPhysical.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-amber-600 text-white shadow-sm transition-all whitespace-nowrap';
-                btnDigital.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/90 shadow-sm transition-all whitespace-nowrap';
-                secPhysical.classList.remove('hidden');
-                secDigital.classList.add('hidden');
+                if (btnDigital) btnDigital.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-sky-700 text-white shadow-sm transition-all whitespace-nowrap';
+                if (secDigital) secDigital.classList.remove('hidden');
+            } else if (mode === 'comic') {
+                if (btnComic) btnComic.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 text-white shadow-sm transition-all whitespace-nowrap';
+                if (secComic) secComic.classList.remove('hidden');
+                renderComicBooks();
+            } else if (mode === 'physical') {
+                if (btnPhysical) btnPhysical.className = 'touch-action-btn px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 bg-amber-600 text-white shadow-sm transition-all whitespace-nowrap';
+                if (secPhysical) secPhysical.classList.remove('hidden');
                 renderHomePhysicalBooks();
             }
         }
@@ -1004,7 +1173,9 @@
         function filterBooks() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
             const filtered = books.filter(book => {
-                const matchesCat = (currentCategory === 'all') || (book.category === currentCategory);
+                const isPdf = Boolean(book.pdfUrl || book.type === 'pdf' || book.category === 'Truyện Tranh PDF');
+                const matchesCat = (currentCategory === 'all') || 
+                                   (currentCategory === 'Truyện Tranh PDF' ? isPdf : book.category === currentCategory);
                 const matchesSearch = (book.title || '').toLowerCase().includes(searchTerm) || 
                                       (book.author || '').toLowerCase().includes(searchTerm) ||
                                       (book.summary || '').toLowerCase().includes(searchTerm);
@@ -1019,24 +1190,35 @@
             const emptyState = document.getElementById('empty-state');
             grid.innerHTML = '';
 
-            if (listToRender.length === 0) {
+            // Tách riêng: Trong mục "Tủ Sách Số 4B", chỉ hiển thị truyện chữ / thơ sáng tác
+            const digitalStories = listToRender.filter(b => !b.pdfUrl && b.type !== 'pdf' && b.category !== 'Truyện Tranh PDF');
+            
+            // Cập nhật số lượng và render truyện tranh cho mục Comic
+            renderComicBooks();
+
+            if (digitalStories.length === 0) {
                 emptyState.classList.remove('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
             }
 
-            listToRender.forEach(book => {
-                const isAI = (book.category || '').includes('AI') || (book.summary || '').includes('AI');
-                const defaultImage = isAI 
-                    ? 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop'
-                    : 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop';
+            digitalStories.forEach(book => {
+                const isComicPdf = Boolean(book.pdfUrl || book.type === 'pdf' || book.category === 'Truyện Tranh PDF');
+                const isAI = !isComicPdf && ((book.category || '').includes('AI') || (book.summary || '').includes('AI'));
+                
+                let defaultImage = 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop';
+                if (isComicPdf) {
+                    defaultImage = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop';
+                } else if (isAI) {
+                    defaultImage = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop';
+                }
 
                 const cardHtml = `
-                    <div class="book-card bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-soft flex flex-col justify-between hover:border-amber-300/80 hover:shadow-card">
+                    <div class="book-card bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-soft flex flex-col justify-between hover:border-amber-300/80 hover:shadow-card transition-all">
                         <div>
                             <!-- Cover & Badges -->
-                            <div class="relative h-44 overflow-hidden bg-slate-100 cursor-pointer" onclick="openReaderModal('${book.id}')">
+                            <div class="relative h-44 overflow-hidden bg-slate-100 cursor-pointer" onclick="handleBookClick('${book.id}')">
                                 <img src="${book.cover || defaultImage}" alt="${book.title}" 
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                                     onerror="this.src='${defaultImage}'">
@@ -1047,16 +1229,20 @@
                                     </span>
                                 </div>
 
-                                ${isAI ? `
+                                ${isComicPdf ? `
+                                    <div class="absolute top-3 right-3 bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/20">
+                                        <i class="fa-solid fa-file-pdf text-amber-200"></i> Truyện Tranh PDF
+                                    </div>
+                                ` : (isAI ? `
                                     <div class="absolute top-3 right-3 ai-stamp text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
                                         <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i> Cùng sáng tác AI
                                     </div>
-                                ` : ''}
+                                ` : '')}
                             </div>
 
                             <!-- Info -->
                             <div class="p-4 sm:p-5 space-y-2">
-                                <h3 class="font-extrabold text-base text-slate-900 line-clamp-2 leading-snug hover:text-sky-700 transition-colors cursor-pointer" onclick="openReaderModal('${book.id}')">
+                                <h3 class="font-extrabold text-base text-slate-900 line-clamp-2 leading-snug hover:text-sky-700 transition-colors cursor-pointer" onclick="handleBookClick('${book.id}')">
                                     ${book.title}
                                 </h3>
                                 <div class="flex items-center gap-1.5 text-xs text-sky-800 font-bold">
@@ -1074,10 +1260,17 @@
                             <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                                 <i class="fa-regular fa-eye"></i> ${book.views || 0} lượt đọc
                             </span>
-                            <button onclick="openReaderModal('${book.id}')" 
-                                class="touch-action-btn bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 text-xs font-bold px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-sky-100">
-                                <i class="fa-solid fa-book-open text-xs"></i> Đọc Sách
-                            </button>
+                            ${isComicPdf ? `
+                                <button onclick="handleBookClick('${book.id}')" 
+                                    class="touch-action-btn bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 shadow-xs">
+                                    <i class="fa-solid fa-book-open-reader text-xs"></i> Đọc Truyện Tranh
+                                </button>
+                            ` : `
+                                <button onclick="handleBookClick('${book.id}')" 
+                                    class="touch-action-btn bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 text-xs font-bold px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-sky-100">
+                                    <i class="fa-solid fa-book-open text-xs"></i> Đọc Sách
+                                </button>
+                            `}
                         </div>
                     </div>
                 `;
@@ -1192,13 +1385,58 @@
             if (musicInterval) clearInterval(musicInterval);
         }
 
-        // 9. Upload Form & Modals
+        // 9. Upload Form & Modals & Upload Ảnh Google Drive
+        let selectedCoverFile = null;
+
+        function handleCoverFileSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('Vui lòng chọn đúng tệp hình ảnh (JPG, PNG, WebP...)', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            selectedCoverFile = file;
+            const previewImg = document.getElementById('cover-file-preview');
+            const previewWrap = document.getElementById('cover-file-preview-wrap');
+            const placeholder = document.getElementById('cover-file-placeholder');
+            const sizeText = document.getElementById('cover-file-size');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (previewImg) previewImg.src = e.target.result;
+                if (previewWrap) previewWrap.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+                
+                const kb = Math.round(file.size / 1024);
+                if (sizeText) {
+                    sizeText.textContent = `${kb > 1024 ? (kb / 1024).toFixed(1) + 'MB' : kb + 'KB'} (Tự nén khi gửi)`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedCoverFile() {
+            selectedCoverFile = null;
+            const fileInput = document.getElementById('form-cover-file');
+            if (fileInput) fileInput.value = '';
+            const previewImg = document.getElementById('cover-file-preview');
+            if (previewImg) previewImg.src = '';
+            const previewWrap = document.getElementById('cover-file-preview-wrap');
+            if (previewWrap) previewWrap.classList.add('hidden');
+            const placeholder = document.getElementById('cover-file-placeholder');
+            if (placeholder) placeholder.classList.remove('hidden');
+        }
+
         function openUploadModal() {
             document.getElementById('upload-modal').classList.remove('hidden');
         }
 
         function closeUploadModal() {
             document.getElementById('upload-modal').classList.add('hidden');
+            removeSelectedCoverFile();
         }
 
         function closeSuccessModal() {
@@ -1216,23 +1454,46 @@
             const category = document.getElementById('form-category').value;
             const summary = document.getElementById('form-summary').value.trim();
             const content = document.getElementById('form-content').value.trim();
-            const cover = document.getElementById('form-cover').value.trim();
+            const inputUrlCover = document.getElementById('form-cover').value.trim();
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi bài...';
 
             try {
+                let finalCover = inputUrlCover;
+
+                // ƯU TIÊN ẢNH UPLOAD NẾU HỌC SINH/NGƯỜI DÙNG CÓ CHỌN TỆP
+                if (selectedCoverFile) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-spin"></i> Đang tải ảnh lên Drive...';
+                    try {
+                        const uploadRes = await StorageService.uploadImageToDrive(selectedCoverFile);
+                        finalCover = uploadRes.url;
+                        showToast('Tải ảnh bìa lên Google Drive thành công!', 'success');
+                    } catch (uploadErr) {
+                        console.warn('Không tải được ảnh lên Drive:', uploadErr);
+                        // Nếu có link URL nhập tay thì fallback sang link URL đó
+                        if (inputUrlCover) {
+                            finalCover = inputUrlCover;
+                            showToast('Không tải được ảnh lên Drive, chuyển sang dùng URL đã nhập!', 'info');
+                        } else {
+                            throw new Error('Lỗi khi tải ảnh lên Google Drive: ' + uploadErr.message);
+                        }
+                    }
+                }
+
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi bài viết...';
+
                 await StorageService.createPost({
                     title,
                     author,
                     category,
                     summary,
                     content,
-                    cover
+                    cover: finalCover
                 });
 
                 closeUploadModal();
                 document.getElementById('upload-form').reset();
+                removeSelectedCoverFile();
                 document.getElementById('success-modal').classList.remove('hidden');
 
             } catch (err) {
@@ -1466,6 +1727,182 @@
                 submitBtn.innerHTML = originalHtml;
             }
         }
+    
+        // ==========================================
+        // QUẢN LÝ TRÌNH ĐỌC TRUYỆN TRANH PDF
+        // ==========================================
+        function handleBookClick(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+
+            if (book.pdfUrl || book.type === 'pdf' || book.category === 'Truyện Tranh PDF') {
+                openComicReaderModal(bookId);
+            } else {
+                openReaderModal(bookId);
+            }
+        }
+
+        function openComicReaderModal(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+
+            // Tăng lượt xem
+            StorageService.incrementViews(book.id);
+            book.views = (Number(book.views) || 0) + 1;
+            updateHeaderStats();
+            renderBooks();
+
+            document.getElementById('comic-reader-title').innerText = book.title;
+            document.getElementById('comic-reader-author').innerText = 'Họa sĩ / Tác giả: ' + (book.author || 'Sáng tác');
+            
+            const openTabLink = document.getElementById('comic-reader-open-tab');
+            if (openTabLink) openTabLink.href = book.pdfUrl || '#';
+
+            // Show skeleton loading
+            const skeleton = document.getElementById('comic-loading-skeleton');
+            if (skeleton) skeleton.classList.remove('hidden');
+
+            const formattedUrl = StorageService.formatPdfUrl(book.pdfUrl);
+            const iframe = document.getElementById('comic-pdf-iframe');
+            if (iframe) iframe.src = formattedUrl;
+
+            document.getElementById('comic-reader-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideComicLoading() {
+            const skeleton = document.getElementById('comic-loading-skeleton');
+            if (skeleton) skeleton.classList.add('hidden');
+        }
+
+        function closeComicReaderModal() {
+            document.getElementById('comic-reader-modal').classList.add('hidden');
+            const iframe = document.getElementById('comic-pdf-iframe');
+            if (iframe) iframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        function toggleComicFullscreen() {
+            const container = document.getElementById('comic-reader-container');
+            const icon = document.getElementById('comic-fullscreen-icon');
+            if (!container) return;
+
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                }
+                if (icon) icon.className = 'fa-solid fa-compress text-sm';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                if (icon) icon.className = 'fa-solid fa-expand text-sm';
+            }
+        }
+
+    
+        // ==========================================
+        // RENDER RIÊNG CHO MỤC TRUYỆN TRANH DẠNG PDF
+        // ==========================================
+        function getComicBooksList() {
+            return books.filter(b => Boolean(b.pdfUrl || b.type === 'pdf' || b.category === 'Truyện Tranh PDF'));
+        }
+
+        function filterComicBooks() {
+            const searchVal = (document.getElementById('comic-search-input')?.value || '').toLowerCase().trim();
+            const allComics = getComicBooksList();
+            const filtered = allComics.filter(b => {
+                return (b.title || '').toLowerCase().includes(searchVal) ||
+                       (b.author || '').toLowerCase().includes(searchVal) ||
+                       (b.summary || '').toLowerCase().includes(searchVal);
+            });
+            renderComicBooks(filtered);
+        }
+
+        function renderComicBooks(comicList = null) {
+            const comicGrid = document.getElementById('comic-books-grid');
+            const comicEmpty = document.getElementById('comic-empty-state');
+            const comicTabCount = document.getElementById('tab-comic-count');
+            const comicTotalBadge = document.getElementById('comic-total-badge');
+
+            if (!comicGrid) return;
+            comicGrid.innerHTML = '';
+
+            const allComics = getComicBooksList();
+            if (comicTabCount) comicTabCount.innerText = allComics.length;
+            if (comicTotalBadge) comicTotalBadge.innerText = allComics.length;
+
+            const list = comicList !== null ? comicList : allComics;
+
+            if (list.length === 0) {
+                if (comicEmpty) comicEmpty.classList.remove('hidden');
+                return;
+            } else {
+                if (comicEmpty) comicEmpty.classList.add('hidden');
+            }
+
+            list.forEach(comic => {
+                const defaultImage = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop';
+                const card = document.createElement('div');
+                card.className = 'book-card bg-white rounded-3xl border border-rose-200/80 overflow-hidden shadow-soft flex flex-col justify-between hover:border-rose-400 hover:shadow-card transition-all group';
+                card.innerHTML = `
+                    <div>
+                        <!-- Bìa truyện tranh PDF -->
+                        <div class="relative h-48 sm:h-52 overflow-hidden bg-slate-100 cursor-pointer" onclick="openComicReaderModal('${comic.id}')">
+                            <img src="${comic.cover || defaultImage}" alt="${comic.title}" 
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                onerror="this.src='${defaultImage}'">
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-3 left-3">
+                                <span class="bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                                    ${comic.category || 'Truyện Tranh PDF'}
+                                </span>
+                            </div>
+
+                            <div class="absolute top-3 right-3 bg-gradient-to-r from-rose-600 to-amber-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/20">
+                                <i class="fa-solid fa-file-pdf text-amber-200"></i> PDF Màu
+                            </div>
+
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                                <span class="text-white text-xs font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-book-open-reader text-amber-300"></i> Bấm để đọc tranh
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin -->
+                        <div class="p-4 sm:p-5 space-y-2">
+                            <h3 class="font-extrabold text-base text-slate-900 line-clamp-2 leading-snug hover:text-rose-600 transition-colors cursor-pointer" onclick="openComicReaderModal('${comic.id}')">
+                                ${comic.title}
+                            </h3>
+                            <div class="flex items-center gap-1.5 text-xs text-rose-700 font-bold">
+                                <i class="fa-solid fa-paintbrush text-slate-400 text-[11px]"></i>
+                                <span>${comic.author || 'Sáng tác'}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                ${comic.summary || 'Bộ truyện tranh màu hấp dẫn dành cho học sinh.'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Footer Card -->
+                    <div class="p-4 sm:p-5 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
+                        <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-eye text-slate-400"></i> ${comic.views || 0} lượt đọc
+                        </span>
+                        <button onclick="openComicReaderModal('${comic.id}')" 
+                            class="touch-action-btn bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-book-open-reader text-xs"></i> Đọc Truyện Tranh
+                        </button>
+                    </div>
+                `;
+                comicGrid.appendChild(card);
+            });
+        }
+
     </script>
 </body>
 </html>

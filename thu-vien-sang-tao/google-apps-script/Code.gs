@@ -5,16 +5,16 @@
  * =========================================================================
  * 
  * Hướng dẫn triển khai nhanh:
- * 1. Mở một Google Sheet mới trên Google Drive (đặt tên: "CSDL Tu Sach So 4B").
+ * 1. Mở file Google Sheet "CSDL Tu Sach So 4B" của bạn.
  * 2. Vào menu "Tiện ích mở rộng" (Extensions) > "Apps Script".
  * 3. Xóa hết mã cũ, dán toàn bộ nội dung file này vào file Code.gs.
- * 4. Trên thanh công cụ, chọn hàm "setupDatabase" và bấm nút "Chạy" (Run) để tự động tạo bảng & nạp 4 truyện mẫu.
- * 5. Bấm nút "Triển khai" (Deploy) > "Triển khai mới" (New deployment).
- *    - Loại triển khai: "Ứng dụng web" (Web app).
- *    - Thực thi dưới dạng (Execute as): "Tôi" (Me).
- *    - Ai có quyền truy cập (Who has access): "Bất kỳ ai" (Anyone).
- * 6. Bấm "Triển khai" và sao chép Web App URL (dạng https://script.google.com/macros/s/.../exec)
- *    để dán vào trang Quản trị (admin.html) hoặc file config.js!
+ * 4. Bấm nút "Triển khai" (Deploy) > "Quản lý bản triển khai" (Manage deployments).
+ *    - Bấm biểu tượng cây bút chì ✏️ > Phiên bản: chọn "Phiên bản mới" (New version).
+ *    - Bấm "Triển khai" (Deploy).
+ * 
+ * LƯU Ý BẢO VỆ DỮ LIỆU:
+ * - Mã nguồn này giữ nguyên 100% dữ liệu thực tế hiện có trên Google Sheet của bạn.
+ * - Đã loại bỏ hoàn toàn các đoạn chèn dữ liệu mẫu (dummy data), không bao giờ xóa dữ liệu của bạn!
  */
 
 // Tên các bảng tính
@@ -23,8 +23,8 @@ const SHEET_CATEGORIES = 'Categories';
 const SHEET_PHYSICAL_BOOKS = 'PhysicalBooks';
 const SHEET_WISHES = 'Wishes2011';
 
-// Cấu trúc cột của Sheet Posts
-const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt'];
+// Cấu trúc cột của Sheet Posts (Đã mở rộng hỗ trợ Truyện Tranh PDF: pdfUrl, type)
+const POST_COLUMNS = ['id', 'title', 'author', 'category', 'summary', 'content', 'cover', 'views', 'status', 'createdAt', 'pdfUrl', 'type'];
 
 // Cấu trúc cột của Sheet Categories
 const CAT_COLUMNS = ['id', 'name', 'icon'];
@@ -36,139 +36,47 @@ const PHYSICAL_COLUMNS = ['id', 'code', 'title', 'author', 'category', 'shelf', 
 const WISH_COLUMNS = ['id', 'sender', 'flower', 'message', 'date', 'createdAt'];
 
 /**
- * Hàm khởi tạo cơ sở dữ liệu và nạp dữ liệu mẫu ban đầu
- * Chạy hàm này lần đầu tiên khi cài đặt!
+ * Hàm kiểm tra cấu trúc cơ sở dữ liệu (BẢO VỆ DỮ LIỆU CỦA BẠN 100%)
+ * - Giữ nguyên toàn bộ bài viết, thể loại, sách giấy và lời chúc hiện có trên Sheet của bạn.
+ * - Chỉ tạo Sheet và tiêu đề cột nếu Sheet đó chưa tồn tại hoặc hoàn toàn trống.
+ * - ĐÃ XÓA TOÀN BỘ dữ liệu mẫu (dummy data), không bao giờ xóa hay ghi đè dữ liệu thật.
  */
 function setupDatabase() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. Tạo hoặc lấy Sheet Posts
-  let sheetPosts = ss.getSheetByName(SHEET_POSTS);
-  if (!sheetPosts) {
-    sheetPosts = ss.insertSheet(SHEET_POSTS);
+  // Helper đảm bảo sheet tồn tại và có dòng tiêu đề cột (header)
+  function ensureSheet(sheetName, columns, headerColor) {
+    let sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      sheet = ss.insertSheet(sheetName);
+    }
+    // Chỉ thêm dòng tiêu đề nếu sheet hoàn toàn trống
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(columns);
+      sheet.getRange(1, 1, 1, columns.length).setFontWeight('bold').setBackground(headerColor);
+    }
+    return sheet;
   }
-  sheetPosts.clear();
-  sheetPosts.appendRow(POST_COLUMNS);
-  sheetPosts.getRange(1, 1, 1, POST_COLUMNS.length).setFontWeight('bold').setBackground('#dbeafe');
 
-  // 2. Tạo hoặc lấy Sheet Categories
-  let sheetCats = ss.getSheetByName(SHEET_CATEGORIES);
-  if (!sheetCats) {
-    sheetCats = ss.insertSheet(SHEET_CATEGORIES);
-  }
-  sheetCats.clear();
-  sheetCats.appendRow(CAT_COLUMNS);
-  sheetCats.getRange(1, 1, 1, CAT_COLUMNS.length).setFontWeight('bold').setBackground('#fef3c7');
+  // 1. Đảm bảo có Sheet Posts (Tác phẩm)
+  ensureSheet(SHEET_POSTS, POST_COLUMNS, '#dbeafe');
 
-  // Xóa sheet mặc định "Sheet1" nếu có và đang có nhiều hơn 1 sheet
+  // 2. Đảm bảo có Sheet Categories (Thể loại)
+  ensureSheet(SHEET_CATEGORIES, CAT_COLUMNS, '#fef3c7');
+
+  // 3. Đảm bảo có Sheet PhysicalBooks (Sách truyện giấy)
+  ensureSheet(SHEET_PHYSICAL_BOOKS, PHYSICAL_COLUMNS, '#fed7aa');
+
+  // 4. Đảm bảo có Sheet Wishes2011 (Lời chúc 20/11)
+  ensureSheet(SHEET_WISHES, WISH_COLUMNS, '#fecdd3');
+
+  // Xóa sheet mặc định "Sheet1" nếu có và đang có nhiều sheet khác và Sheet1 hoàn toàn trống
   const defaultSheet = ss.getSheetByName('Sheet1') || ss.getSheetByName('Trang tính1');
-  if (defaultSheet && ss.getSheets().length > 2) {
+  if (defaultSheet && ss.getSheets().length > 4 && defaultSheet.getLastRow() === 0) {
     try { ss.deleteSheet(defaultSheet); } catch (e) {}
   }
 
-  // 3. Nạp danh mục thể loại mẫu
-  const initialCats = [
-    ['cat-1', 'Truyện AI Sáng Tác', '✨'],
-    ['cat-2', 'Truyện Song Ngữ', '🌐'],
-    ['cat-3', 'Thơ Ca', '🌾'],
-    ['cat-4', 'STEM & Khoa Học', '🚀']
-  ];
-  initialCats.forEach(cat => sheetCats.appendRow(cat));
-
-  // 4. Nạp 4 bài viết truyện mẫu ban đầu của Tủ Sách Số 4B
-  const initialPosts = [
-    [
-      'book-1',
-      'Hành Trình Khám Phá Vũ Trụ Cùng AI',
-      'Chu Nam Phong (Lớp 4B)',
-      'Truyện AI Sáng Tác',
-      'Một câu chuyện phiêu lưu kỳ thú qua các hành tinh do em Nam Phong viết kịch bản và AI minh họa.',
-      'Ngày xửa ngày xưa, ở một ngôi trường tiểu học xinh đẹp, có một cậu bé tên là Nam Phong rất thích quan sát bầu trời đêm. \n\nMột ngày nọ, Nam Phong chế tạo ra một chú robot nhỏ tên là Aki bằng công nghệ Trí tuệ Nhân tạo. Aki có thể nói chuyện và giải đáp mọi thắc mắc của Nam Phong về các vì sao.\n\nCùng nhau, Nam Phong và Aki đã thực hiện một chuyến du hành tưởng tượng xuyên qua Hệ Mặt Trời, ghé thăm Sao Hỏa đỏ rực và những vành đai rực rỡ của Sao Thổ. Qua chuyến đi, Nam Phong hiểu rằng khoa học và trí tuệ nhân tạo là người bạn đồng hành tuyệt vời giúp con người vươn tới những ước mơ cao xa.',
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop',
-      124,
-      'approved',
-      new Date('2024-11-15T08:00:00Z').toISOString()
-    ],
-    [
-      'book-2',
-      'The Little Bear & The Forest / Chú Gấu Nhỏ Và Rừng Xanh',
-      'Nguyễn Kiều Anh (Lớp 4B)',
-      'Truyện Song Ngữ',
-      'Truyện tranh song ngữ Anh - Việt dạy bài học về việc bảo vệ môi trường và yêu thương cây xanh.',
-      'Once upon a time, in a green forest, lived a little bear named Barnaby. Barnaby loved planting trees.\n(Ngày xửa ngày xưa, trong một khu rừng xanh tươi, có một chú gấu nhỏ tên là Barnaby. Barnaby rất thích trồng cây.)\n\nOne sunny morning, he found a withered flower near the stream. He carefully watered it every day.\n(Một sáng nắng đẹp, chú tìm thấy một bông hoa héo bên dòng suối. Chú cẩn thận tưới nước cho nó mỗi ngày.)\n\nLessons learned: Nature is our best friend. Protect the green planet!\n(Bài học rút ra: Thiên nhiên là người bạn tốt nhất của chúng ta. Hãy bảo vệ hành tinh xanh!)',
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop',
-      98,
-      'approved',
-      new Date('2024-11-16T09:30:00Z').toISOString()
-    ],
-    [
-      'book-3',
-      'Nắng Khai Trường & Thầy Cô Kính Yêu',
-      'Nguyễn Hải An (Lớp 4B)',
-      'Thơ Ca',
-      'Tập thơ ngắn xúc động chào mừng Ngày Nhà giáo Việt Nam 20/11 do học sinh sáng tác.',
-      'Nắng thu vàng rực khoảng sân trường\nTiếng giảng bài cô đọng yêu thương\nHàng cây xanh mát nghiêng đầu đón\nNhiệt huyết thầy gieo muôn vạn phương.\n\nChúng em ghi nhớ lời cô dạy\nChăm ngoan học tốt xứng cháu Bác Hồ\nMái trường Nam Đồng thân thương quá\nNâng bước tuổi thơ dệt ước mơ!',
-      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop',
-      215,
-      'approved',
-      new Date('2024-11-18T10:15:00Z').toISOString()
-    ],
-    [
-      'book-4',
-      'Bí Mật Của Nước & Sự Tuần Hoàn Kỳ Diệu',
-      'Chu Thị Minh Hằng (Lớp 4B)',
-      'STEM & Khoa Học',
-      'Sách khám phá khoa học vui kết hợp bài tập thực nghiệm đơn giản tại lớp học.',
-      'Bạn có biết giọt nước mưa rơi trên lá cây từ đâu đến không?\n\nNước sông hồ khi gặp ánh nắng mặt trời chiếu vào sẽ bốc hơi bay lên không trung. Khi lên cao gặp lạnh, hơi nước ngưng tụ lại thành những đám mây bồng bềnh.\n\nKhi các đám mây trở nên nặng trĩu, những giọt nước bé nhỏ rơi xuống tạo thành mưa. Đó chính là vòng tuần hoàn kỳ diệu của nước trong thiên nhiên mà chúng mình được học trong môn Khoa học!',
-      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop',
-      85,
-      'approved',
-      new Date('2024-11-19T14:20:00Z').toISOString()
-    ]
-  ];
-
-  initialPosts.forEach(post => sheetPosts.appendRow(post));
-
-  // 5. Tạo hoặc lấy Sheet PhysicalBooks (10 sách truyện giấy mẫu)
-  let sheetPhysical = ss.getSheetByName(SHEET_PHYSICAL_BOOKS);
-  if (!sheetPhysical) {
-    sheetPhysical = ss.insertSheet(SHEET_PHYSICAL_BOOKS);
-  }
-  sheetPhysical.clear();
-  sheetPhysical.appendRow(PHYSICAL_COLUMNS);
-  sheetPhysical.getRange(1, 1, 1, PHYSICAL_COLUMNS.length).setFontWeight('bold').setBackground('#fed7aa');
-
-  const initialPhysical = [
-    ['pb-1', 'SG-01', 'Dế Mèn Phiêu Lưu Ký', 'Tô Hoài', 'Văn học thiếu nhi', 'Kệ A1', 'borrowed', 'Trần Bảo Nam (4B)', '2024-11-18', '2024-11-25', 'Bìa cứng, giữ gìn tốt'],
-    ['pb-2', 'SG-02', 'Đất Rừng Phương Nam', 'Đoàn Giỏi', 'Văn học thiếu nhi', 'Kệ A1', 'available', '', '', '', 'Sách mới'],
-    ['pb-3', 'SG-03', 'Kính Vạn Hoa (Tập 1 - Nhà Ảo Thuật)', 'Nguyễn Nhật Ánh', 'Truyện dài thiếu nhi', 'Kệ A2', 'borrowed', 'Nguyễn Hoàng Long (4B)', '2024-11-20', '2024-11-27', 'Sách bìa mềm'],
-    ['pb-4', 'SG-04', 'Totto-chan Bên Cửa Sổ', 'Kuroyanagi Tetsuko', 'Văn học kinh điển', 'Kệ B1', 'available', '', '', '', 'Có tranh minh họa'],
-    ['pb-5', 'SG-05', 'Hoàng Tử Bé', 'Antoine de Saint-Exupéry', 'Truyện ngụ ngôn', 'Kệ B1', 'borrowed', 'Phạm Thảo Vy (4B)', '2024-11-19', '2024-11-26', 'Bản dịch mới có màu'],
-    ['pb-6', 'SG-06', 'Thần Đồng Đất Việt (Tập 15 - Trí Tuệ Trạng Tí)', 'Phan Thị', 'Truyện tranh lịch sử', 'Kệ C1', 'borrowed', 'Chu Nam Phong (4B)', '2024-11-21', '2024-11-28', 'Rất được các bạn yêu thích'],
-    ['pb-7', 'SG-07', 'Doraemon Tuyển Tập Truyện Dài (Tập 3)', 'Fujiko F. Fujio', 'Truyện tranh khoa học', 'Kệ C1', 'available', '', '', '', 'Có bọc nilon bảo quản'],
-    ['pb-8', 'SG-08', 'Bách Khoa Tri Thức - Kỳ Quan Thiên Nhiên Thế Giới', 'Nhiều tác giả', 'Khoa học & Khám phá', 'Kệ D2', 'available', '', '', '', 'Sách khổ lớn, đọc tại lớp'],
-    ['pb-9', 'SG-09', 'Những Tấm Lòng Cao Cả', 'Edmondo De Amicis', 'Giáo dục đạo đức', 'Kệ A3', 'borrowed', 'Vũ Quỳnh Mai (4B)', '2024-11-17', '2024-11-24', 'Bài học cảm động'],
-    ['pb-10', 'SG-10', '10 Vạn Câu Hỏi Vì Sao - Bí Ẩn Quanh Em', 'Nhiều tác giả', 'Khoa học vui', 'Kệ D1', 'available', '', '', '', 'Sách kiến thức đời sống']
-  ];
-  initialPhysical.forEach(p => sheetPhysical.appendRow(p));
-
-  // 6. Tạo hoặc lấy Sheet Wishes2011 (Lời chúc tri ân 20/11)
-  let sheetWishes = ss.getSheetByName(SHEET_WISHES);
-  if (!sheetWishes) {
-    sheetWishes = ss.insertSheet(SHEET_WISHES);
-  }
-  sheetWishes.clear();
-  sheetWishes.appendRow(WISH_COLUMNS);
-  sheetWishes.getRange(1, 1, 1, WISH_COLUMNS.length).setFontWeight('bold').setBackground('#fecdd3');
-
-  const initialWishes = [
-    ['wish-1', 'Nguyễn Minh Anh (Lớp 4B)', '🌹 Hoa Hồng Điểm 10', 'Nhân ngày 20/11, em kính chúc các Thầy Cô giáo luôn mạnh khỏe, tươi vui và luôn nở nụ cười thật tươi bên chúng em ạ!', '20/11/2024', new Date('2024-11-20T08:00:00Z').toISOString()],
-    ['wish-2', 'Lê Hoàng Nam (Lớp 4B)', '🌻 Hướng Dương Tri Ân', 'Em cảm ơn Thầy Cô đã dạy em bao bài học hay và những câu chuyện bổ ích. Em xin hứa sẽ chăm ngoan học giỏi!', '20/11/2024', new Date('2024-11-20T09:15:00Z').toISOString()],
-    ['wish-3', 'Trần Thảo My (Lớp 4B)', '💐 Bó Hoa Tươi Thắm', 'Kính chúc toàn thể các Thầy Cô giáo trường TH Nam Đồng luôn dồi dào sức khỏe, tràn đầy niềm vui và nhiệt huyết trên bục giảng!', '20/11/2024', new Date('2024-11-20T10:30:00Z').toISOString()]
-  ];
-  initialWishes.forEach(w => sheetWishes.appendRow(w));
-
-  Logger.log('🎉 Cấu hình cơ sở dữ liệu Tủ Sách Số 4B thành công!');
+  Logger.log('✅ Đã kiểm tra cấu trúc cơ sở dữ liệu. Toàn bộ dữ liệu của bạn được bảo toàn nguyên vẹn!');
 }
 
 /**
@@ -309,7 +217,9 @@ function doGet(e) {
         cover: String(row[6] || ''),
         views: Number(row[7]) || 0,
         status: String(row[8] || 'pending'),
-        createdAt: row[9] ? (row[9] instanceof Date ? row[9].toISOString() : String(row[9])) : new Date().toISOString()
+        createdAt: row[9] ? (row[9] instanceof Date ? row[9].toISOString() : String(row[9])) : new Date().toISOString(),
+        pdfUrl: String(row[10] || ''),
+        type: String(row[11] || (row[10] ? 'pdf' : 'story'))
       };
 
       if (!statusFilter || statusFilter === 'all' || post.status === statusFilter) {
@@ -356,7 +266,8 @@ function doPost(e) {
       }
 
       const newId = post.id || ('book-' + Date.now());
-      const newStatus = 'pending'; // Luôn là pending khi công khai gửi bài
+      // Nhận status từ client (ví dụ admin chọn 'approved' khi đăng truyện tranh), mặc định là 'pending' nếu không truyền
+      const newStatus = post.status || 'pending';
       const createdAt = post.createdAt || new Date().toISOString();
 
       sheetPosts.appendRow([
@@ -369,13 +280,20 @@ function doPost(e) {
         post.cover || '',
         Number(post.views) || 0,
         newStatus,
-        createdAt
+        createdAt,
+        post.pdfUrl || '',
+        post.type || (post.pdfUrl ? 'pdf' : 'story')
       ]);
+
+      const returnMsg = (newStatus === 'approved')
+        ? 'Xuất bản tác phẩm thành công lên thư viện!'
+        : 'Đăng bài thành công, đang chờ ban quản trị duyệt!';
 
       return jsonResponse({
         success: true,
-        message: 'Đăng bài thành công, đang chờ ban quản trị duyệt!',
-        id: newId
+        message: returnMsg,
+        id: newId,
+        status: newStatus
       });
     }
 
@@ -419,6 +337,8 @@ function doPost(e) {
           if (postData.content !== undefined) sheetPosts.getRange(i + 1, 6).setValue(postData.content);
           if (postData.cover !== undefined) sheetPosts.getRange(i + 1, 7).setValue(postData.cover);
           if (postData.status !== undefined) sheetPosts.getRange(i + 1, 9).setValue(postData.status);
+          if (postData.pdfUrl !== undefined) sheetPosts.getRange(i + 1, 11).setValue(postData.pdfUrl);
+          if (postData.type !== undefined) sheetPosts.getRange(i + 1, 12).setValue(postData.type);
           return jsonResponse({ success: true, message: 'Đã cập nhật nội dung bài viết thành công.' });
         }
       }
@@ -629,10 +549,116 @@ function doPost(e) {
       return jsonResponse({ success: false, message: 'Không tìm thấy lời chúc để xóa.' });
     }
 
-    // 12. Đồng bộ toàn bộ dữ liệu ban đầu từ Client lên Sheet
+    // 12. Kiểm tra an toàn cấu trúc Sheet (Bảo vệ dữ liệu, không ghi đè)
     if (action === 'seedInitialData') {
       setupDatabase();
-      return jsonResponse({ success: true, message: 'Đã đồng bộ toàn bộ truyện mẫu, thể loại, 10 sách truyện giấy và lời chúc 20/11 lên Google Sheets!' });
+      return jsonResponse({ success: true, message: 'Đã kiểm tra cấu trúc bảng thành công! Toàn bộ dữ liệu thực tế trên Sheet của bạn được giữ nguyên vẹn 100%.' });
+    }
+
+    // 13. Tải ảnh lên Google Drive miễn phí (uploadImage)
+    if (action === 'uploadImage') {
+      const base64Data = payload.base64Data;
+      if (!base64Data) {
+        return jsonResponse({ success: false, message: 'Thiếu dữ liệu ảnh (base64Data).' });
+      }
+
+      let cleanBase64 = base64Data;
+      if (base64Data.indexOf(';base64,') > -1) {
+        cleanBase64 = base64Data.split(';base64,')[1];
+      }
+
+      const decoded = Utilities.base64Decode(cleanBase64);
+      const mimeType = payload.mimeType || 'image/jpeg';
+      const fileName = payload.fileName || ('anh_bia_' + Date.now() + '.jpg');
+
+      const blob = Utilities.newBlob(decoded, mimeType, fileName);
+
+      // Tìm hoặc tạo thư mục lưu trữ ảnh riêng trên Google Drive
+      const FOLDER_NAME = 'TuSach4B_AnhBia';
+      let folder;
+      const folders = DriveApp.getFoldersByName(FOLDER_NAME);
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder(FOLDER_NAME);
+      }
+      
+      // Thiết lập quyền xem công khai cho thư mục và file
+      try {
+        folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {}
+
+      const file = folder.createFile(blob);
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {}
+
+      const fileId = file.getId();
+      // Link Google User Content (lh3) là link CDN ảnh trực tiếp không bị cookie / CORS chặn
+      const directUrl = 'https://lh3.googleusercontent.com/d/' + fileId;
+      const downloadUrl = 'https://drive.google.com/uc?export=view&id=' + fileId;
+
+      return jsonResponse({
+        success: true,
+        message: 'Tải ảnh lên Google Drive thành công!',
+        fileId: fileId,
+        url: directUrl,
+        downloadUrl: downloadUrl,
+        folderName: FOLDER_NAME
+      });
+    }
+
+    // 14. Tải file Truyện Tranh PDF lên Google Drive miễn phí (uploadPdf)
+    if (action === 'uploadPdf') {
+      const base64Data = payload.base64Data;
+      if (!base64Data) {
+        return jsonResponse({ success: false, message: 'Thiếu dữ liệu tệp PDF (base64Data).' });
+      }
+
+      let cleanBase64 = base64Data;
+      if (base64Data.indexOf(';base64,') > -1) {
+        cleanBase64 = base64Data.split(';base64,')[1];
+      }
+
+      const decoded = Utilities.base64Decode(cleanBase64);
+      const fileName = payload.fileName || ('truyen_tranh_' + Date.now() + '.pdf');
+
+      const blob = Utilities.newBlob(decoded, 'application/pdf', fileName);
+
+      // Thư mục lưu trữ riêng cho truyện tranh PDF trên Google Drive
+      const FOLDER_NAME = 'TuSach4B_TruyenTranhPDF';
+      let folder;
+      const folders = DriveApp.getFoldersByName(FOLDER_NAME);
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder(FOLDER_NAME);
+      }
+
+      try {
+        folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {}
+
+      const file = folder.createFile(blob);
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {}
+
+      const fileId = file.getId();
+      // Link nhúng xem trực tiếp toàn màn hình (Preview) của Google Drive dành cho iframe
+      const previewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
+      const webViewLink = file.getUrl();
+
+      return jsonResponse({
+        success: true,
+        message: 'Tải truyện tranh PDF lên Google Drive thành công!',
+        fileId: fileId,
+        url: previewUrl,
+        previewUrl: previewUrl,
+        webViewLink: webViewLink,
+        fileName: fileName,
+        folderName: FOLDER_NAME
+      });
     }
 
     return jsonResponse({ success: false, message: 'Hành động không hợp lệ: ' + action });
