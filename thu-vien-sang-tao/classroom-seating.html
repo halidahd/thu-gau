@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ Đồ Lớp Học 2.5D - Thư Viện Sáng Tạo Lớp 4B</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800;900&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        heading: ['"Baloo 2"', 'cursive', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Baloo 2', cursive, sans-serif;
+        }
+
+        /* ISOMETRIC 2.5D STAGE */
+        .iso-viewport {
+            perspective: 1400px;
+            perspective-origin: 50% 28%;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(circle at 50% 20%, #1e293b 0%, #090d16 85%);
+        }
+
+        .classroom-container {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            transform-origin: center center;
+        }
+
+        /* 3D Classroom Floor */
+        .classroom-floor {
+            background-color: #f1ebd9;
+            background-image: 
+                linear-gradient(rgba(180, 160, 120, 0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(180, 160, 120, 0.25) 1px, transparent 1px);
+            background-size: 60px 60px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 10px #78350f,
+                0 20px 0 10px #451a03;
+            border-radius: 12px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* Back Wall (3D standing upright) */
+        .classroom-wall-back {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+            transform-origin: top left;
+            transform: rotateX(-90deg);
+            border-bottom: 6px solid #475569;
+            box-shadow: inset 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        /* Left Wall (3D standing upright) */
+        .classroom-wall-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 180px;
+            height: 100%;
+            background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+            transform-origin: top left;
+            transform: rotateY(90deg) rotateZ(0deg);
+            border-right: 6px solid #475569;
+            box-shadow: inset -20px 0 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 15px;
+        }
+
+        /* Classroom Blackboard */
+        .blackboard {
+            width: 65%;
+            height: 130px;
+            background: #064e3b;
+            border: 6px solid #92400e;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6), inset 0 0 25px rgba(0,0,0,0.4);
+            position: relative;
+            padding: 10px;
+            color: #ecfdf5;
+        }
+
+        /* Teacher's Podium & Desk */
+        .teacher-podium {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d97706;
+            border-radius: 12px;
+            padding: 8px 24px;
+            box-shadow: 0 10px 0 #92400e, 0 15px 25px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+
+        /* DESK ITEM (2.5D Isometric Desk) */
+        .desk-unit {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.25s ease;
+        }
+
+        .desk-surface {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #d97706;
+            border-radius: 10px;
+            box-shadow: 0 6px 0 #b45309, 0 10px 14px rgba(0,0,0,0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .desk-unit:hover .desk-surface {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 #b45309, 0 14px 20px rgba(0,0,0,0.4);
+            border-color: #f59e0b;
+        }
+
+        /* Drag over target highlight */
+        .desk-unit.drag-target-active .desk-surface {
+            background: #dcfce7 !important;
+            border: 2px dashed #16a34a !important;
+            box-shadow: 0 8px 0 #15803d, 0 0 25px rgba(34, 197, 94, 0.8) !important;
+            transform: translateY(-8px) scale(1.05);
+        }
+
+        /* Billboard elements (Always face camera upright) */
+        .billboard {
+            transform: rotateZ(38deg) rotateX(-56deg);
+            transform-origin: center bottom;
+        }
+
+        /* STUDENT 2.5D AVATAR (HUMANOID CHIBI) */
+        .student-figure {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%) rotateZ(38deg) rotateX(-56deg);
+            transform-origin: center bottom;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+            z-index: 20;
+        }
+
+        .student-figure.active-drag {
+            opacity: 0.5;
+        }
+
+        .student-tag {
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 2px;
+            pointer-events: auto;
+        }
+
+        .student-avatar-body {
+            width: 36px;
+            height: 38px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+            animation: breathe 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
+        }
+
+        /* UFO SPOTLIGHT EFFECT */
+        #ufo-rig {
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            pointer-events: none;
+            z-index: 999;
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            opacity: 0;
+        }
+
+        #ufo-rig.active {
+            opacity: 1;
+        }
+
+        .ufo-saucer {
+            width: 130px;
+            height: 55px;
+            background: radial-gradient(ellipse at 50% 30%, #38bdf8 0%, #0369a1 70%, #0c4a6e 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 30px #38bdf8,
+                inset 0 4px 10px rgba(255,255,255,0.7),
+                0 10px 20px rgba(0,0,0,0.6);
+            position: relative;
+            animation: ufoFloat 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes ufoFloat {
+            0% { transform: translateY(0) rotate(1deg); }
+            100% { transform: translateY(-8px) rotate(-1deg); }
+        }
+
+        .ufo-cockpit {
+            width: 50px;
+            height: 30px;
+            background: radial-gradient(circle at 40% 30%, #a7f3d0 0%, #059669 90%);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -15px;
+            left: 40px;
+            box-shadow: 0 0 15px #34d399, inset 0 2px 5px #fff;
+        }
+
+        .ufo-lights {
+            position: absolute;
+            bottom: 8px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ufo-light-dot {
+            width: 7px;
+            height: 7px;
+            background: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #fde047;
+            animation: blink 0.6s infinite alternate;
+        }
+        .ufo-light-dot:nth-child(2) { animation-delay: 0.2s; }
+        .ufo-light-dot:nth-child(3) { animation-delay: 0.4s; }
+        .ufo-light-dot:nth-child(4) { animation-delay: 0.1s; }
+
+        @keyframes blink {
+            from { opacity: 0.4; }
+            to { opacity: 1; transform: scale(1.3); }
+        }
+
+        .ufo-tractor-beam {
+            width: 140px;
+            height: 480px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.75) 0%, rgba(34, 197, 94, 0.4) 60%, rgba(34, 197, 94, 0) 100%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+            filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.8));
+            animation: beamPulse 0.4s infinite alternate;
+            transform-origin: top center;
+        }
+
+        @keyframes beamPulse {
+            from { opacity: 0.7; transform: scaleX(0.95); }
+            to { opacity: 1; transform: scaleX(1.05); }
+        }
+
+        /* Floating student when abducted */
+        .abducted-levitate {
+            animation: levitateStudent 1.5s ease-in-out infinite alternate !important;
+            filter: drop-shadow(0 0 15px #22c55e) !important;
+        }
+
+        @keyframes levitateStudent {
+            0% { transform: translateX(-50%) rotateZ(38deg) rotateX(-56deg) translateY(0); }
+            100% { transform: translateX(-50%) rotateZ(38deg) rotateX(-56deg) translateY(-40px) scale(1.15); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 9999px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- TOP HEADER & CONTROLS -->
+    <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-40 shadow-xl">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-xl shadow-md text-white font-black">
+                🏫
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg sm:text-xl font-black text-white font-heading tracking-wide">Sơ Đồ Chỗ Ngồi Lớp 4B</h1>
+                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded-full">2.5D Isometric</span>
+                </div>
+                <p class="text-xs text-slate-400 font-medium">Kéo thả xếp chỗ học sinh • Lưu trữ DB • Tương thích Đĩa bay UFO trả bài</p>
+            </div>
+        </div>
+
+        <!-- Controls: Rows, Cols & Actions -->
+        <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Row & Col Steppers -->
+            <div class="flex items-center bg-slate-800/80 border border-slate-700 rounded-xl p-1 text-xs font-bold gap-3 px-3 shadow-inner">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-slate-400">Hàng:</span>
+                    <button onclick="adjustGrid(-1, 0)" class="w-6 h-6 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center active:scale-95 transition-all">-</button>
+                    <span id="label-rows" class="w-5 text-center font-black text-sky-400">4</span>
+                    <button onclick="adjustGrid(1, 0)" class="w-6 h-6 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center active:scale-95 transition-all">+</button>
+                </div>
+                <div class="w-[1px] h-4 bg-slate-700"></div>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-slate-400">Cột:</span>
+                    <button onclick="adjustGrid(0, -1)" class="w-6 h-6 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center active:scale-95 transition-all">-</button>
+                    <span id="label-cols" class="w-5 text-center font-black text-sky-400">5</span>
+                    <button onclick="adjustGrid(0, 1)" class="w-6 h-6 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center active:scale-95 transition-all">+</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <button onclick="autoRandomAssign()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all" title="Xếp ngẫu nhiên học sinh vào các bàn">
+                <i class="fa-solid fa-shuffle text-amber-400"></i> Xếp ngẫu nhiên
+            </button>
+
+            <button onclick="clearAllSeats()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all" title="Đưa tất cả học sinh về danh sách chờ">
+                <i class="fa-solid fa-arrow-rotate-left text-rose-400"></i> Xóa chỗ
+            </button>
+
+            <button onclick="saveLayout()" class="bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Sơ Đồ
+            </button>
+
+            <!-- UFO Button Special -->
+            <button onclick="triggerUfoRandomCall()" class="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:brightness-110 text-slate-950 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-lg shadow-teal-500/25 active:scale-95 transition-all animate-pulse">
+                <span>🛸</span> UFO Gọi Bài!
+            </button>
+        </div>
+    </header>
+
+    <!-- WORKSPACE AREA: SIDEBAR ROSTER + 2.5D VIEWPORT -->
+    <div class="flex-1 flex flex-col lg:flex-row relative overflow-hidden">
+
+        <!-- LEFT SIDEBAR: STUDENT ROSTER (DANH SÁCH HỌC SINH) -->
+        <aside class="w-full lg:w-80 bg-slate-900/95 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col shrink-0 z-30 max-h-[35vh] lg:max-h-none">
+            <!-- Sidebar Header & Quick Add -->
+            <div class="p-3.5 border-b border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-sky-400"></i> Danh Sách Học Sinh 
+                        <span id="roster-count-badge" class="bg-sky-500/20 text-sky-300 text-[10px] font-black px-2 py-0.5 rounded-full">0/0</span>
+                    </span>
+                    <button onclick="toggleAddStudentForm()" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> Thêm em
+                    </button>
+                </div>
+
+                <!-- Add Student Quick Form (Toggleable) -->
+                <div id="add-student-box" class="hidden bg-slate-800/90 p-2.5 rounded-xl border border-slate-700 space-y-2">
+                    <input type="text" id="new-student-name" placeholder="Tên học sinh mới..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-500">
+                    <div class="flex items-center justify-between gap-2">
+                        <select id="new-student-gender" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-300 outline-none">
+                            <option value="male">👦 Học sinh Nam</option>
+                            <option value="female">👧 Học sinh Nữ</option>
+                        </select>
+                        <button onclick="addNewStudent()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-bold">Thêm</button>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="roster-search" oninput="renderRoster()" placeholder="Tìm học sinh theo tên..." 
+                        class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
+                </div>
+            </div>
+
+            <!-- Student List Cards (Draggable Items) -->
+            <div id="roster-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Footer Stats -->
+            <div class="p-3 bg-slate-950/60 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Chưa xếp chỗ: <strong id="unassigned-count" class="text-amber-400">0</strong></span>
+                <span>Đã vào bàn: <strong id="seated-count" class="text-emerald-400">0</strong></span>
+            </div>
+        </aside>
+
+        <!-- CENTER VIEWPORT: 2.5D ISOMETRIC CLASSROOM -->
+        <main class="flex-1 flex flex-col relative iso-viewport min-h-[550px] lg:min-h-0">
+
+            <!-- Viewport Overlay Controls (Zoom, Tilt, Center) -->
+            <div class="absolute top-4 right-4 z-30 flex flex-col gap-2">
+                <button onclick="zoomStage(0.1)" class="w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center text-sm shadow-md transition-all active:scale-90" title="Phóng to">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button onclick="zoomStage(-0.1)" class="w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center text-sm shadow-md transition-all active:scale-90" title="Thu nhỏ">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <button onclick="resetCamera()" class="w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center text-sm shadow-md transition-all active:scale-90" title="Góc nhìn chuẩn 2.5D">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </button>
+                <button onclick="togglePerspective()" class="w-8 h-8 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 flex items-center justify-center text-sm shadow-md transition-all active:scale-90" title="Đổi góc 2.5D / Nhìn từ trên xuống">
+                    <i class="fa-solid fa-cube text-sky-400"></i>
+                </button>
+            </div>
+
+            <!-- Notice bar -->
+            <div class="absolute bottom-4 left-4 z-30 bg-slate-900/80 backdrop-blur-sm border border-slate-700/80 px-3.5 py-1.5 rounded-full text-xs text-slate-300 flex items-center gap-2 shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>💡 Kéo học sinh từ cột trái thả vào bàn học • Kéo giữa các bàn để đổi chỗ</span>
+            </div>
+
+            <!-- UFO RIGGING CONTAINER (OVERLAY ANIMATION) -->
+            <div id="ufo-rig">
+                <div class="ufo-saucer">
+                    <div class="ufo-cockpit"></div>
+                    <div class="ufo-lights">
+                        <div class="ufo-light-dot"></div>
+                        <div class="ufo-light-dot"></div>
+                        <div class="ufo-light-dot"></div>
+                        <div class="ufo-light-dot"></div>
+                    </div>
+                </div>
+                <div class="ufo-tractor-beam"></div>
+            </div>
+
+            <!-- THE 3D CLASSROOM WORLD -->
+            <div id="stage-wrapper" class="flex-1 flex items-center justify-center p-8 overflow-hidden">
+                <div id="classroom-world" class="classroom-container">
+                    
+                    <!-- Floor Base -->
+                    <div id="classroom-floor" class="classroom-floor p-12 pt-28">
+
+                        <!-- BACK WALL (BỨC TƯỜNG PHÍA TRƯỚC LỚP) -->
+                        <div class="classroom-wall-back">
+                            <!-- Bảng lớp học -->
+                            <div class="blackboard flex flex-col justify-between">
+                                <div class="flex items-center justify-between border-b border-emerald-600/60 pb-1">
+                                    <span class="font-heading font-black text-xs text-amber-300 tracking-wider">LỚP 4B • TIỂU HỌC NAM ĐỒNG</span>
+                                    <span class="text-[10px] text-emerald-200">✨ Mỗi Ngày Đến Trường Là Một Ngày Vui</span>
+                                </div>
+                                <div class="text-center my-auto">
+                                    <h4 class="font-heading font-bold text-sm text-white">Nhiệm Vụ Sáng Tạo & Đọc Sách</h4>
+                                    <p class="text-[11px] text-emerald-200 italic">"Học tập thật tốt, chia sẻ truyện hay cùng bạn bè"</p>
+                                </div>
+                                <div class="flex items-center justify-between text-[9px] text-emerald-300/80">
+                                    <span>Giáo viên: Cô Mai Hương</span>
+                                    <span id="board-date-label">Thứ 6, 20/11</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LEFT WALL (TƯỜNG CỬA SỔ BÊN TRÁI) -->
+                        <div class="classroom-wall-left">
+                            <div class="w-24 h-28 bg-sky-200/20 border-4 border-amber-800 rounded-lg shadow-inner flex flex-col justify-around p-1">
+                                <div class="w-full h-1 bg-amber-800"></div>
+                                <div class="w-full h-1 bg-amber-800"></div>
+                            </div>
+                            <div class="w-24 h-16 bg-emerald-800/40 border-2 border-emerald-500/50 rounded text-center p-1">
+                                <span class="text-[9px] text-emerald-300 font-bold block">Góc Tri Ân 💐</span>
+                            </div>
+                        </div>
+
+                        <!-- TEACHER PODIUM (BỤC GIẢNG & BÀN GIÁO VIÊN) -->
+                        <div class="teacher-podium">
+                            <span class="text-xl">👩‍🏫</span>
+                            <div>
+                                <span class="font-heading font-black text-xs text-slate-900 block leading-tight">BÀN GIÁO VIÊN</span>
+                                <span class="text-[9px] text-amber-950 font-bold">Bục Giảng Lớp 4B</span>
+                            </div>
+                            <span class="text-xs">💻 📚</span>
+                        </div>
+
+                        <!-- STUDENT DESKS GRID (LƯỚI BÀN HỌC SINH 2.5D) -->
+                        <div id="desks-grid" class="grid gap-6 justify-center items-center relative mt-6">
+                            <!-- Injected dynamically via JS based on rows & columns -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL CHÚC MỪNG UFO GỌI BÀI -->
+    <div id="ufo-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-850 w-full max-w-sm rounded-3xl p-6 border-2 border-emerald-400 shadow-2xl text-center space-y-4 animate-bounce-short">
+            <div class="w-20 h-20 rounded-2xl bg-emerald-500/20 text-5xl flex items-center justify-center mx-auto border border-emerald-400/40 shadow-lg shadow-emerald-500/30">
+                🛸
+            </div>
+            <div>
+                <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Đĩa Bay Đã Chọn Học Sinh!</span>
+                <h3 id="ufo-student-name" class="text-2xl font-black text-white font-heading mt-1">Nguyễn Văn A</h3>
+                <p id="ufo-student-seat" class="text-xs text-slate-400 font-bold">Bàn: Dãy 2 - Hàng 3</p>
+            </div>
+            <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700 text-xs text-slate-200">
+                🎯 <strong>Nhiệm vụ:</strong> Lên bảng trả bài / kể lại một câu chuyện trong thư viện sáng tạo!
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="triggerUfoRandomCall()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-xl text-xs font-extrabold border border-slate-700">
+                    🎲 Chọn bạn khác
+                </button>
+                <button onclick="closeUfoModal()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 py-2.5 rounded-xl text-xs font-black shadow-lg">
+                    👍 Chuẩn bị bài
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 border border-slate-700 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold transition-all transform translate-y-20 opacity-0 pointer-events-none">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Đã lưu sơ đồ thành công!</span>
+    </div>
+
+    <!-- LOGIC APPLICATION -->
+    <script>
+        // ====================================================
+        // STATE MANAGEMENT & DATA SERVICE
+        // ====================================================
+        const STORAGE_KEY = 'thuvien_classroom_layout';
+
+        // Default Classroom State
+        let classroomState = {
+            classroom_id: 'class_4b_creative',
+            rows: 4,
+            cols: 5,
+            updated_at: new Date().toISOString(),
+            seats: [], // Array of { seat_id, row, col, student: null | { id, name, gender, avatar } }
+            unassigned: [] // Array of { id, name, gender, avatar }
+        };
+
+        // Camera View State
+        let camera = {
+            zoom: 0.9,
+            rotateX: 56,
+            rotateZ: -38,
+            isTopView: false
+        };
+
+        // Sample initial student roster for Class 4B
+        const DEFAULT_STUDENTS = [
+            { id: 'std_01', name: 'Nguyễn Minh Anh', gender: 'female', avatar: '👧' },
+            { id: 'std_02', name: 'Lê Hoàng Nam', gender: 'male', avatar: '👦' },
+            { id: 'std_03', name: 'Trần Thảo My', gender: 'female', avatar: '👧' },
+            { id: 'std_04', name: 'Trần Bảo Nam', gender: 'male', avatar: '👦' },
+            { id: 'std_05', name: 'Phạm Gia Huy', gender: 'male', avatar: '👦' },
+            { id: 'std_06', name: 'Đỗ Thùy Linh', gender: 'female', avatar: '👧' },
+            { id: 'std_07', name: 'Vũ Đình Trọng', gender: 'male', avatar: '👦' },
+            { id: 'std_08', name: 'Hoàng Mai Phương', gender: 'female', avatar: '👧' },
+            { id: 'std_09', name: 'Bùi Quang Khải', gender: 'male', avatar: '👦' },
+            { id: 'std_10', name: 'Nguyễn Hà My', gender: 'female', avatar: '👧' },
+            { id: 'std_11', name: 'Đặng Quốc Hưng', gender: 'male', avatar: '👦' },
+            { id: 'std_12', name: 'Lương Ánh Tuyết', gender: 'female', avatar: '👧' },
+            { id: 'std_13', name: 'Ngô Gia Bảo', gender: 'male', avatar: '👦' },
+            { id: 'std_14', name: 'Phan Khánh An', gender: 'female', avatar: '👧' },
+            { id: 'std_15', name: 'Trịnh Minh Khôi', gender: 'male', avatar: '👦' },
+            { id: 'std_16', name: 'Đinh Hải Yến', gender: 'female', avatar: '👧' },
+            { id: 'std_17', name: 'Hoàng Đức Anh', gender: 'male', avatar: '👦' },
+            { id: 'std_18', name: 'Vũ Ngọc Diệp', gender: 'female', avatar: '👧' },
+            { id: 'std_19', name: 'Lê Tuấn Kiệt', gender: 'male', avatar: '👦' },
+            { id: 'std_20', name: 'Chu Bảo Ngọc', gender: 'female', avatar: '👧' }
+        ];
+
+        // Currently dragged student item
+        let draggedPayload = null; // { from: 'roster' | 'seat', studentId, sourceSeatId }
+
+        // ====================================================
+        // INITIALIZATION
+        // ====================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLayout();
+            applyCameraTransform();
+            updateDateLabel();
+        });
+
+        function updateDateLabel() {
+            const now = new Date();
+            const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+            const dayName = days[now.getDay()];
+            const formatted = `${dayName}, ${now.getDate()}/${now.getMonth() + 1}`;
+            const elem = document.getElementById('board-date-label');
+            if (elem) elem.innerText = formatted;
+        }
+
+        // ====================================================
+        // PERSISTENCE (DB / LOCALSTORAGE)
+        // ====================================================
+        function loadLayout() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    classroomState = Object.assign({}, classroomState, parsed);
+                } else {
+                    // Initialize clean grid with default students
+                    initDefaultGrid();
+                }
+            } catch (e) {
+                console.error("Error loading layout from storage:", e);
+                initDefaultGrid();
+            }
+
+            // Sync Stepper Labels
+            document.getElementById('label-rows').innerText = classroomState.rows;
+            document.getElementById('label-cols').innerText = classroomState.cols;
+
+            renderGrid();
+            renderRoster();
+        }
+
+        function initDefaultGrid() {
+            classroomState.rows = 4;
+            classroomState.cols = 5;
+            classroomState.seats = [];
+            classroomState.unassigned = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+
+            // Seed first 12 students into front seats automatically
+            let studentIdx = 0;
+            for (let r = 0; r < classroomState.rows; r++) {
+                for (let c = 0; c < classroomState.cols; c++) {
+                    const seat_id = `seat_r${r}_c${c}`;
+                    let assigned = null;
+                    if (studentIdx < 12 && classroomState.unassigned.length > 0) {
+                        assigned = classroomState.unassigned.shift();
+                        studentIdx++;
+                    }
+                    classroomState.seats.push({
+                        seat_id,
+                        row: r,
+                        col: c,
+                        student: assigned
+                    });
+                }
+            }
+        }
+
+        function saveLayout(silent = false) {
+            classroomState.updated_at = new Date().toISOString();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(classroomState));
+
+            if (!silent) {
+                showToast("✅ Đã lưu cấu hình sơ đồ chỗ ngồi vào hệ thống!", "success");
+            }
+
+            // Dispatch custom event for external tabs/pages
+            window.dispatchEvent(new CustomEvent('classroom-layout-saved', { detail: classroomState }));
+        }
+
+        // ====================================================
+        // GRID SETUP & ADJUSTMENT
+        // ====================================================
+        function adjustGrid(deltaRows, deltaCols) {
+            const newRows = Math.min(8, Math.max(2, classroomState.rows + deltaRows));
+            const newCols = Math.min(8, Math.max(2, classroomState.cols + deltaCols));
+
+            if (newRows === classroomState.rows && newCols === classroomState.cols) return;
+
+            classroomState.rows = newRows;
+            classroomState.cols = newCols;
+
+            document.getElementById('label-rows').innerText = newRows;
+            document.getElementById('label-cols').innerText = newCols;
+
+            rebuildSeatsMatrix();
+            renderGrid();
+            renderRoster();
+            saveLayout(true);
+        }
+
+        function rebuildSeatsMatrix() {
+            const oldSeats = classroomState.seats;
+            const newSeats = [];
+
+            for (let r = 0; r < classroomState.rows; r++) {
+                for (let c = 0; c < classroomState.cols; c++) {
+                    const seatId = `seat_r${r}_c${c}`;
+                    const existing = oldSeats.find(s => s.row === r && s.col === c);
+                    newSeats.push({
+                        seat_id: seatId,
+                        row: r,
+                        col: c,
+                        student: existing ? existing.student : null
+                    });
+                }
+            }
+
+            // Return any out-of-bound seated students back to unassigned roster
+            oldSeats.forEach(s => {
+                if ((s.row >= classroomState.rows || s.col >= classroomState.cols) && s.student) {
+                    classroomState.unassigned.push(s.student);
+                }
+            });
+
+            classroomState.seats = newSeats;
+        }
+
+        function clearAllSeats() {
+            if (!confirm("Bạn có chắc chắn muốn xóa tất cả học sinh khỏi bàn và đưa về danh sách chờ?")) return;
+
+            classroomState.seats.forEach(s => {
+                if (s.student) {
+                    classroomState.unassigned.push(s.student);
+                    s.student = null;
+                }
+            });
+
+            renderGrid();
+            renderRoster();
+            saveLayout();
+        }
+
+        function autoRandomAssign() {
+            // Gather all students
+            let allStudents = [...classroomState.unassigned];
+            classroomState.seats.forEach(s => {
+                if (s.student) allStudents.push(s.student);
+                s.student = null;
+            });
+
+            // Shuffle array
+            for (let i = allStudents.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allStudents[i], allStudents[j]] = [allStudents[j], allStudents[i]];
+            }
+
+            // Fill seats sequentially
+            classroomState.seats.forEach(seat => {
+                if (allStudents.length > 0) {
+                    seat.student = allStudents.shift();
+                }
+            });
+
+            classroomState.unassigned = allStudents;
+
+            renderGrid();
+            renderRoster();
+            saveLayout();
+            showToast("🎲 Đã xếp ngẫu nhiên vị trí học sinh trong lớp!", "info");
+        }
+
+        // ====================================================
+        // RENDERING: 2.5D GRID & ROSTER
+        // ====================================================
+        function renderGrid() {
+            const gridContainer = document.getElementById('desks-grid');
+            gridContainer.innerHTML = '';
+
+            gridContainer.style.gridTemplateColumns = `repeat(${classroomState.cols}, minmax(105px, 115px))`;
+
+            classroomState.seats.forEach(seat => {
+                const desk = document.createElement('div');
+                desk.className = `desk-unit relative`;
+                desk.id = seat.seat_id;
+                desk.dataset.seatId = seat.seat_id;
+                desk.dataset.row = seat.row;
+                desk.dataset.col = seat.col;
+
+                const student = seat.student;
+                const isOccupied = Boolean(student);
+
+                desk.innerHTML = `
+                    <div class="desk-surface w-full h-24 p-2 relative" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDropOnDesk(event, '${seat.seat_id}')">
+                        
+                        <!-- Desk Coordinate Label (Billboard) -->
+                        <span class="billboard text-[9px] font-extrabold text-amber-900/70 absolute top-1.5 left-2">
+                            ${seat.row + 1}-${seat.col + 1}
+                        </span>
+
+                        ${isOccupied ? `
+                            <!-- Remove Student Button -->
+                            <button onclick="unassignStudent('${seat.seat_id}')" 
+                                    class="billboard absolute top-1 right-1.5 w-4 h-4 rounded-full bg-rose-500/80 hover:bg-rose-600 text-white text-[9px] flex items-center justify-center shadow-xs transition-transform active:scale-90" 
+                                    title="Gỡ học sinh khỏi bàn">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+
+                            <!-- 2.5D Humanoid Student Figure -->
+                            <div class="student-figure" 
+                                 id="student-fig-${student.id}"
+                                 draggable="true" 
+                                 ondragstart="handleDragStartFromSeat(event, '${student.id}', '${seat.seat_id}')">
+                                
+                                <span class="student-tag truncate max-w-[95px]">${student.name}</span>
+                                
+                                <div class="student-avatar-body">
+                                    <div class="text-2xl">${student.avatar || (student.gender === 'female' ? '👧' : '👦')}</div>
+                                    <!-- Cute uniform collar -->
+                                    <div class="w-4 h-2 bg-red-500 rounded-b-md shadow-xs -mt-1"></div>
+                                </div>
+                            </div>
+                        ` : `
+                            <!-- Empty Seat Target Placeholder -->
+                            <div class="billboard flex flex-col items-center justify-center opacity-40 hover:opacity-80 transition-opacity">
+                                <span class="text-xs text-amber-900/50 font-black">+ Trống</span>
+                            </div>
+                        `}
+                    </div>
+                `;
+
+                gridContainer.appendChild(desk);
+            });
+
+            updateRosterStats();
+        }
+
+        function renderRoster() {
+            const list = document.getElementById('roster-list');
+            const searchVal = (document.getElementById('roster-search').value || '').toLowerCase().trim();
+
+            list.innerHTML = '';
+
+            const filtered = classroomState.unassigned.filter(s => s.name.toLowerCase().includes(searchVal));
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 text-xs text-slate-500">
+                        <i class="fa-solid fa-user-check text-2xl text-slate-600 mb-1.5 block"></i>
+                        Không có học sinh nào đang chờ xếp chỗ!
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(student => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-800/80 hover:bg-slate-750 border border-slate-700/80 hover:border-sky-500/50 p-2.5 rounded-xl flex items-center justify-between gap-2.5 cursor-grab active:cursor-grabbing transition-all hover:scale-[1.02] shadow-sm';
+                card.draggable = true;
+                card.dataset.studentId = student.id;
+
+                card.ondragstart = (e) => handleDragStartFromRoster(e, student.id);
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-lg bg-slate-700 text-lg flex items-center justify-center shrink-0">
+                            ${student.avatar || (student.gender === 'female' ? '👧' : '👦')}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-xs font-bold text-white block truncate">${student.name}</span>
+                            <span class="text-[10px] text-slate-400 font-medium">${student.gender === 'female' ? 'Nữ' : 'Nam'} • Lớp 4B</span>
+                        </div>
+                    </div>
+                    <span class="text-slate-500 text-xs shrink-0"><i class="fa-solid fa-grip-vertical"></i></span>
+                `;
+
+                list.appendChild(card);
+            });
+
+            updateRosterStats();
+        }
+
+        function updateRosterStats() {
+            const total = classroomState.seats.filter(s => s.student).length + classroomState.unassigned.length;
+            const seated = classroomState.seats.filter(s => s.student).length;
+            const unassigned = classroomState.unassigned.length;
+
+            document.getElementById('roster-count-badge').innerText = `${seated}/${total}`;
+            document.getElementById('seated-count').innerText = seated;
+            document.getElementById('unassigned-count').innerText = unassigned;
+        }
+
+        // ====================================================
+        // DRAG AND DROP HANDLERS
+        // ====================================================
+        function handleDragStartFromRoster(e, studentId) {
+            draggedPayload = {
+                from: 'roster',
+                studentId: studentId,
+                sourceSeatId: null
+            };
+            e.dataTransfer.setData('text/plain', JSON.stringify(draggedPayload));
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragStartFromSeat(e, studentId, seatId) {
+            draggedPayload = {
+                from: 'seat',
+                studentId: studentId,
+                sourceSeatId: seatId
+            };
+            e.dataTransfer.setData('text/plain', JSON.stringify(draggedPayload));
+            e.dataTransfer.effectAllowed = 'move';
+
+            // Visual feedback on dragged element
+            const elem = document.getElementById(`student-fig-${studentId}`);
+            if (elem) elem.classList.add('active-drag');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const desk = e.currentTarget.closest('.desk-unit');
+            if (desk) desk.classList.add('drag-target-active');
+        }
+
+        function handleDragLeave(e) {
+            const desk = e.currentTarget.closest('.desk-unit');
+            if (desk) desk.classList.remove('drag-target-active');
+        }
+
+        function handleDropOnDesk(e, targetSeatId) {
+            e.preventDefault();
+            const desk = e.currentTarget.closest('.desk-unit');
+            if (desk) desk.classList.remove('drag-target-active');
+
+            if (!draggedPayload) {
+                try {
+                    const raw = e.dataTransfer.getData('text/plain');
+                    if (raw) draggedPayload = JSON.parse(raw);
+                } catch (err) {}
+            }
+            if (!draggedPayload) return;
+
+            const targetSeat = classroomState.seats.find(s => s.seat_id === targetSeatId);
+            if (!targetSeat) return;
+
+            // Scenario 1: Dragged from Roster
+            if (draggedPayload.from === 'roster') {
+                const studentIdx = classroomState.unassigned.findIndex(s => s.id === draggedPayload.studentId);
+                if (studentIdx === -1) return;
+
+                const studentObj = classroomState.unassigned.splice(studentIdx, 1)[0];
+
+                // If target seat already has a student, push them back to roster
+                if (targetSeat.student) {
+                    classroomState.unassigned.push(targetSeat.student);
+                }
+
+                targetSeat.student = studentObj;
+            }
+            // Scenario 2: Dragged from another Seat
+            else if (draggedPayload.from === 'seat') {
+                const sourceSeat = classroomState.seats.find(s => s.seat_id === draggedPayload.sourceSeatId);
+                if (!sourceSeat) return;
+
+                if (sourceSeat.seat_id === targetSeat.seat_id) return; // Dropped on self
+
+                const studentToMove = sourceSeat.student;
+                const studentAtTarget = targetSeat.student;
+
+                // Swap or Move
+                targetSeat.student = studentToMove;
+                sourceSeat.student = studentAtTarget; // null or swapped student
+            }
+
+            draggedPayload = null;
+            renderGrid();
+            renderRoster();
+            saveLayout(true);
+            playDeskSound();
+        }
+
+        function unassignStudent(seatId) {
+            const seat = classroomState.seats.find(s => s.seat_id === seatId);
+            if (!seat || !seat.student) return;
+
+            classroomState.unassigned.push(seat.student);
+            seat.student = null;
+
+            renderGrid();
+            renderRoster();
+            saveLayout(true);
+            playDeskSound();
+        }
+
+        function toggleAddStudentForm() {
+            const box = document.getElementById('add-student-box');
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                document.getElementById('new-student-name').focus();
+            }
+        }
+
+        function addNewStudent() {
+            const nameInput = document.getElementById('new-student-name');
+            const genderInput = document.getElementById('new-student-gender');
+            const name = (nameInput.value || '').trim();
+
+            if (!name) {
+                alert("Vui lòng nhập họ và tên học sinh!");
+                return;
+            }
+
+            const gender = genderInput.value;
+            const newStudent = {
+                id: 'std_' + Date.now(),
+                name: name,
+                gender: gender,
+                avatar: gender === 'female' ? '👧' : '👦'
+            };
+
+            classroomState.unassigned.unshift(newStudent);
+            nameInput.value = '';
+            toggleAddStudentForm();
+
+            renderRoster();
+            saveLayout(true);
+            showToast(`Đã thêm học sinh "${name}" vào danh sách!`, "success");
+        }
+
+        // ====================================================
+        // CAMERA CONTROLS (2.5D ISOMETRIC VIEWPORT)
+        // ====================================================
+        function applyCameraTransform() {
+            const world = document.getElementById('classroom-world');
+            if (!world) return;
+
+            if (camera.isTopView) {
+                world.style.transform = `scale(${camera.zoom}) rotateX(0deg) rotateZ(0deg)`;
+            } else {
+                world.style.transform = `scale(${camera.zoom}) rotateX(${camera.rotateX}deg) rotateZ(${camera.rotateZ}deg)`;
+            }
+        }
+
+        function zoomStage(delta) {
+            camera.zoom = Math.min(1.4, Math.max(0.6, camera.zoom + delta));
+            applyCameraTransform();
+        }
+
+        function resetCamera() {
+            camera.zoom = 0.9;
+            camera.rotateX = 56;
+            camera.rotateZ = -38;
+            camera.isTopView = false;
+            applyCameraTransform();
+        }
+
+        function togglePerspective() {
+            camera.isTopView = !camera.isTopView;
+            applyCameraTransform();
+            showToast(camera.isTopView ? "Chuyển sang góc nhìn thẳng 2D" : "Chuyển sang phối cảnh 2.5D Isometric", "info");
+        }
+
+        // ====================================================
+        // EXTENSIBILITY HOOK & UFO ABDUCTION ANIMATION 🛸
+        // ====================================================
+        window.ClassroomManager = {
+            // Get current layout state
+            getLayout() {
+                return JSON.parse(JSON.stringify(classroomState));
+            },
+            // Pick a random seated student
+            pickRandomStudent() {
+                const seatedSeats = classroomState.seats.filter(s => s.student);
+                if (seatedSeats.length === 0) return null;
+                const chosenSeat = seatedSeats[Math.floor(Math.random() * seatedSeats.length)];
+                const element = document.getElementById(chosenSeat.seat_id);
+                return {
+                    seat: chosenSeat,
+                    student: chosenSeat.student,
+                    element: element,
+                    rect: element ? element.getBoundingClientRect() : null
+                };
+            },
+            // Trigger UFO beam animation onto student
+            triggerUfoAbduction(studentId, callback) {
+                triggerUfoCall(studentId, callback);
+            }
+        };
+
+        function triggerUfoRandomCall() {
+            const randomPick = window.ClassroomManager.pickRandomStudent();
+            if (!randomPick) {
+                alert("Hiện chưa có học sinh nào ngồi trong lớp để đĩa bay lựa chọn! Hãy xếp ít nhất 1 bạn vào bàn học.");
+                return;
+            }
+            triggerUfoCall(randomPick.student.id);
+        }
+
+        function triggerUfoCall(targetStudentId, callback) {
+            const seat = classroomState.seats.find(s => s.student && s.student.id === targetStudentId);
+            if (!seat) return;
+
+            const deskElem = document.getElementById(seat.seat_id);
+            if (!deskElem) return;
+
+            const ufoRig = document.getElementById('ufo-rig');
+            const studentFig = deskElem.querySelector('.student-figure');
+
+            // Play Sci-Fi synthesizer audio
+            playUfoSynthSound();
+
+            // Calculate exact position relative to viewport
+            const stageWrapper = document.getElementById('stage-wrapper');
+            const stageRect = stageWrapper.getBoundingClientRect();
+            const deskRect = deskElem.getBoundingClientRect();
+
+            const targetX = (deskRect.left + deskRect.width / 2) - stageRect.left;
+            const targetY = (deskRect.top + deskRect.height / 2) - stageRect.top - 80;
+
+            // Position and show UFO Rig
+            ufoRig.style.left = `${targetX}px`;
+            ufoRig.style.top = `${Math.max(20, targetY - 260)}px`;
+            ufoRig.classList.add('active');
+
+            if (studentFig) {
+                studentFig.classList.add('abducted-levitate');
+            }
+
+            // After beam sequence, show celebration modal
+            setTimeout(() => {
+                document.getElementById('ufo-student-name').innerText = seat.student.name;
+                document.getElementById('ufo-student-seat').innerText = `Bàn: Dãy ${seat.col + 1} - Hàng ${seat.row + 1}`;
+                document.getElementById('ufo-modal').classList.remove('hidden');
+
+                if (typeof callback === 'function') {
+                    callback(seat.student, seat);
+                }
+
+                // Dispatch global event
+                window.dispatchEvent(new CustomEvent('student-abducted', {
+                    detail: { student: seat.student, seat: seat }
+                }));
+            }, 1800);
+        }
+
+        function closeUfoModal() {
+            document.getElementById('ufo-modal').classList.add('hidden');
+            const ufoRig = document.getElementById('ufo-rig');
+            ufoRig.classList.remove('active');
+
+            // Reset student levitate animation
+            document.querySelectorAll('.abducted-levitate').forEach(el => {
+                el.classList.remove('abducted-levitate');
+            });
+        }
+
+        // ====================================================
+        // SYNTHESIZER SOUND EFFECTS (PURE WEB AUDIO API)
+        // ====================================================
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playDeskSound() {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.09);
+            } catch (e) {}
+        }
+
+        function playUfoSynthSound() {
+            try {
+                const ctx = getAudioContext();
+                // UFO Beam Vibrato effect
+                const osc = ctx.createOscillator();
+                const mod = ctx.createOscillator();
+                const modGain = ctx.createGain();
+                const mainGain = ctx.createGain();
+
+                osc.type = 'sine';
+                mod.type = 'sine';
+                mod.frequency.setValueAtTime(14, ctx.currentTime); // 14Hz vibrato
+                modGain.gain.setValueAtTime(80, ctx.currentTime);
+
+                mod.connect(osc.frequency);
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 1.2);
+
+                mainGain.gain.setValueAtTime(0, ctx.currentTime);
+                mainGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.3);
+                mainGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.8);
+
+                osc.connect(mainGain);
+                mainGain.connect(ctx.destination);
+
+                mod.start();
+                osc.start();
+                mod.stop(ctx.currentTime + 1.9);
+                osc.stop(ctx.currentTime + 1.9);
+            } catch (e) {}
+        }
+
+        // ====================================================
+        // TOAST NOTIFICATION
+        // ====================================================
+        let toastTimeout = null;
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const text = document.getElementById('toast-msg');
+
+            icon.innerText = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+            text.innerText = msg;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
