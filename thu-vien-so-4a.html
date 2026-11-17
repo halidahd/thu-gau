@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư viện số Lớp 4A - Trường Tiểu học Nam Đồng</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FFFDF7;
+            color: #1F2937;
+        }
+        .book-cover {
+            position: relative;
+            box-shadow: inset 6px 0 12px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .book-card:hover .book-cover {
+            transform: translateY(-4px);
+            box-shadow: inset 6px 0 12px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+        }
+        .heart-pop {
+            animation: heartPop 0.35s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FEF3C7;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #F59E0B;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Toast thông báo -->
+    <div id="toast" class="fixed top-5 right-5 z-50 hidden transform transition-all duration-300">
+        <div id="toast-bg" class="bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-sm">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-xl"></i>
+            <span id="toast-message">Thông báo</span>
+        </div>
+    </div>
+
+    <!-- 1. HEADER -->
+    <header class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-md relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-yellow-300 opacity-20 rounded-full"></div>
+        <div class="absolute bottom-0 left-10 -mb-8 w-28 h-28 bg-orange-300 opacity-20 rounded-full"></div>
+
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:py-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-center md:text-left">
+                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold tracking-wide uppercase mb-2">
+                    <i class="fa-solid fa-school text-yellow-300"></i>
+                    <span>Trường Tiểu học Nam Đồng</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black tracking-tight flex items-center justify-center md:justify-start gap-3">
+                    <span class="bg-yellow-400 text-emerald-950 w-11 h-11 rounded-2xl flex items-center justify-center shadow-md transform -rotate-3">
+                        <i class="fa-solid fa-book-open"></i>
+                    </span>
+                    Thư viện số Lớp 4A
+                </h1>
+                <p class="mt-2 text-emerald-100 text-sm sm:text-base font-semibold flex items-center justify-center md:justify-start gap-2">
+                    <i class="fa-solid fa-heart text-rose-300"></i>
+                    <span>Tủ sách điện tử Kết nối tri thức Lớp 4 & Tác phẩm học sinh Lớp 4A</span>
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="openCreateModal()" class="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-extrabold px-5 py-3 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center gap-2 text-sm sm:text-base border-2 border-yellow-200 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                    <span>Thêm sách / PDF mới</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
+
+        <!-- 2. BỘ LỌC CHUYÊN MỤC & TÌM KIẾM -->
+        <section class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-amber-100 space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-2" id="filter-buttons">
+                    <button onclick="setFilter('all')" data-filter="all" class="filter-btn active px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-emerald-600 text-white shadow-sm">
+                        <i class="fa-solid fa-layer-group mr-1"></i> Tất cả (<span id="count-all">0</span>)
+                    </button>
+                    <button onclick="setFilter('sgk')" data-filter="sgk" class="filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                        📘 SGK Lớp 4 KNTT (<span id="count-sgk">0</span>)
+                    </button>
+                    <button onclick="setFilter('tham-khao')" data-filter="tham-khao" class="filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-teal-50 hover:text-teal-700">
+                        📗 Sách tham khảo (<span id="count-tham-khao">0</span>)
+                    </button>
+                    <button onclick="setFilter('sang-tac')" data-filter="sang-tac" class="filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700">
+                        ✏️ Truyện sáng tác (<span id="count-sang-tac">0</span>)
+                    </button>
+                    <button onclick="setFilter('suu-tam')" data-filter="suu-tam" class="filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-purple-50 hover:text-purple-700">
+                        📖 Truyện sưu tầm (<span id="count-suu-tam">0</span>)
+                    </button>
+                    <button onclick="setFilter('song-ngu')" data-filter="song-ngu" class="filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-amber-50 hover:text-amber-700">
+                        🌍 Truyện song ngữ (<span id="count-song-ngu">0</span>)
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 w-full lg:w-auto">
+                    <div class="relative flex-grow lg:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="search-input" oninput="renderBooks()" placeholder="Tìm kiếm sách, tác giả..." class="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none text-xs sm:text-sm font-semibold transition-colors">
+                    </div>
+                    <button onclick="resetToDefaults()" title="Khôi phục lại toàn bộ dữ liệu gốc chuẩn lớp 4" class="p-2.5 bg-gray-100 hover:bg-amber-50 text-gray-600 hover:text-amber-700 rounded-xl transition-colors cursor-pointer text-xs font-bold shrink-0 flex items-center gap-1 border border-gray-200">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span class="hidden sm:inline">Khôi phục gốc</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. DANH SÁCH SÁCH & TRUYỆN -->
+        <section>
+            <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Sẽ render bằng JS -->
+            </div>
+
+            <div id="empty-state" class="hidden text-center py-16 bg-white rounded-3xl border-2 border-dashed border-amber-200">
+                <div class="text-5xl mb-3">📚</div>
+                <h3 class="text-xl font-extrabold text-gray-700">Chưa có tác phẩm nào trong mục này!</h3>
+                <p class="text-gray-500 mt-1 text-sm">Bạn có thể bấm "Thêm sách / PDF mới" hoặc bấm nút "Khôi phục gốc" ở trên nhé.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-emerald-900 text-emerald-100 py-6 mt-12 text-center text-sm">
+        <div class="max-w-6xl mx-auto px-4 space-y-1">
+            <p class="font-extrabold text-base">Thư viện số Chi đội Lớp 4A – Trường Tiểu học Nam Đồng</p>
+            <p class="text-emerald-300 text-xs">Chuẩn bộ sách giáo khoa Lớp 4 Kết nối tri thức với cuộc sống</p>
+        </div>
+    </footer>
+
+    <!-- 4. MODAL THÊM SÁCH & NẠP FILE PDF -->
+    <div id="create-modal" class="fixed inset-0 z-40 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-4 flex items-center justify-between text-white">
+                <h2 class="text-xl font-black flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Thêm tác phẩm mới vào thư viện
+                </h2>
+                <button onclick="closeCreateModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="create-book-form" onsubmit="handleCreateBook(event)" class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-extrabold text-gray-700 mb-1">Tên sách / Truyện <span class="text-rose-500">*</span></label>
+                        <input type="text" id="book-title" required placeholder="VD: Toán 4 Tập 1..." class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:outline-none font-semibold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-extrabold text-gray-700 mb-1">Người giới thiệu / Tác giả (Lớp 4A) <span class="text-rose-500">*</span></label>
+                        <input type="text" id="book-author" required placeholder="VD: Đỗ Quỳnh Anh - Lớp 4A" class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:outline-none font-semibold text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-gray-700 mb-1">Chuyên mục <span class="text-rose-500">*</span></label>
+                    <select id="book-category" onchange="toggleEnglishField()" class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:outline-none font-semibold bg-white text-sm">
+                        <option value="sgk">📘 Sách giáo khoa Lớp 4 (KNTT)</option>
+                        <option value="tham-khao">📗 Sách tham khảo</option>
+                        <option value="sang-tac">✏️ Truyện sáng tác</option>
+                        <option value="suu-tam">📖 Truyện sưu tầm</option>
+                        <option value="song-ngu">🌍 Truyện song ngữ Việt - Anh</option>
+                    </select>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-2xl border-2 border-dashed border-amber-300 space-y-3">
+                    <p class="font-extrabold text-xs text-amber-900 flex items-center gap-1.5 uppercase tracking-wide">
+                        <i class="fa-solid fa-file-pdf text-rose-500 text-base"></i>
+                        Đính kèm file PDF bản thật (Chọn 1 trong 2):
+                    </p>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">Cách 1: Chọn file PDF từ máy tính của bạn</label>
+                        <input type="file" id="book-pdf-file" accept="application/pdf" class="w-full text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-white hover:file:bg-amber-600 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">Cách 2: Hoặc dán link đọc sách online / PDF Google Drive</label>
+                        <input type="url" id="book-pdf-url" placeholder="VD: https://giaokhoaonline.com/... hoặc link drive" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 focus:outline-none text-xs font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-gray-700 mb-1">Đường dẫn hình ảnh bìa sách</label>
+                    <input type="url" id="book-image" placeholder="https://..." class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:outline-none font-semibold text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-extrabold text-gray-700 mb-1">Tóm tắt / Lời giới thiệu (Tiếng Việt) <span class="text-rose-500">*</span></label>
+                    <textarea id="book-content-vi" rows="3" required placeholder="Nội dung trích đoạn hoặc lời giới thiệu..." class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-amber-500 focus:outline-none text-sm"></textarea>
+                </div>
+
+                <div id="english-field-container" class="hidden bg-sky-50 p-3.5 rounded-2xl border border-sky-200">
+                    <label class="block text-xs font-bold text-sky-800 mb-1">
+                        <i class="fa-solid fa-earth-americas mr-1"></i> Nội dung tiếng Anh (Dành cho truyện song ngữ)
+                    </label>
+                    <textarea id="book-content-en" rows="3" placeholder="English version content..." class="w-full px-3 py-2 rounded-xl border border-sky-200 text-xs bg-white"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeCreateModal()" class="px-5 py-2 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer text-sm">Hủy</button>
+                    <button type="submit" class="px-6 py-2 rounded-xl font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-colors cursor-pointer flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-check"></i> Lưu vào thư viện
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. MODAL ĐỌC SÁCH & TRÌNH XEM TRỰC TIẾP -->
+    <div id="read-modal" class="fixed inset-0 z-40 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#FFFDF7] rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border-4 border-amber-200">
+            <div class="bg-amber-100/90 px-6 py-3.5 flex items-start justify-between gap-4 border-b border-amber-200">
+                <div>
+                    <div id="read-badge" class="inline-block mb-1"></div>
+                    <h2 id="read-title" class="text-xl sm:text-2xl font-black text-gray-800 leading-snug">Tên tác phẩm</h2>
+                    <p id="read-author" class="text-xs sm:text-sm font-bold text-emerald-700 mt-0.5">Tác giả</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- Nút xóa trong modal đọc -->
+                    <button id="modal-delete-btn" onclick="confirmDeleteCurrentBook()" title="Xóa tác phẩm này" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 hover:bg-rose-200 flex items-center justify-center transition-colors cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                    <button onclick="closeReadModal()" class="w-8 h-8 rounded-full bg-white text-gray-600 hover:text-rose-500 shadow-sm flex items-center justify-center transition-colors cursor-pointer">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="lang-switcher" class="hidden bg-white px-6 py-2 border-b border-amber-100 flex items-center justify-between">
+                <span class="text-xs font-black uppercase text-amber-700">Chế độ đọc:</span>
+                <div class="flex gap-1.5 bg-amber-50 p-1 rounded-xl">
+                    <button onclick="setReadMode('both')" id="btn-mode-both" class="px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-white shadow-sm cursor-pointer">Song ngữ (Việt - Anh)</button>
+                    <button onclick="setReadMode('vi')" id="btn-mode-vi" class="px-3 py-1 rounded-lg text-xs font-bold text-gray-600 hover:bg-amber-100 cursor-pointer">Tiếng Việt</button>
+                    <button onclick="setReadMode('en')" id="btn-mode-en" class="px-3 py-1 rounded-lg text-xs font-bold text-gray-600 hover:bg-amber-100 cursor-pointer">English</button>
+                </div>
+            </div>
+
+            <div id="read-body" class="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-grow space-y-4">
+                <!-- Nội dung JS nhúng -->
+            </div>
+
+            <div class="bg-white px-6 py-3 border-t border-amber-100 flex items-center justify-between">
+                <span class="text-xs sm:text-sm font-bold text-gray-500">Góc đọc sách thân thiện Lớp 4A ❤️</span>
+                <button id="read-like-btn" onclick="toggleLikeCurrentBook()" class="px-4 py-2 rounded-2xl font-extrabold flex items-center gap-2 transition-all cursor-pointer bg-rose-50 text-rose-600 hover:bg-rose-100 border-2 border-rose-200 text-xs sm:text-sm">
+                    <i class="fa-solid fa-heart text-base"></i>
+                    <span>Thả tim (<span id="read-like-count">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // TRỌN BỘ SGK CHUẨN LỚP 4 KẾT NỐI TRI THỨC, SÁCH THAM KHẢO & TRUYỆN THẬT HỌC SINH 4A
+        const DEFAULT_BOOKS = [
+            // ================= 1. TRỌN BỘ SÁCH GIÁO KHOA CHUẨN LỚP 4 (KNTT) =================
+            {
+                id: 'sgk-tv1',
+                title: 'Tiếng Việt 4 - Tập 1 (Kết nối tri thức)',
+                author: 'Nguyễn Tùng Chi - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/tieng-viet-lop-4-tap-1-ket-noi-tri-thuc/',
+                likes: 54,
+                contentVi: 'Sách giáo khoa Tiếng Việt lớp 4 Tập 1 gồm 4 chủ điểm bổ ích: Mỗi người một vẻ, Trải nghiệm và khám phá, Niềm vui sáng tạo, Chắp cánh ước mơ. Sách giúp học sinh phát triển năng lực đọc hiểu, viết bài văn miêu tả và mở rộng vốn từ.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-tv2',
+                title: 'Tiếng Việt 4 - Tập 2 (Kết nối tri thức)',
+                author: 'Đoàn Nguyệt Ánh - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/tieng-viet-lop-4-tap-2-ket-noi-tri-thuc/',
+                likes: 48,
+                contentVi: 'Sách giáo khoa Tiếng Việt lớp 4 Tập 2 tiếp tục bồi dưỡng tình yêu quê hương đất nước qua các chủ điểm: Sống để yêu thương, Uống nước nhớ nguồn, Quê hương trong tôi, Bầu trời tuổi thơ.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-toan1',
+                title: 'Toán 4 - Tập 1 (Kết nối tri thức)',
+                author: 'Lê Minh Đức - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/toan-lop-4-tap-1-ket-noi-tri-thuc/',
+                likes: 46,
+                contentVi: 'Sách giáo khoa Toán lớp 4 Tập 1: Ôn tập và bổ sung, góc và đơn vị đo góc, số có sáu chữ số, phép cộng, trừ, nhân, chia nhiều chữ số và đường thẳng song song, vuông góc.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-toan2',
+                title: 'Toán 4 - Tập 2 (Kết nối tri thức)',
+                author: 'Đỗ Quốc Bảo - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/toan-lop-4-tap-2-ket-noi-tri-thuc/',
+                likes: 42,
+                contentVi: 'Sách giáo khoa Toán lớp 4 Tập 2 gồm kiến thức quan trọng về Phân số (rút gọn, quy đồng, 4 phép tính phân số), hình bình hành, hình thoi và bài toán tìm hai số khi biết tổng và hiệu/tỉ số.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-ta1',
+                title: 'Tiếng Anh 4 - Global Success (Tập 1)',
+                author: 'Đỗ Quỳnh Anh - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/lop-4-kntt/tieng-anh-4-tap-1-ket-noi-tri-thuc.html',
+                likes: 58,
+                contentVi: 'Sách Tiếng Anh lớp 4 Global Success Tập 1 với các chủ đề gần gũi: My friends, Time and daily routines, My week, My birthday party... kèm theo các bài hát và bài nghe trực quan.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-ta2',
+                title: 'Tiếng Anh 4 - Global Success (Tập 2)',
+                author: 'Nguyễn Quỳnh Chi - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/lop-4-kntt/tieng-anh-4-tap-2-ket-noi-tri-thuc.html',
+                likes: 51,
+                contentVi: 'Sách Tiếng Anh lớp 4 Global Success Tập 2 rèn luyện cho học sinh 4 kĩ năng Nghe, Nói, Đọc, Viết qua các bài học: My home, In the classroom, Animal world, At the campsite.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-kh4',
+                title: 'Khoa học 4 (Kết nối tri thức)',
+                author: 'Đinh Minh Khang - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/khoa-hoc-lop-4-ket-noi-tri-thuc/',
+                likes: 47,
+                contentVi: 'Khám phá thế giới vật chất và sự sống Lớp 4: Nước, Không khí, Năng lượng ánh sáng, Âm thanh, Thực vật và Động vật, Dinh dưỡng đối với cơ thể cùng các thí nghiệm thực hành an toàn.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-lsdl4',
+                title: 'Lịch sử và Địa lí 4 (Kết nối tri thức)',
+                author: 'Hoàng Tiến Lộc - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/lich-su-va-dia-li-lop-4-ket-noi-tri-thuc/',
+                likes: 44,
+                contentVi: 'Hành trình tìm hiểu các vùng miền của Tổ quốc trong chương trình Lớp 4: Vùng Trung du và miền núi Bắc Bộ, Đồng bằng Bắc Bộ, Duyên hải miền Trung, Tây Nguyên, Nam Bộ.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-dd4',
+                title: 'Đạo đức 4 (Kết nối tri thức)',
+                author: 'Đinh Thị Hồng Minh - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/dao-duc-lop-4-ket-noi-tri-thuc/',
+                likes: 39,
+                contentVi: 'Chương trình Đạo đức Lớp 4 dạy học sinh biết tôn trọng sự khác biệt của người khác, biết cảm thông chia sẻ, yêu lao động, quý trọng đồng tiền và chấp hành an toàn giao thông.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-th4',
+                title: 'Tin học 4 (Kết nối tri thức)',
+                author: 'Lê Sơn Lâm - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/tin-hoc-lop-4-ket-noi-tri-thuc/',
+                likes: 41,
+                contentVi: 'Tin học 4 hướng dẫn học sinh làm quen với phần mềm trình chiếu PowerPoint, rèn luyện soạn thảo văn bản Word, quy tắc an toàn khi sử dụng Internet và tư duy lập trình trực quan.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-cn4',
+                title: 'Công nghệ 4 (Kết nối tri thức)',
+                author: 'Đinh Quang Toàn - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/cong-nghe-lop-4-ket-noi-tri-thuc/',
+                likes: 33,
+                contentVi: 'Công nghệ 4: Tìm hiểu về hoa và cây cảnh, các bước gieo trồng và chăm sóc cây xanh, lắp ghép các mô hình kỹ thuật như chong chóng, mô hình xe đồ chơi an toàn.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-an4',
+                title: 'Âm nhạc 4 (Kết nối tri thức)',
+                author: 'Nguyễn Khánh Linh - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/am-nhac-lop-4-ket-noi-tri-thuc/',
+                likes: 37,
+                contentVi: 'Khơi gợi tình yêu âm nhạc Lớp 4 qua các bài hát thiếu nhi rộn ràng, nhạc cụ gõ thanh phách, sáo recorder và đọc nhạc theo ký hiệu bàn tay sinh động.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-mt4',
+                title: 'Mĩ thuật 4 (Kết nối tri thức)',
+                author: 'Đỗ Khánh Ngọc - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/mi-thuat-lop-4-ket-noi-tri-thuc/',
+                likes: 35,
+                contentVi: 'Phát triển năng khiếu mĩ thuật: Nghệ thuật tạo hình từ thiên nhiên, vẽ tranh phong cảnh quê hương đất nước, chân dung bạn bè và trang trí đồ vật quen thuộc.',
+                contentEn: ''
+            },
+            {
+                id: 'sgk-hdtn',
+                title: 'Hoạt động trải nghiệm 4 (Kết nối tri thức)',
+                author: 'Bùi Ngọc Huyền - Lớp 4A (Giới thiệu)',
+                category: 'sgk',
+                badgeText: '📘 SGK Lớp 4 KNTT',
+                badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+                image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://giaokhoaonline.com/hoat-dong-trai-nghiem-lop-4-ket-noi-tri-thuc/',
+                likes: 36,
+                contentVi: 'Rèn luyện nền nếp học tập, kỹ năng tự phục vụ, giữ gìn vệ sinh lớp học, xây dựng tình bạn đoàn kết và tham gia các hoạt động thiện nguyện vì cộng đồng.',
+                contentEn: ''
+            },
+
+            // ================= 2. SÁCH THAM KHẢO & NÂNG CAO TOÁN - TIẾNG VIỆT - TIẾNG ANH 4 (KNTT) =================
+            {
+                id: 'tk-toan-vbt1',
+                title: 'Vở bài tập Toán 4 - Tập 1 (Kết nối tri thức)',
+                author: 'Tủ sách Toán Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/ket-noi-tri-thuc/vbt-toan-4-tap-1-ket-noi-tri-thuc.html',
+                likes: 51,
+                contentVi: 'Tài liệu thực hành song hành cùng SGK Toán 4 Tập 1 Kết nối tri thức với cuộc sống (NXB Giáo dục Việt Nam). Giúp học sinh củng cố kiến thức về số có nhiều chữ số, góc, đơn vị đo đại lượng và các phép tính cộng, trừ, nhân, chia.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-toan-vbt2',
+                title: 'Vở bài tập Toán 4 - Tập 2 (Kết nối tri thức)',
+                author: 'Tủ sách Toán Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/ket-noi-tri-thuc/vbt-toan-4-tap-2-ket-noi-tri-thuc.html',
+                likes: 49,
+                contentVi: 'Hệ thống bài tập luyện tập thực hành bám sát chương trình Toán 4 Tập 2 (KNTT): Phân số, phép tính với phân số, hình bình hành, hình thoi, yếu tố thống kê và xác suất.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-toan-nc1',
+                title: 'Chuyên đề Toán nâng cao Lớp 4 - Bồi dưỡng HSG',
+                author: 'Góc Học Toán Thông Minh 4A',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1632571401005-458e9d244591?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://loigiaihay.com/toan-nang-cao-lop-4-c1651.html',
+                likes: 64,
+                contentVi: 'Tuyển tập các chuyên đề Toán nâng cao lớp 4 có lời giải chi tiết: Phân tích cấu tạo số, dãy số có quy luật, bài toán trung bình cộng, tìm hai số khi biết tổng - hiệu và các bài toán phân số nâng cao.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-toan-ct4',
+                title: 'Tuyển tập 35 tuần Bài tập cuối tuần Toán 4 (KNTT)',
+                author: 'Góc Ôn Luyện Lớp 4A',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vietjack.com/de-kiem-tra-toan-lop-4/bai-tap-cuoi-tuan-toan-lop-4-ket-noi-tri-thuc.jsp',
+                likes: 57,
+                contentVi: 'Bộ phiếu bài tập trắc nghiệm và tự luận cuối tuần bám sát 35 tuần học của sách Toán 4 Kết nối tri thức, có kèm bài tập vận dụng nâng cao và đáp án chi tiết giúp các bạn tự ôn luyện cuối tuần.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-tv-vbt1',
+                title: 'Vở bài tập Tiếng Việt 4 - Tập 1 (Kết nối tri thức)',
+                author: 'Tủ sách Tiếng Việt Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/ket-noi-tri-thuc/vbt-tieng-viet-4-tap-1-ket-noi-tri-thuc.html',
+                likes: 53,
+                contentVi: 'Vở bài tập Tiếng Việt 4 Tập 1 (KNTT) hỗ trợ học sinh rèn luyện kĩ năng Luyện từ và câu (Danh từ, Động từ, Tính từ), luyện viết đoạn văn nêu tình cảm cảm xúc và viết bài văn miêu tả.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-tv-vbt2',
+                title: 'Vở bài tập Tiếng Việt 4 - Tập 2 (Kết nối tri thức)',
+                author: 'Tủ sách Tiếng Việt Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1474932430478-367dbb6832c1?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://sach.baikiemtra.com/ket-noi-tri-thuc/vbt-tieng-viet-4-tap-2-ket-noi-tri-thuc.html',
+                likes: 50,
+                contentVi: 'Vở bài tập Tiếng Việt 4 Tập 2 (KNTT) giúp các em nắm vững kiến thức về Câu, Trạng ngữ, Biện pháp nhân hóa, cách lập dàn ý và hoàn thiện các bài văn miêu tả cây cối, kể chuyện sáng tạo.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-tv-vanmau',
+                title: 'Tuyển tập Văn mẫu & Luyện viết sáng tạo Lớp 4 (KNTT)',
+                author: 'CLB Em Yêu Văn Học Lớp 4A',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vietjack.com/tieng-viet-4-kn/tap-lam-van-lop-4.jsp',
+                likes: 61,
+                contentVi: 'Tổng hợp dàn ý chi tiết và các bài văn tham khảo chọn lọc bám sát từng chủ điểm Tập làm văn lớp 4 Kết nối tri thức: Tả con vật, tả cây cối, viết thư, viết đơn, báo cáo thảo luận nhóm và kể lại câu chuyện.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-tv-ct4',
+                title: 'Bài tập cuối tuần & Mở rộng vốn từ Tiếng Việt 4 (KNTT)',
+                author: 'Góc Ôn Luyện Lớp 4A',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vietjack.com/de-kiem-tra-lop-4/bai-tap-cuoi-tuan-tieng-viet-lop-4-ket-noi-tri-thuc.jsp',
+                likes: 48,
+                contentVi: 'Hệ thống phiếu bài tập Đọc hiểu - Luyện từ và câu - Viết đoạn văn theo 35 tuần học của sách Tiếng Việt 4 Kết nối tri thức, giúp học sinh rèn cảm thụ văn học và chuẩn bị tốt cho các sân chơi Trạng Nguyên Tiếng Việt.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-ta-sbt',
+                title: 'Sách bài tập Tiếng Anh 4 - Global Success (Bản điện tử)',
+                author: 'CLB Tiếng Anh Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://thtandan-hp.thuvien.edu.vn/tai-lieu/sach-dien-tu/sbt-tieng-anh-lop-4-global-success-849975',
+                likes: 59,
+                contentVi: 'Sách bài tập (Workbook) Tiếng Anh 4 Global Success của NXB Giáo dục Việt Nam biên soạn đồng bộ với sách học sinh, gồm các bài tập luyện Phonics, Vocabulary, Sentence Patterns, Reading và Writing cho từng Unit.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-ta-ct4',
+                title: 'Bài tập bổ trợ & Nâng cao Tiếng Anh 4 Global Success',
+                author: 'CLB Tiếng Anh Lớp 4A (Sưu tầm)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vietjack.com/bai-tap-cuoi-tuan-lop-4/bai-tap-cuoi-tuan-tieng-anh-lop-4-global.jsp',
+                likes: 55,
+                contentVi: 'Tuyển tập phiếu bài tập ôn luyện theo 20 Unit của chương trình Tiếng Anh 4 Global Success (Kết nối tri thức), giúp học sinh củng cố ngữ pháp, luyện đọc hiểu và làm quen với các dạng đề thi IOE lớp 4.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-1',
+                title: 'Bác Hồ kính yêu với thiếu niên, nhi đồng',
+                author: 'Chu Triệu Vân - Lớp 4A (Góc sách Bác Hồ)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 52,
+                contentVi: 'Cuốn sách gồm nhiều mẩu chuyện cảm động về tình cảm của Bác Hồ với trẻ thơ: Bác chia kẹo cho các cháu, Bác dạy giữ gìn vệ sinh, chăm học và rèn luyện thể chất để trở thành người có ích cho quê hương đất nước.',
+                contentEn: ''
+            },
+            {
+                id: 'tk-2',
+                title: 'Kể chuyện Lịch sử Việt Nam bằng tranh',
+                author: 'Lê Thành Nam - Lớp 4A (Tủ sách lịch sử)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 49,
+                contentVi: 'Tái hiện sinh động lịch sử hào hùng: Trận chiến cọc gỗ trên sông Bạch Đằng, Hai Bà Trưng cưỡi voi ra trận, lòng quả cảm của Trần Quốc Toản với lá cờ "Phá cường địch, báo hoàng ân".',
+                contentEn: ''
+            },
+            {
+                id: 'tk-3',
+                title: 'Mười vạn câu hỏi vì sao - Khám phá tự nhiên',
+                author: 'Nguyễn Minh Phúc - Lớp 4A (Góc khoa học)',
+                category: 'tham-khao',
+                badgeText: '📗 Sách tham khảo',
+                badgeClass: 'bg-teal-100 text-teal-800 border-teal-200',
+                image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 47,
+                contentVi: 'Giải đáp những thắc mắc khoa học ngộ nghĩnh: Vì sao ban đêm đom đóm lại phát sáng? Tại sao cây xương rồng có gai mà không có lá? Một cuốn sách khơi dậy tò mò vô tận của lứa tuổi học trò.',
+                contentEn: ''
+            },
+
+            // ================= 3. TRUYỆN SÁNG TÁC CỦA HỌC SINH 4A =================
+            {
+                id: 'st-1',
+                title: 'Chiếc Cặp Thần Kỳ Của Bạn An',
+                author: 'Phan Hoàng Hiệp - Lớp 4A (Tự sáng tác)',
+                category: 'sang-tac',
+                badgeText: '✏️ Truyện sáng tác',
+                badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                image: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 58,
+                contentVi: 'Bạn An có một chiếc cặp sách màu xanh rất kỳ lạ. Mỗi khi bạn chăm chỉ làm bài tập, chiếc cặp bỗng nhẹ bẫng như một đám mây. Nhưng mỗi khi An lười biếng để quên sách vở, chiếc cặp lại nặng trĩu. Nhờ chiếc cặp nhắc nhở, An ngày càng ngăn nắp và luôn đạt điểm 10!',
+                contentEn: ''
+            },
+            {
+                id: 'st-2',
+                title: 'Chú Vẹt Ham Đọc Sách Ở Góc Sân Trường',
+                author: 'Đinh Nguyễn Mai Lan - Lớp 4A (Tự sáng tác)',
+                category: 'sang-tac',
+                badgeText: '✏️ Truyện sáng tác',
+                badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                image: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 45,
+                contentVi: 'Tại trường Tiểu học Nam Đồng có chú Vẹt Xanh thích bay đến bậu cửa lớp 4A. Mỗi giờ đọc sách, vẹt ta nghẹo cổ chăm chú nhìn từng trang truyện. Một hôm, bạn Mai Lan làm rơi phiếu đọc sách, chú vẹt đã nhanh trí ngậm lấy và mang trả lại bàn học!',
+                contentEn: ''
+            },
+            {
+                id: 'st-3',
+                title: 'Cuộc Phiêu Lưu Của Chú Bút Chì Màu',
+                author: 'Cao Nam Phong - Lớp 4A (Tự sáng tác)',
+                category: 'sang-tac',
+                badgeText: '✏️ Truyện sáng tác',
+                badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                image: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: '',
+                likes: 53,
+                contentVi: 'Bút Chì Vàng luôn buồn vì mình bị gọt ngắn dần qua mỗi bức tranh. Nhưng khi nhìn thấy bức vẽ mặt trời rực rỡ và nụ cười rạng rỡ của bạn nhỏ lớp 4A trên tờ giấy trắng, Bút Chì Vàng hiểu rằng hy sinh để mang lại cái đẹp chính là niềm hạnh phúc lớn nhất.',
+                contentEn: ''
+            },
+
+            // ================= 4. TRUYỆN SƯU TẦM CÓ LINK ĐỌC TRỰC TUYẾN (20 QUYỂN) =================
+            {
+                id: 'suu-1',
+                title: 'Dế Mèn Bênh Vực Kẻ Yếu (Tô Hoài)',
+                author: 'Đinh Mạnh Hùng - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1518796745738-41048802f99a?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vietjack.com/tieng-viet-lop-4/de-men-benh-vuc-ke-yeu.jsp',
+                likes: 62,
+                contentVi: 'Trích đoạn kinh điển trong tác phẩm Dế Mèn phiêu lưu ký. Trên đường ngao du, Dế Mèn bắt gặp chị Nhà Trò yếu ớt đang ngồi khóc bên tảng đá cuội vì bị bọn Nhện hung hãn ức hiếp đòi nợ. Với tinh thần nghĩa hiệp, Dế Mèn đã ra tay dẹp tan vòng vây mạng nhện và bảo vệ kẻ yếu.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-2',
+                title: 'Sự Tích Hoa Cúc Trắng (Lòng Hiếu Thảo)',
+                author: 'Nguyễn Trâm Anh - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/su-tich-hoa-cuc-trang.html',
+                likes: 55,
+                contentVi: 'Ngày xưa có một cô bé nghèo thương mẹ bị bệnh nặng. Cảm động trước tấm lòng hiếu thảo của em, một ông lão đã chỉ cho em bông hoa cúc trắng trong rừng sâu. Vì muốn mẹ sống thật lâu, cô bé đã xé nhỏ từng cánh hoa thành vô số sợi nhỏ. Lòng hiếu thảo đã cứu sống người mẹ.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-3',
+                title: 'Cậu Bé Chăn Cừu (Bài Học Trung Thực)',
+                author: 'Trần Bảo Nguyên - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1484557052118-f32bd25b45b5?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-ngu-ngon/cau-be-chan-cuu.html',
+                likes: 43,
+                contentVi: 'Cậu bé chăn cừu nhiều lần nói dối: "Sói đến! Sói đến!" khiến dân làng hớt hải chạy lên cứu rồi thất vọng bỏ về. Đến khi chó sói thật xuất hiện bắt cừu, cậu kêu cứu khản giọng nhưng không một ai tin nữa. Câu chuyện răn dạy học sinh luôn luôn sống trung thực.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-4',
+                title: 'Sự Tích Cây Khế (Ăn Khế Trả Vàng)',
+                author: 'Phạm Gia Huy - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/an-khe-tra-vang.html',
+                likes: 58,
+                contentVi: 'Hai anh em nhà nọ cha mẹ mất sớm, người anh tham lam chiếm hết gia tài, chỉ chia cho em một túp lều và cây khế ngọt. Chim Phượng Hoàng đến ăn khế và chở người em ra đảo lấy vàng, giúp em trở nên giàu có. Người anh bắt chước may túi ba gang to gấp bội nên bị rơi xuống biển vì lòng tham vô đáy.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-5',
+                title: 'Thạch Sanh (Truyện Cổ Tích Việt Nam)',
+                author: 'Vũ Hoàng Nam - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/thach-sanh.html',
+                likes: 64,
+                contentVi: 'Chàng dũng sĩ Thạch Sanh thật thà, chất phác nhiều lần bị kẻ gian Lý Thông lừa gạt và cướp công. Với tài năng võ nghệ cùng tiếng đàn thần và niêu cơm thạch sanh kỳ diệu, chàng đã diệt trừ chằn tinh, đại bàng, cứu công chúa và cảm hóa quân xâm lược, mang lại thái bình cho đất nước.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-6',
+                title: 'Tấm Cám (Ở Hiền Gặp Lành)',
+                author: 'Nguyễn Minh Châu - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/tam-cam.html',
+                likes: 51,
+                contentVi: 'Cô Tấm mồ côi hiền lành, chăm chỉ nhưng luôn bị mẹ con Cám hãm hại. Nhờ sự giúp đỡ của ông Bụt và tấm lòng nhân hậu, Tấm đã vượt qua bao thử thách từ chú cá bống, chim vàng anh đến khung cửi và quả thị thơm để tìm lại hạnh phúc xứng đáng.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-7',
+                title: 'Sọ Dừa (Tài Năng Và Tấm Lòng Nhân Hậu)',
+                author: 'Lê Ngọc Diệp - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/so-dua.html',
+                likes: 47,
+                contentVi: 'Sọ Dừa sinh ra có hình dáng kỳ lạ nhưng lại vô cùng thông minh, chăm chỉ chăn bò giúp phú ông. Cô út nhà phú ông không chê bai vẻ bề ngoài mà hết lòng yêu thương Sọ Dừa, nhờ vậy đã nhận ra chàng khôi ngô tuấn tú và đỗ đạt trạng nguyên.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-8',
+                title: 'Cây Tre Trăm Đốt (Khắc Nhập - Khắc Xuất)',
+                author: 'Đặng Tuấn Kiệt - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1508264165352-258db2ebd59b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/cay-tre-tram-dot.html',
+                likes: 53,
+                contentVi: 'Anh Khoai hiền lành cày thuê cho phú ông suốt ba năm trời với lời hứa gả con gái. Phú ông lật lọng bắt anh tìm cây tre trăm đốt mới chịu giữ lời. Bụt hiện lên dạy anh câu thần chú "Khắc nhập, khắc xuất", giúp anh trừng trị kẻ bội tín và sống hạnh phúc.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-9',
+                title: 'Sự Tích Quả Dưa Hấu (Mai An Tiêm)',
+                author: 'Trần Gia Bảo - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/su-tich-qua-dua-hau.html',
+                likes: 56,
+                contentVi: 'Bị đày ra đảo hoang vì câu nói "Của biếu là của lo, của cho là của nợ", Mai An Tiêm không hề nản chí. Chàng chăm chỉ gieo trồng hạt giống lạ do chim mang tới, tạo nên giống dưa hấu vỏ xanh ruột đỏ ngọt lịm, chứng minh giá trị của đôi bàn tay lao động.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-10',
+                title: 'Bó Đũa (Bài Học Về Tình Đoàn Kết)',
+                author: 'Nguyễn Phương Thảo - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-ngu-ngon/cau-chuyen-bo-dua.html',
+                likes: 49,
+                contentVi: 'Thấy các con thường xuyên cãi vã, người cha gọi tất cả lại và đưa ra một bó đũa, đố ai bẻ gãy được. Không ai bẻ nổi cả bó, nhưng khi tháo rời từng chiếc thì ai cũng bẻ gãy dễ dàng. Câu chuyện dạy chúng ta bài học sâu sắc: "Đoàn kết thì sống, chia rẽ thì chết".',
+                contentEn: ''
+            },
+            {
+                id: 'suu-11',
+                title: 'Chú Bé Tích Chu (Tình Cảm Gia Đình)',
+                author: 'Bùi Thanh Trúc - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/cau-be-tich-chu.html',
+                likes: 60,
+                contentVi: 'Tích Chu mải chơi không chăm sóc bà nội ốm nặng, khiến bà khát nước quá hóa thành chim bay đi. Hối hận khôn nguôi, Tích Chu vượt bao núi cao vực sâu đi lấy nước suối Tiên về cho bà uống, giúp bà trở lại thành người và luôn hiếu thảo từ đó.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-12',
+                title: 'Ba Lưỡi Rìu (Phần Thưởng Cho Lòng Trung Thực)',
+                author: 'Hoàng Minh Quân - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/ba-luoi-riu.html',
+                likes: 52,
+                contentVi: 'Anh tiều phu nghèo lỡ tay đánh rơi lưỡi rìu sắt xuống sông sâu. Ông Bụt hiện lên lần lượt vớt rìu vàng và rìu bạc nhưng anh đều lắc đầu từ chối vì không phải của mình, chỉ nhận đúng chiếc rìu sắt cũ. Cảm phục đức tính thật thà, Bụt tặng anh cả ba lưỡi rìu.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-13',
+                title: 'Cóc Kiện Trời (Sức Mạnh Của Sự Đồng Lòng)',
+                author: 'Đỗ Hải Đăng - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/coc-kien-troi.html',
+                likes: 46,
+                contentVi: 'Trời hạn hán kéo dài khiến muôn loài khốn khổ. Cóc nhỏ bé dũng cảm dẫn đầu đoàn quân gồm Cua, Gấu, Cọp, Ong, Cáo lên tận thiên đình kiện Ngọc Hoàng. Nhờ sự mưu trí và hiệp lực của cả đoàn, Thiên đình phải nhượng bộ và làm mưa xuống trần gian.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-14',
+                title: 'Sự Tích Hồ Gươm (Lê Lợi Trả Gươm Thần)',
+                author: 'Nguyễn Đức Anh - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/su-tich-ho-guom.html',
+                likes: 65,
+                contentVi: 'Đức Long Quân cho nghĩa quân Lam Sơn mượn thanh gươm thần Thuận Thiên để đánh đuổi giặc Minh xâm lược. Khi đất nước sạch bóng quân thù, vua Lê Lợi dạo thuyền trên hồ Tả Vọng và hoàn trả gươm báu cho Rùa Vàng, từ đó hồ mang tên Hồ Hoàn Kiếm.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-15',
+                title: 'Sơn Tinh, Thủy Tinh (Truyền Thuyết Thời Hùng Vương)',
+                author: 'Lê Bảo Châu - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/son-tinh-thuy-tinh.html',
+                likes: 57,
+                contentVi: 'Vua Hùng thứ mười tám kén rể cho công chúa Mị Nương. Sơn Tinh mang lễ vật đến trước nên đón được công chúa về núi Tản Viên. Thủy Tinh đến sau nổi giận dâng nước đánh Sơn Tinh, nhưng nước dâng cao bao nhiêu thì Sơn Tinh lại nâng đồi núi cao bấy nhiêu.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-16',
+                title: 'Thánh Gióng (Người Anh Hùng Làng Phù Đổng)',
+                author: 'Trịnh Quang Minh - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/thanh-giong.html',
+                likes: 61,
+                contentVi: 'Cậu bé làng Gióng lên ba vẫn chưa biết nói cười, nhưng khi nghe tiếng sứ giả rao tìm người cứu nước liền cất tiếng nói đầu tiên xin đi đánh giặc Ân. Gióng lớn nhanh như thổi, cưỡi ngựa sắt, nhổ tre ngà đánh tan quân giặc rồi bay về trời.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-17',
+                title: 'Sự Tích Bánh Chưng, Bánh Giầy (Lang Liêu)',
+                author: 'Phạm Khánh An - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-viet-nam/su-tich-banh-chung-banh-day.html',
+                likes: 54,
+                contentVi: 'Trong cuộc thi dâng lễ vật ngày Tết của vua Hùng, hoàng tử Lang Liêu nghèo khó nhưng hiếu thảo đã dùng hạt gạo nếp quen thuộc làm ra bánh Chưng vuông tượng trưng cho Đất và bánh Giầy tròn tượng trưng cho Trời, được vua cha truyền ngôi báu.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-18',
+                title: 'Cáo Và Chùm Nho (Truyện Ngụ Ngôn Ê-dốp)',
+                author: 'Vũ Minh Anh - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-ngu-ngon/con-cao-va-chum-nho.html',
+                likes: 44,
+                contentVi: 'Một con cáo đói nhìn thấy giàn nho chín mọng trên cao liền tìm đủ mọi cách nhảy lên hái nhưng đều thất bại. Không với tới được chùm nho, cáo bèn bỏ đi và tự an ủi: "Nho còn xanh lắm, ăn vào chỉ tổ ê răng!". Câu chuyện phê phán thói chê bai khi không đạt được mục tiêu.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-19',
+                title: 'Kiến Và Ve Sầu (Chăm Chỉ Lao Động)',
+                author: 'Nguyễn Hà Linh - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-ngu-ngon/ve-sau-va-kien.html',
+                likes: 50,
+                contentVi: 'Suốt mùa hè nắng ấm, Kiến miệt mài tha thóc về tổ dự trữ trong khi Ve Sầu chỉ mải ca hát rong chơi. Đến mùa đông giá rét không có gì ăn, Ve Sầu đành sang xin Kiến cứu giúp. Câu chuyện nhắc nhở các bạn nhỏ biết chăm chỉ học tập và chuẩn bị cho tương lai.',
+                contentEn: ''
+            },
+            {
+                id: 'suu-20',
+                title: 'Đẽo Cày Giữa Đường (Giữ Vững Chính Kiến)',
+                author: 'Đinh Gia Hưng - Lớp 4A (Sưu tầm)',
+                category: 'suu-tam',
+                badgeText: '📖 Truyện sưu tầm',
+                badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+                image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-ngu-ngon/deo-cay-giua-duong.html',
+                likes: 48,
+                contentVi: 'Một người thợ mộc mang gỗ ra bên đường đẽo cày để bán. Ai đi qua góp ý gì anh cũng nghe theo, người bảo đẽo to, người bảo đẽo nhỏ, kết quả cả đống gỗ biến thành mẩu củi vụn không bán được cho ai. Bài học quý giá về việc biết lắng nghe có chọn lọc và giữ vững lập trường.',
+                contentEn: ''
+            },
+
+            // ================= 5. TRUYỆN SONG NGỮ VIỆT - ANH (15 TRUYỆN CÓ LINK ĐỌC TRỰC TUYẾN) =================
+            {
+                id: 'sn-1',
+                title: 'Rùa và Thỏ (The Tortoise and The Hare)',
+                author: 'Chu Khánh Linh & Nguyễn Khánh Linh - Lớp 4A',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://contuhoc.com/truyen-ngan-tieng-anh-de-doc-cho-tre',
+                likes: 67,
+                contentVi: 'Thỏ luôn giễu cợt Rùa chậm chạp. Rùa thách Thỏ chạy đua. Thỏ ỷ mình nhanh nhẹn nên nằm ngủ khì dưới gốc cây. Rùa từng bước kiên trì tiến về phía trước và đã về đích trước. Bài học: Chậm mà chắc, kiên trì ắt thắng!',
+                contentEn: 'The Hare laughed at the slow Tortoise. The Tortoise challenged him to a race. Overconfident, the Hare took a nap under a shady tree. The Tortoise kept moving steadily and won the race. Moral: Slow and steady wins the race!'
+            },
+            {
+                id: 'sn-2',
+                title: 'Mặt Trời và Gió Bắc (The Sun and the Wind)',
+                author: 'Nguyễn Ngọc Minh Hân - Lớp 4A',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vn.elsaspeak.com/truyen-ngan-tieng-anh/',
+                likes: 54,
+                contentVi: 'Gió Bắc và Mặt Trời thi nhau xem ai cởi được áo khoác của người bộ hành. Gió thổi càng mạnh thì người đó càng giữ chặt áo. Mặt Trời nhẹ nhàng tỏa ánh nắng ấm, người bộ hành liền mỉm cười tự cởi áo. Lòng dịu dàng thắng sức mạnh thô bạo.',
+                contentEn: 'The Wind and the Sun argued over who could make a traveler remove his coat. The harder the Wind blew, the tighter the traveler held his coat. The Sun gently shone warm rays, and the traveler smiled and took it off. Gentle warmth is stronger than brute force.'
+            },
+            {
+                id: 'sn-3',
+                title: 'Chú Quạ Khát Nước (The Thirsty Crow)',
+                author: 'Đinh Thị Hà Vy - Lớp 4A',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1520808663317-647b476a81b9?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vn.elsaspeak.com/truyen-ngan-tieng-anh/',
+                likes: 59,
+                contentVi: 'Một chú quạ đang rất khát nhìn thấy bình nước đáy sâu không uống tới. Quạ bèn gắp từng viên sỏi nhỏ thả vào bình. Nước dâng dần lên miệng bình và quạ uống thỏa thích. Trí thông minh giúp ta vượt qua mọi hoàn cảnh khó khăn.',
+                contentEn: 'A thirsty crow found a pitcher with water deep at the bottom. The clever crow patiently picked up pebbles and dropped them into the pitcher one by one. The water rose to the brim, and the crow drank his fill. Wit finds a way!'
+            },
+            {
+                id: 'sn-4',
+                title: 'Sư Tử và Chuột Nhắt (The Lion and the Mouse)',
+                author: 'CLB Tiếng Anh Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://vn.elsaspeak.com/truyen-ngan-tieng-anh/',
+                likes: 65,
+                contentVi: 'Một chú Sư Tử đang ngủ say thì bị Chuột Nhắt vô tình đánh thức. Sư Tử rộng lượng tha mạng cho Chuột. Ít lâu sau, Sư Tử mắc vào lưới thợ săn, chính Chuột Nhắt đã chạy tới cắn đứt dây lưới cứu sống Sư Tử. Bài học: Ngay cả những người bạn nhỏ bé nhất cũng có thể làm nên việc lớn.',
+                contentEn: 'A sleeping Lion was accidentally woken up by a little Mouse. The generous Lion let the Mouse go. Days later, the Lion was caught in a hunter\'s net, and the Mouse came and gnawed through the ropes to free him. Moral: Even the smallest friends can be of great help.'
+            },
+            {
+                id: 'sn-5',
+                title: 'Kiến và Châu Chấu (The Ant and the Grasshopper)',
+                author: 'Nguyễn Tùng Chi - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://thleductho.hcm.edu.vn/suu-tam-chia-se/truyen-song-ngu-kien-va-chau-chau/ctmb/112613/894925',
+                likes: 61,
+                contentVi: 'Suốt mùa hè ấm áp, đàn Kiến chăm chỉ tích trữ lương thực cho mùa đông, còn Châu Chấu chỉ mải ca hát rong chơi. Khi mùa đông lạnh giá kéo đến, Châu Chấu đói lả đành xin Kiến giúp đỡ và nhận ra bài học quý giá: Phải biết chăm chỉ làm việc và chuẩn bị cho tương lai.',
+                contentEn: 'All summer long, a family of Ants worked hard storing food for winter, while a Grasshopper only sang and played. When cold winter arrived, the starving Grasshopper begged the Ants for food and learned a valuable lesson: There is a time for work and a time for play.'
+            },
+            {
+                id: 'sn-6',
+                title: 'Cậu Bé Chăn Cừu và Chó Sói (The Boy Who Cried Wolf)',
+                author: 'Lê Minh Đức - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1484557985045-edf25e08da73?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://bmyc.vn/truyen-song-ngu-anh-viet/',
+                likes: 58,
+                contentVi: 'Một cậu bé chăn cừu thường xuyên hét to "Sói đến!" để trêu chọc dân làng. Khi sói thật xuất hiện tấn công đàn cừu, cậu kêu cứu khản cổ nhưng chẳng còn ai tin nữa. Câu chuyện nhắc nhở chúng ta: Nói dối sẽ đánh mất niềm tin của mọi người.',
+                contentEn: 'A shepherd boy repeatedly tricked the villagers by shouting "Wolf! Wolf!". When a real wolf finally appeared and attacked the sheep, nobody believed his cries for help. Moral: Liars are not believed even when they speak the truth.'
+            },
+            {
+                id: 'sn-7',
+                title: 'Cô Bé Quàng Khăn Đỏ (Little Red Riding Hood)',
+                author: 'Đỗ Quỳnh Anh - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://www.youtube.com/watch?v=mLn62-r6A9M',
+                likes: 64,
+                contentVi: 'Trên đường mang bánh vào rừng thăm bà ngoại ốm, Cô Bé Quàng Khăn Đỏ vì mải hái hoa và trò chuyện với Chó Sói gian ác nên đã gặp nguy hiểm. May nhờ bác thợ săn dũng cảm giải cứu kịp thời, hai bà cháu bình an. Bài học: Luôn vâng lời cha mẹ và cảnh giác với người lạ.',
+                contentEn: 'On her way through the forest to visit her sick grandmother, Little Red Riding Hood stopped to pick flowers and talked to a wicked Wolf, putting them both in danger. Luckily, a brave woodcutter rescued them. Moral: Always listen to your parents and never talk to strangers.'
+            },
+            {
+                id: 'sn-8',
+                title: 'Bạch Tuyết và Bảy Chú Lùn (Snow White and the Seven Dwarfs)',
+                author: 'Nguyễn Quỳnh Chi - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1516575334481-f85287c2c82d?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://bmyc.vn/truyen-song-ngu-anh-viet/',
+                likes: 68,
+                contentVi: 'Nàng công chúa Bạch Tuyết hiền hậu bị hoàng hậu độc ác ghen tị hãm hại nhưng luôn được muôn thú và bảy chú lùn tốt bụng che chở trong rừng sâu. Cuối cùng, cái thiện đã chiến thắng cái ác và Bạch Tuyết sống hạnh phúc bên hoàng tử.',
+                contentEn: 'Kind princess Snow White was envied by the wicked queen, yet she was protected by forest animals and seven kind dwarfs. In the end, goodness triumphed over evil, and Snow White lived happily ever after with the prince.'
+            },
+            {
+                id: 'sn-9',
+                title: 'Cô Bé Lọ Lem (Cinderella)',
+                author: 'Đoàn Nguyệt Ánh - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://bmyc.vn/truyen-song-ngu-anh-viet/',
+                likes: 66,
+                contentVi: 'Dù bị mẹ kế và hai chị đối xử bất công, cô bé Lọ Lem vẫn giữ tấm lòng nhân hậu, chăm chỉ và lạc quan. Nhờ phép màu của bà tiên đỡ đầu cùng chiếc giày thủy tinh lấp lánh, Lọ Lem đã tìm thấy hạnh phúc xứng đáng.',
+                contentEn: 'Although treated unfairly by her stepmother and stepsisters, Cinderella remained kind, hardworking, and optimistic. With the magic of her fairy godmother and a sparkling glass slipper, Cinderella found the happiness she deserved.'
+            },
+            {
+                id: 'sn-10',
+                title: 'Jack và Hạt Đậu Thần (Jack and the Beanstalk)',
+                author: 'Đinh Minh Khang - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-the-gioi/truyen-co-tich-song-ngu-jack-va-hat-dau-than.html',
+                likes: 60,
+                contentVi: 'Cậu bé nghèo Jack đổi con bò lấy những hạt đậu thần kỳ. Sau một đêm, cây đậu mọc cao tận trời xanh, dẫn Jack tới lâu đài của người khổng lồ. Bằng sự dũng cảm và nhanh trí, Jack đã mang lại cuộc sống ấm no cho hai mẹ con.',
+                contentEn: 'Poor boy Jack traded his cow for magic beans. Overnight, a giant beanstalk grew high into the clouds, leading Jack to a giant\'s castle. With courage and quick wit, Jack brought prosperity to himself and his mother.'
+            },
+            {
+                id: 'sn-11',
+                title: 'Nàng Công Chúa và Hạt Đậu (The Princess and the Pea)',
+                author: 'Đinh Thị Hồng Minh - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-the-gioi/truyen-co-tich-song-ngu-nang-cong-chua-va-hat-dau.html',
+                likes: 56,
+                contentVi: 'Trong một đêm mưa bão, có một cô gái ướt sũng gõ cửa hoàng cung tự nhận mình là công chúa thật sự. Hoàng hậu đã đặt một hạt đậu nhỏ dưới hai mươi lớp đệm để thử lòng. Sự tinh tế đã chứng minh nàng chính là nàng công chúa đích thực.',
+                contentEn: 'On a stormy night, a rain-soaked girl knocked on the palace gate claiming to be a real princess. The Queen placed a tiny pea beneath twenty mattresses to test her. Her sensitivity proved she was truly a real princess.'
+            },
+            {
+                id: 'sn-12',
+                title: 'Cô Gái Tóc Dài Rapunzel (Rapunzel)',
+                author: 'Đỗ Khánh Ngọc - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://truyencotich.vn/truyen-co-tich/co-tich-the-gioi/truyen-co-tich-song-ngu-co-gai-toc-dai-rapunzel.html',
+                likes: 57,
+                contentVi: 'Nàng Rapunzel có mái tóc vàng óng dài tuyệt đẹp bị mụ phù thủy giam trên tòa tháp cao không có cầu thang. Giọng hát trong trẻo của nàng đã dẫn lối cho chàng hoàng tử dũng cảm tìm đến và giải thoát cho nàng khỏi mụ phù thủy.',
+                contentEn: 'Rapunzel had magnificent long golden hair and was locked by a witch in a tall tower with no stairs. Her sweet singing guided a brave prince to find her and rescue her from the wicked witch.'
+            },
+            {
+                id: 'sn-13',
+                title: 'Vịt Con Xấu Xí (The Ugly Duckling)',
+                author: 'Bùi Ngọc Huyền - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://www.youtube.com/watch?v=XzHsbYW-Vbg',
+                likes: 63,
+                contentVi: 'Chú vịt con sinh ra có bộ lông xám xịt khác biệt nên luôn bị mọi người chê cười và xa lánh. Vượt qua mùa đông giá lạnh, đến mùa xuân ấm áp, chú nhận ra mình chính là một chú thiên nga trắng muốt xinh đẹp. Bài học: Hãy luôn tự tin vào giá trị của bản thân.',
+                contentEn: 'Born with gray feathers different from the rest, the duckling was teased and shunned by everyone. After surviving a cold winter, spring arrived and he discovered he had grown into a graceful white swan. Moral: Always believe in your own true worth.'
+            },
+            {
+                id: 'sn-14',
+                title: 'Hai Con Cua (The Two Crabs)',
+                author: 'Hoàng Tiến Lộc - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://www.anh135689999.violet.vn/entry/truyen-ngan-song-ngu-hai-con-cua-12392872.html',
+                likes: 52,
+                contentVi: 'Một ngày đẹp trời, cua mẹ dạo chơi trên bãi cát và nhắc cua con phải tập đi thẳng cho duyên dáng thay vì bò ngang. Cua con lễ phép đáp: "Mẹ hãy làm mẫu đi thẳng trước, con sẽ học theo mẹ ngay ạ!". Bài học: Hành động làm gương luôn có giá trị hơn lời nói.',
+                contentEn: 'One fine day on the sandy beach, a mother crab told her child to walk straight forward instead of side to side. The young crab politely replied, "Please show me how to walk straight first, Mother, and I will follow you!" Moral: Example is the best teacher.'
+            },
+            {
+                id: 'sn-15',
+                title: 'Quả Táo Ngọt Hơn (The Sweeter Apple)',
+                author: 'Lê Sơn Lâm - Lớp 4A (Sưu tầm)',
+                category: 'song-ngu',
+                badgeText: '🌍 Song ngữ Việt - Anh',
+                badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+                image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80',
+                pdfUrl: 'https://anh135689999.violet.vn/entry/truyen-ngan-song-ngu-qua-tao-ngot-hon-12303801.html',
+                likes: 62,
+                contentVi: 'Cô bé cầm trên tay hai quả táo đỏ mọng. Khi mẹ xin một quả, cô bé liền cắn một miếng ở cả hai quả trước khi đưa cho mẹ. Người mẹ hơi buồn nhưng chợt mỉm cười hạnh phúc khi cô bé nói: "Mẹ ơi, quả này ngọt hơn, con biếu mẹ ạ!". Đừng vội đánh giá người khác khi chưa hiểu rõ tấm lòng họ.',
+                contentEn: 'A little girl held two red apples in her hands. When her mother asked for one, the girl quickly took a bite from each apple. Her mother felt disappointed until the girl smiled and said, "Mommy, this one is sweeter, so it is for you!" Never judge others too quickly.'
+            }
+        ];
+
+        let books = [];
+        let currentFilter = 'all';
+        let currentBookId = null;
+        let currentReadMode = 'both';
+
+        // Khởi tạo
+        function initData() {
+            const saved = localStorage.getItem('thuvien4a_kntt_v9_songngu15');
+            if (saved) {
+                try {
+                    books = JSON.parse(saved);
+                } catch (e) {
+                    books = [...DEFAULT_BOOKS];
+                }
+            } else {
+                books = [...DEFAULT_BOOKS];
+                saveData();
+            }
+            updateCategoryCounts();
+            renderBooks();
+        }
+
+        function saveData() {
+            localStorage.setItem('thuvien4a_kntt_v9_songngu15', JSON.stringify(books));
+            updateCategoryCounts();
+        }
+
+        function updateCategoryCounts() {
+            document.getElementById('count-all').textContent = books.length;
+            document.getElementById('count-sgk').textContent = books.filter(b => b.category === 'sgk').length;
+            document.getElementById('count-tham-khao').textContent = books.filter(b => b.category === 'tham-khao').length;
+            document.getElementById('count-sang-tac').textContent = books.filter(b => b.category === 'sang-tac').length;
+            document.getElementById('count-suu-tam').textContent = books.filter(b => b.category === 'suu-tam').length;
+            document.getElementById('count-song-ngu').textContent = books.filter(b => b.category === 'song-ngu').length;
+        }
+
+        function resetToDefaults() {
+            if (confirm('Khôi phục lại toàn bộ danh mục Sách giáo khoa Lớp 4 (KNTT), Sách tham khảo, Truyện sưu tầm và 15 Truyện song ngữ Việt - Anh?')) {
+                books = [...DEFAULT_BOOKS];
+                saveData();
+                renderBooks();
+                showToast('Đã khôi phục trọn bộ SGK, Sách tham khảo, Truyện sưu tầm & 15 Truyện song ngữ! ✨', 'success');
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.className = 'filter-btn active px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-emerald-600 text-white shadow-sm';
+                } else {
+                    btn.className = 'filter-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700';
+                }
+            });
+            renderBooks();
+        }
+
+        function renderBooks() {
+            const grid = document.getElementById('books-grid');
+            const emptyState = document.getElementById('empty-state');
+            const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+
+            const filtered = books.filter(book => {
+                const matchFilter = currentFilter === 'all' || book.category === currentFilter;
+                const matchSearch = book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm);
+                return matchFilter && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(book => {
+                const imgUrl = book.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+                const hasPdf = (book.pdfUrl || book.pdfBase64);
+                return `
+                <div onclick="openReadModal('${book.id}')" class="book-card bg-white rounded-3xl p-4 border-2 border-amber-100 hover:border-emerald-400 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between group relative">
+                    <div>
+                        <!-- Bìa sách có ảnh -->
+                        <div class="book-cover h-48 rounded-2xl overflow-hidden mb-3 relative bg-gray-100">
+                            <img src="${imgUrl}" alt="${escapeHtml(book.title)}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
+                            <span class="absolute top-2.5 right-2.5 text-[10px] font-black uppercase tracking-wider bg-black/60 text-white backdrop-blur-sm px-2.5 py-0.5 rounded-full">
+                                Lớp 4A
+                            </span>
+                            ${hasPdf ? `<span class="absolute bottom-2.5 left-2.5 text-[10px] font-extrabold bg-rose-600 text-white px-2 py-0.5 rounded-md shadow-sm"><i class="fa-solid fa-file-pdf mr-1"></i>Đọc trực tuyến</span>` : ''}
+                        </div>
+                        
+                        <span class="inline-block text-[11px] font-black px-2.5 py-1 rounded-lg border ${book.badgeClass} mb-2">
+                            ${book.badgeText}
+                        </span>
+
+                        <h3 class="font-black text-sm sm:text-base text-gray-800 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-700 transition-colors">${escapeHtml(book.title)}</h3>
+                        <p class="text-xs font-bold text-gray-500 flex items-center gap-1">
+                            <i class="fa-solid fa-user-pen text-emerald-500 text-[11px]"></i> ${escapeHtml(book.author)}
+                        </p>
+                    </div>
+
+                    <!-- Chân thẻ: Nút đọc, thả tim & NÚT XOÁ -->
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Đọc ngay <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </span>
+                        
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="event.stopPropagation(); quickLike('${book.id}', this)" class="flex items-center gap-1 text-rose-500 font-extrabold text-xs bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-full transition-colors cursor-pointer" title="Thả tim">
+                                <i class="fa-solid fa-heart"></i>
+                                <span>${book.likes || 0}</span>
+                            </button>
+
+                            <!-- NÚT XOÁ TRÊN THẺ -->
+                            <button onclick="event.stopPropagation(); deleteBook('${book.id}')" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-rose-100 text-gray-400 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer" title="Xóa tác phẩm này">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // TÍNH NĂNG XOÁ SÁCH CÓ XÁC NHẬN
+        function deleteBook(id) {
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+
+            const confirmMsg = `Bạn có chắc chắn muốn xoá "${book.title}" không?`;
+            if (confirm(confirmMsg)) {
+                books = books.filter(b => b.id !== id);
+                saveData();
+                renderBooks();
+                showToast(`Đã xoá "${book.title}" thành công!`, 'delete');
+
+                if (currentBookId === id) {
+                    closeReadModal();
+                }
+            }
+        }
+
+        function confirmDeleteCurrentBook() {
+            if (currentBookId) {
+                deleteBook(currentBookId);
+            }
+        }
+
+        function quickLike(id, btnElement) {
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+            book.likes = (book.likes || 0) + 1;
+            saveData();
+            renderBooks();
+            showToast('Đã thả tim cho "' + book.title + '" ❤️', 'success');
+        }
+
+        function openCreateModal() {
+            document.getElementById('create-modal').classList.remove('hidden');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('create-modal').classList.add('hidden');
+            document.getElementById('create-book-form').reset();
+            toggleEnglishField();
+        }
+
+        function toggleEnglishField() {
+            const cat = document.getElementById('book-category').value;
+            const enContainer = document.getElementById('english-field-container');
+            if (cat === 'song-ngu') {
+                enContainer.classList.remove('hidden');
+            } else {
+                enContainer.classList.add('hidden');
+            }
+        }
+
+        function handleCreateBook(e) {
+            e.preventDefault();
+            const title = document.getElementById('book-title').value.trim();
+            const author = document.getElementById('book-author').value.trim();
+            const category = document.getElementById('book-category').value;
+            let image = document.getElementById('book-image').value.trim();
+            let pdfUrl = document.getElementById('book-pdf-url').value.trim();
+            const contentVi = document.getElementById('book-content-vi').value.trim();
+            const contentEn = document.getElementById('book-content-en').value.trim();
+            const fileInput = document.getElementById('book-pdf-file');
+
+            if (!image) {
+                image = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+            }
+
+            const catMap = {
+                'sgk': { badgeText: '📘 SGK Lớp 4 KNTT', badgeClass: 'bg-blue-100 text-blue-800 border-blue-200' },
+                'tham-khao': { badgeText: '📗 Sách tham khảo', badgeClass: 'bg-teal-100 text-teal-800 border-teal-200' },
+                'sang-tac': { badgeText: '✏️ Truyện sáng tác', badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+                'suu-tam': { badgeText: '📖 Truyện sưu tầm', badgeClass: 'bg-purple-100 text-purple-800 border-purple-200' },
+                'song-ngu': { badgeText: '🌍 Song ngữ Việt - Anh', badgeClass: 'bg-amber-100 text-amber-800 border-amber-200' }
+            };
+
+            const completeCreation = (pdfBase64 = null) => {
+                const newBook = {
+                    id: 'book-' + Date.now(),
+                    title,
+                    author,
+                    category,
+                    badgeText: catMap[category].badgeText,
+                    badgeClass: catMap[category].badgeClass,
+                    image,
+                    pdfUrl,
+                    pdfBase64,
+                    likes: 1,
+                    contentVi,
+                    contentEn
+                };
+
+                books.unshift(newBook);
+                saveData();
+                renderBooks();
+                closeCreateModal();
+                showToast('Đã thêm thành công vào thư viện! 🎉', 'success');
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    completeCreation(evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                completeCreation(null);
+            }
+        }
+
+        // Mở Modal đọc
+        function openReadModal(id) {
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+            currentBookId = id;
+            currentReadMode = 'both';
+
+            document.getElementById('read-badge').innerHTML = `<span class="text-xs font-black px-2.5 py-1 rounded-lg border ${book.badgeClass}">${book.badgeText}</span>`;
+            document.getElementById('read-title').textContent = book.title;
+            document.getElementById('read-author').textContent = 'Người chia sẻ / Tác giả: ' + book.author;
+            document.getElementById('read-like-count').textContent = book.likes || 0;
+
+            const langSwitcher = document.getElementById('lang-switcher');
+            if (book.contentEn && book.contentEn.trim() !== '') {
+                langSwitcher.classList.remove('hidden');
+                setReadMode('both');
+            } else {
+                langSwitcher.classList.add('hidden');
+                renderReadContent(book, 'vi');
+            }
+
+            document.getElementById('read-modal').classList.remove('hidden');
+        }
+
+        function closeReadModal() {
+            document.getElementById('read-modal').classList.add('hidden');
+            currentBookId = null;
+        }
+
+        function setReadMode(mode) {
+            currentReadMode = mode;
+            const book = books.find(b => b.id === currentBookId);
+            if (!book) return;
+
+            ['both', 'vi', 'en'].forEach(m => {
+                const btn = document.getElementById('btn-mode-' + m);
+                if (m === mode) {
+                    btn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-white shadow-sm cursor-pointer';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-gray-600 hover:bg-amber-100 cursor-pointer';
+                }
+            });
+
+            renderReadContent(book, mode);
+        }
+
+        function renderReadContent(book, mode) {
+            const body = document.getElementById('read-body');
+            const formatText = (txt) => escapeHtml(txt).replace(/\n/g, '<br><br>');
+
+            let pdfViewerHtml = '';
+            if (book.pdfBase64) {
+                pdfViewerHtml = `
+                    <div class="mb-4 rounded-2xl overflow-hidden border-2 border-amber-200 bg-gray-100">
+                        <iframe src="${book.pdfBase64}" class="w-full h-[450px]" frameborder="0"></iframe>
+                    </div>
+                `;
+            } else if (book.pdfUrl && book.pdfUrl.trim() !== '') {
+                const isStory = book.category === 'suu-tam' || book.category === 'sang-tac' || book.category === 'song-ngu';
+                const bannerTitle = isStory ? 'Truyện đọc trực tuyến (Bản đầy đủ)' : 'Tài liệu đọc trực tuyến Lớp 4';
+                const bannerSub = isStory ? 'Mở đọc trọn vẹn câu chuyện gốc trong tab mới' : 'Mở toàn bộ nội dung sách chuẩn Lớp 4 trong tab mới';
+                pdfViewerHtml = `
+                    <div class="mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-amber-50 border border-blue-200 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-book-bookmark text-3xl text-blue-600"></i>
+                            <div>
+                                <p class="text-sm font-black text-gray-800">${bannerTitle}</p>
+                                <p class="text-xs text-gray-500">${bannerSub}</p>
+                            </div>
+                        </div>
+                        <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở đọc ngay
+                        </a>
+                    </div>
+                `;
+            }
+
+            let textHtml = '';
+            if (mode === 'both' && book.contentEn) {
+                textHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-1.5">
+                                <span>🇻🇳</span> Bản Tiếng Việt
+                            </h4>
+                            <p class="text-sm leading-relaxed">${formatText(book.contentVi)}</p>
+                        </div>
+                        <div class="bg-sky-50/60 p-4 rounded-2xl border border-sky-100 shadow-sm">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-sky-600 mb-2 flex items-center gap-1.5">
+                                <span>🇬🇧</span> English Version
+                            </h4>
+                            <p class="text-sm leading-relaxed">${formatText(book.contentEn)}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (mode === 'en' && book.contentEn) {
+                textHtml = `<div class="bg-sky-50/50 p-5 rounded-2xl border border-sky-100"><p class="text-sm leading-relaxed">${formatText(book.contentEn)}</p></div>`;
+            } else {
+                textHtml = `<div class="bg-white p-5 rounded-2xl border border-amber-100 shadow-sm"><p class="text-sm leading-relaxed">${formatText(book.contentVi)}</p></div>`;
+            }
+
+            body.innerHTML = pdfViewerHtml + textHtml;
+        }
+
+        function toggleLikeCurrentBook() {
+            if (!currentBookId) return;
+            const book = books.find(b => b.id === currentBookId);
+            if (!book) return;
+            book.likes = (book.likes || 0) + 1;
+            document.getElementById('read-like-count').textContent = book.likes;
+            const btn = document.getElementById('read-like-btn');
+            btn.classList.add('heart-pop');
+            setTimeout(() => btn.classList.remove('heart-pop'), 350);
+
+            saveData();
+            renderBooks();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const bg = document.getElementById('toast-bg');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-message').textContent = msg;
+
+            if (type === 'delete') {
+                bg.className = 'bg-rose-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-sm';
+                icon.className = 'fa-solid fa-trash-can text-xl';
+            } else {
+                bg.className = 'bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-sm';
+                icon.className = 'fa-solid fa-circle-check text-xl';
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        window.onload = initData;
+    </script>
+</body>
+</html>
